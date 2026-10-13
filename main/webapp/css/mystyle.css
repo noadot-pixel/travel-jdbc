@@ -1619,10 +1619,11 @@
 }
 
 .profile-edit-button {
-    display: inline-block;
+    display: inline-flex;
     width: auto;
     padding: 9px 20px;
     font-size: 13px;
+    align-items: center;
 }
 
 /* =========================

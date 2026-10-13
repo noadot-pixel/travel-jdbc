@@ -4,7 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.LinkedHashMap; //추가-경민
 import java.util.List;
+import java.util.Map; //추가-경민
+
 import util.DBUtil;
 
 /**
@@ -18,6 +21,35 @@ public class PostDAO {
 			"p.bno, p.writer, m.nickname writer_nick, p.title, p.country, p.style, p.img_path, "
 		  + "p.view_cnt, p.like_cnt, to_char(p.reg_date, 'YYYY-MM-DD') reg_date, "
 		  + "to_char(p.mod_date, 'YYYY-MM-DD') mod_date ";
+	//추가시작-경민
+	private static final Map<String, String[]> COUNTRY_WORDS = new LinkedHashMap<String, String[]>();
+	private static final Map<String, String[]> STYLE_WORDS = new LinkedHashMap<String, String[]>();
+
+	static {
+		COUNTRY_WORDS.put("KR", new String[] {"한국", "국내"});
+		COUNTRY_WORDS.put("JP", new String[] {"일본"});
+		COUNTRY_WORDS.put("ETC", new String[] {"세계", "해외"});
+
+		STYLE_WORDS.put("healing", new String[] {"힐링"});
+		STYLE_WORDS.put("food", new String[] {"맛집", "음식"});
+		STYLE_WORDS.put("activity", new String[] {"액티비티"});
+		STYLE_WORDS.put("shopping", new String[] {"쇼핑"});
+	}
+
+	private String findCode(Map<String, String[]> words, String keyword) {
+
+		String k = keyword.trim();
+
+		for (Map.Entry<String, String[]> e : words.entrySet()) {
+			for (String w : e.getValue()) {
+				if (k.contains(w)) {
+					return e.getKey();
+				}
+			}
+		}
+		return null;
+	}
+	//추가끝-경민
 
 	private PostDTO toDto(ResultSet rs) throws Exception {
 
@@ -48,7 +80,7 @@ public class PostDAO {
 			conditions.add("p.style = ?");
 		}
 		if (keyword != null && !keyword.trim().isEmpty()) {
-			conditions.add("p.title like ?");
+			conditions.add("(p.title like ? or p.country = ? or p.style = ?)"); //수정-경민
 		}
 
 		if (conditions.isEmpty()) {
@@ -68,6 +100,8 @@ public class PostDAO {
 		}
 		if (keyword != null && !keyword.trim().isEmpty()) {
 			pstmt.setString(idx++, "%" + keyword.trim() + "%");
+			pstmt.setString(idx++, findCode(COUNTRY_WORDS, keyword)); //추가-경민
+			pstmt.setString(idx++, findCode(STYLE_WORDS, keyword)); //추가-경민
 		}
 
 		return idx;

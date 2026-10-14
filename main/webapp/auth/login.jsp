@@ -29,11 +29,7 @@
 
     <title>로그인 - 여행만들기</title>
 
-    <link rel="stylesheet"
-          href="<%= contextPath %>/css/common.css">
-
-    <link rel="stylesheet"
-          href="<%= contextPath %>/css/mystyle.css">
+    <%@ include file="/common/css-links.jspf" %>
 </head>
 
 <body>

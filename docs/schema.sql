@@ -31,7 +31,13 @@ CREATE TABLE members (
     name_public      CHAR(1)        DEFAULT 'Y' NOT NULL,
     birthday         VARCHAR2(10),                -- "YYYY-MM-DD" stored as plain text, never parsed
     birthday_public  CHAR(1)        DEFAULT 'Y' NOT NULL,
-    photo_path       VARCHAR2(300)
+    photo_path       VARCHAR2(300),
+    gender           VARCHAR2(1),                 -- M / F, asked at signup (ranking feature). NULL for members who joined before this.
+    gender_public    CHAR(1)        DEFAULT 'Y' NOT NULL,
+    last_notice_seen DATE                         -- last time this member opened the notification bell. NULL = never.
+    -- Age is NOT stored as a column: MemberDTO.getAge() computes it from birthday instead,
+    -- so there is nothing to keep in sync as time passes. (An age/age_public column pair
+    -- existed briefly for this project's ranking feature and was dropped in favor of this.)
 );
 
 -- Make an account an admin (sign up through the normal form first, then run):
@@ -46,8 +52,11 @@ CREATE TABLE posts (
     bno         NUMBER          PRIMARY KEY,
     writer      VARCHAR2(100)   NOT NULL REFERENCES members(id),
     title       VARCHAR2(200)   NOT NULL,
-    content     VARCHAR2(4000)  NOT NULL,
+    content     CLOB            NOT NULL,          -- was VARCHAR2(4000); moved to CLOB to fit rich-text/HTML post bodies
     country     VARCHAR2(3)     NOT NULL,          -- KR / JP / ETC
+    region      VARCHAR2(30),                      -- country=KR/JP일 때만 필수(세부 지역). ETC는 NULL.
+                                                     -- KR_CAPITAL/KR_GANGWON/KR_CHUNGCHEONG/KR_JEOLLA/KR_GYEONGSANG/KR_JEJU
+                                                     -- JP_HOKKAIDO/JP_TOHOKU/JP_KANTO/JP_CHUBU/JP_KANSAI/JP_CHUGOKU/JP_SHIKOKU/JP_KYUSHU_OKINAWA
     style       VARCHAR2(10)    NOT NULL,          -- healing / food / activity / shopping
     img_path    VARCHAR2(300),                     -- "images/korea.jpg" (default) or "upload/post/xxx.jpg" (uploaded)
     view_cnt    NUMBER          DEFAULT 0 NOT NULL,
@@ -100,4 +109,55 @@ CREATE TABLE post_logs (
     post_title  VARCHAR2(200)   NOT NULL,
     actor_id    VARCHAR2(100)   NOT NULL REFERENCES members(id),
     log_date    DATE            DEFAULT SYSDATE NOT NULL
+);
+
+
+-- 7. Notices (admin announcements, shown in every member's notification bell)
+CREATE SEQUENCE seq_notices START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE notices (
+    notice_id   NUMBER          PRIMARY KEY,
+    title       VARCHAR2(200)   NOT NULL,
+    content     VARCHAR2(2000)  NOT NULL,
+    writer      VARCHAR2(100)   NOT NULL REFERENCES members(id),   -- admin who wrote it
+    reg_date    DATE            DEFAULT SYSDATE NOT NULL
+);
+
+
+-- 8. Notifications (personal alerts - someone commented/liked my post)
+CREATE SEQUENCE seq_notifications START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE notifications (
+    notif_id    NUMBER          PRIMARY KEY,
+    member_id   VARCHAR2(100)   NOT NULL REFERENCES members(id),              -- who the alert is for
+    type        VARCHAR2(10)    NOT NULL,                                     -- COMMENT / LIKE
+    bno         NUMBER          NOT NULL REFERENCES posts(bno) ON DELETE CASCADE,
+    actor_id    VARCHAR2(100)   NOT NULL REFERENCES members(id),              -- who commented/liked
+    is_read     CHAR(1)         DEFAULT 'N' NOT NULL,
+    reg_date    DATE            DEFAULT SYSDATE NOT NULL
+);
+
+
+-- 9. FAQs (footer "자주 묻는 질문", editable by admins on /admin/faqs)
+CREATE SEQUENCE seq_faqs START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE faqs (
+    faq_id      NUMBER          PRIMARY KEY,
+    question    VARCHAR2(300)   NOT NULL,
+    answer      VARCHAR2(2000)  NOT NULL,
+    writer      VARCHAR2(100)   NOT NULL REFERENCES members(id),
+    reg_date    DATE            DEFAULT SYSDATE NOT NULL,
+    mod_date    DATE
+);
+
+
+-- 10. Inquiries (footer "문의하기" board - anyone can read, members can post)
+CREATE SEQUENCE seq_inquiries START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE inquiries (
+    inquiry_id  NUMBER          PRIMARY KEY,
+    title       VARCHAR2(200)   NOT NULL,
+    content     VARCHAR2(2000)  NOT NULL,
+    writer      VARCHAR2(100)   NOT NULL REFERENCES members(id),
+    reg_date    DATE            DEFAULT SYSDATE NOT NULL
 );

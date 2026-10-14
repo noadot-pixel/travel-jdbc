@@ -26,11 +26,7 @@
 
     <title>회원가입 - 여행만들기</title>
 
-    <link rel="stylesheet"
-          href="<%= contextPath %>/css/common.css">
-
-    <link rel="stylesheet"
-          href="<%= contextPath %>/css/mystyle.css">
+    <%@ include file="/common/css-links.jspf" %>
 </head>
 
 <body>
@@ -147,6 +143,33 @@
                                    autocomplete="new-password">
                         </div>
 
+                        <!-- 랭킹 화면(성별/여행지별 인기 통계)에 쓸 값. JS가 hidden input에 채워서 보낸다 -->
+                        <input type="hidden" id="genderInput" name="gender" value="">
+
+                        <div class="auth-field">
+                            <label>
+                                성별
+                            </label>
+
+                            <div class="filter-group" id="signupGenderGroup">
+                                <button type="button" class="filter-button" data-gender="M">남성</button>
+                                <button type="button" class="filter-button" data-gender="F">여성</button>
+                            </div>
+                        </div>
+
+                        <div class="auth-field auth-agree-field">
+                            <label class="auth-agree-label">
+                                <input type="checkbox"
+                                       id="privacyAgree"
+                                       name="privacyAgree"
+                                       value="Y">
+
+                                <span>
+                                    [필수] <a href="<%= contextPath %>/auth/privacy.jsp" target="_blank">개인정보 수집·이용</a>에 동의합니다.
+                                </span>
+                            </label>
+                        </div>
+
                         <button type="submit"
                                 class="auth-submit">
                             회원가입
@@ -178,6 +201,37 @@
 
 <script>
     /*
+     * 성별 버튼 하나만 선택되도록 처리하고, 고른 값을 hidden input에 채워서 서버로 보낸다
+     * (write.jsp/edit.jsp에서 쓰는 것과 같은 방식).
+     */
+
+    function bindFilterGroup(groupId, hiddenInputId, datasetKey) {
+
+        const group = document.getElementById(groupId);
+        const hiddenInput = document.getElementById(hiddenInputId);
+        const buttons = group.querySelectorAll(".filter-button");
+
+        buttons.forEach(function (button) {
+
+            button.addEventListener("click", function () {
+
+                buttons.forEach(function (other) {
+                    other.classList.remove("active");
+                });
+
+                button.classList.add("active");
+
+                hiddenInput.value = button.dataset[datasetKey];
+
+            });
+
+        });
+
+    }
+
+    bindFilterGroup("signupGenderGroup", "genderInput", "gender");
+
+    /*
      * 서버에서도 똑같이 검사하지만(JoinCommand), 사용자 편의를 위해 제출 전에 미리 알려준다.
      */
 
@@ -187,8 +241,11 @@
         const email = document.getElementById("signupEmail").value.trim();
         const password = document.getElementById("signupPassword").value;
         const passwordConfirm = document.getElementById("signupPasswordConfirm").value;
+        const gender = document.getElementById("genderInput").value;
+        const privacyAgree = document.getElementById("privacyAgree").checked;
 
-        if (nickname === "" || email === "" || password === "" || passwordConfirm === "") {
+        if (nickname === "" || email === "" || password === "" || passwordConfirm === ""
+            || gender === "") {
             event.preventDefault();
             alert("모든 항목을 입력해 주세요.");
             return;
@@ -203,6 +260,12 @@
         if (password.length < 6) {
             event.preventDefault();
             alert("비밀번호는 6자 이상이어야 합니다.");
+            return;
+        }
+
+        if (!privacyAgree) {
+            event.preventDefault();
+            alert("개인정보 수집·이용에 동의해야 가입할 수 있습니다.");
         }
 
     });

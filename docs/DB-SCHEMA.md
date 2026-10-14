@@ -54,6 +54,8 @@ admins/{uid}                    관리자 표시 (필드 없음, 문서 존재 �
 | `title` / `body` | string | 제목 / 본문 |
 | `country` | string | 여행지 구분: `KR`, `JP`, `ETC` |
 | `countryLabel` | string | 표시용 이름 (예: "한국 여행지"). `country`에서 파생되는 중복값 |
+| `region` | string | 세부 지역(`country`=`KR`/`JP`일 때만 필수, `ETC`는 없음): `KR_CAPITAL`/`KR_GANGWON`/`KR_CHUNGCHEONG`/`KR_JEOLLA`/`KR_GYEONGSANG`/`KR_JEJU`, `JP_HOKKAIDO`/`JP_TOHOKU`/`JP_KANTO`/`JP_CHUBU`/`JP_KANSAI`/`JP_CHUGOKU`/`JP_SHIKOKU`/`JP_KYUSHU_OKINAWA` |
+| `regionLabel` | string | 표시용 이름 (예: "제주도"). `region`에서 파생되는 중복값 |
 | `style` | string | 여행 성향: `healing`, `food`, `activity`, `shopping` |
 | `image` | string | 기본 이미지 파일명 (`korea.jpg` 등) |
 | `imageUrl` | string | 업로드한 사진의 Storage URL (없을 수 있음) |
@@ -124,12 +126,16 @@ MEMBERS 1 ──< POSTS 1 ──< COMMENTS
 
 | 테이블 | 기본키 | 설명 |
 |---|---|---|
-| `members` | `id` (VARCHAR2, = 이메일) | 회원. `is_admin`='Y'면 관리자. `MemberDAO` |
+| `members` | `id` (VARCHAR2, = 이메일) | 회원. `is_admin`='Y'면 관리자. `gender`는 랭킹 화면용(이 기능 이전 가입자는 NULL). 나이는 컬럼 없이 `birthday`에서 계산(`MemberDTO.getAge()`). `MemberDAO` |
 | `posts` | `bno` (시퀀스 `seq_posts`) | 게시글. `writer`는 `members.id` 참조. `PostDAO` |
 | `comments` | `cno` (시퀀스 `seq_comments`) | 댓글. `bno`는 `posts.bno` 참조(`ON DELETE CASCADE`). `CommentDAO` |
 | `post_likes` | `(bno, member_id)` | 좋아요. 문서가 아니라 행 존재 여부로 판단. `PostDAO`에 같이 있음 |
 | `scraps` | `(member_id, bno)` | 스크랩. `PostDAO`에 같이 있음 |
 | `post_logs` | `log_id` (시퀀스 `seq_post_logs`) | 작업 이력. `bno`는 FK 없음(글이 지워져도 이력은 남아야 함). `PostLogDAO` |
+| `notices` | `notice_id` (시퀀스 `seq_notices`) | 관리자 공지. 모든 회원의 알림 벨에 표시됨. `NoticeDAO` |
+| `notifications` | `notif_id` (시퀀스 `seq_notifications`) | 개인 알림(내 글에 댓글/좋아요). 자기 글에 자기 행동은 안 쌓음. `NotificationDAO` |
+| `faqs` | `faq_id` (시퀀스 `seq_faqs`) | 자주 묻는 질문. 관리자가 `/admin/faqs`에서 등록/수정/삭제. `FaqDAO` |
+| `inquiries` | `inquiry_id` (시퀀스 `seq_inquiries`) | 문의하기 게시판. 누구나 보고 로그인한 회원이면 남길 수 있음(답변 기능 없음). `InquiryDAO` |
 
 ### Firestore 필드 → 컬럼 대응 (1번과 비교용)
 

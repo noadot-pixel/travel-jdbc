@@ -47,11 +47,7 @@
 
     <title>회원정보 수정 - 여행만들기</title>
 
-    <link rel="stylesheet"
-          href="<%= contextPath %>/css/common.css">
-
-    <link rel="stylesheet"
-          href="<%= contextPath %>/css/mystyle.css">
+    <%@ include file="/common/css-links.jspf" %>
 </head>
 
 <body>
@@ -174,6 +170,52 @@
 
                 <p class="filter-label">개인정보</p>
 
+                <% if (loginMember.getGender() == null) { %>
+
+                <p class="write-field-note">
+                    성별은 성별/여행지별 인기 게시글 통계(랭킹)에 쓰이며, 한 번 저장하면
+                    이 화면에서 다시 바꿀 수 없습니다. 공개 여부는 자유롭게 선택하세요.
+                    (나이는 따로 받지 않고 아래 생일로 계산해서 보여줘요)
+                </p>
+
+                <input type="hidden" id="genderInput" name="gender" value="">
+
+                <div class="write-field">
+
+                    <label>성별</label>
+
+                    <div class="filter-group" id="profileGenderGroup">
+                        <button type="button" class="filter-button" data-gender="M">남성</button>
+                        <button type="button" class="filter-button" data-gender="F">여성</button>
+                    </div>
+
+                    <div class="radio-group">
+
+                        <label class="radio-option">
+                            <input type="radio" name="genderVisibility" value="public" checked>
+                            공개
+                        </label>
+
+                        <label class="radio-option">
+                            <input type="radio" name="genderVisibility" value="private">
+                            비공개
+                        </label>
+
+                    </div>
+
+                </div>
+
+                <div class="write-field">
+                    <label class="auth-agree-label">
+                        <input type="checkbox" id="privacyAgree" name="privacyAgree" value="Y">
+                        <span>
+                            [필수] <a href="<%= contextPath %>/auth/privacy.jsp" target="_blank">개인정보 수집·이용</a>에 동의합니다.
+                        </span>
+                    </label>
+                </div>
+
+                <% } %>
+
                 <div class="write-field">
 
                     <label for="profileBirthday">
@@ -281,6 +323,51 @@
 
     });
 </script>
+
+<% if (loginMember.getGender() == null) { %>
+<script>
+    /*
+     * 성별 버튼 선택과, 제출 전 필수 입력 검사(서버에서도 똑같이 검사함).
+     * 이 블록은 gender가 아직 null인 회원에게만 보이므로, 이 화면을 저장하려면
+     * 성별/동의를 전부 채워야 한다.
+     */
+
+    const genderGroup = document.getElementById("profileGenderGroup");
+    const genderInput = document.getElementById("genderInput");
+
+    genderGroup.querySelectorAll(".filter-button").forEach(function (button) {
+
+        button.addEventListener("click", function () {
+
+            genderGroup.querySelectorAll(".filter-button").forEach(function (other) {
+                other.classList.remove("active");
+            });
+
+            button.classList.add("active");
+            genderInput.value = button.dataset.gender;
+
+        });
+
+    });
+
+    document.getElementById("profileForm").addEventListener("submit", function (event) {
+
+        const privacyAgree = document.getElementById("privacyAgree").checked;
+
+        if (genderInput.value === "") {
+            event.preventDefault();
+            alert("성별을 선택해 주세요.");
+            return;
+        }
+
+        if (!privacyAgree) {
+            event.preventDefault();
+            alert("개인정보 수집·이용에 동의해야 저장할 수 있습니다.");
+        }
+
+    });
+</script>
+<% } %>
 
 </body>
 </html>

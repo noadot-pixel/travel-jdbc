@@ -22,10 +22,12 @@ public class JoinCommand implements Command {
 		String nickname = request.getParameter("signupNickname");
 		String pwd = request.getParameter("signupPassword");
 		String pwdConfirm = request.getParameter("signupPasswordConfirm");
+		String gender = request.getParameter("gender");
+		String privacyAgree = request.getParameter("privacyAgree");
 
 		//JS에서 이미 검사했더라도 서버에서 한 번 더 검사해야 한다
 		//(JS는 브라우저에서 끄거나 조작할 수 있어서 믿을 수 없다)
-		if (isBlank(email) || isBlank(nickname) || isBlank(pwd) || isBlank(pwdConfirm)) {
+		if (isBlank(email) || isBlank(nickname) || isBlank(pwd) || isBlank(pwdConfirm) || isBlank(gender)) {
 			request.setAttribute("msg", "모든 항목을 입력해 주세요.");
 			return true;   // signup.jsp로 다시 forward
 		}
@@ -37,6 +39,18 @@ public class JoinCommand implements Command {
 
 		if (pwd.length() < 6) {
 			request.setAttribute("msg", "비밀번호는 6자 이상이어야 합니다.");
+			return true;
+		}
+
+		if (!"M".equals(gender) && !"F".equals(gender)) {
+			request.setAttribute("msg", "성별을 선택해 주세요.");
+			return true;
+		}
+
+		//개인정보 수집·이용 동의 체크박스. 랭킹 기능에 쓸 성별을 받는 것에 대한 동의라
+		//가입 자체를 막는 필수 조건으로 둔다.
+		if (!"Y".equals(privacyAgree)) {
+			request.setAttribute("msg", "개인정보 수집·이용에 동의해야 가입할 수 있습니다.");
 			return true;
 		}
 
@@ -58,6 +72,7 @@ public class JoinCommand implements Command {
 		dto.setId(email);
 		dto.setPwd(pwd);
 		dto.setNickname(nickname.trim());
+		dto.setGender(gender);
 
 		if (dao.join(dto) == 1) {
 

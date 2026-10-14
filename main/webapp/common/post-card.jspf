@@ -21,7 +21,13 @@
 
     <div class="story-content">
 
-        <span class="story-category"><%= EscapeUtil.html(post.getCountryLabel()) %></span>
+        <div class="story-tags">
+            <span class="story-category"><%= EscapeUtil.html(post.getCountryLabel()) %></span>
+            <% if (post.getRegion() != null && !post.getRegion().isEmpty()) { %>
+            <span class="story-region-tag"><%= EscapeUtil.html(post.getRegionLabel()) %></span>
+            <% } %>
+            <span class="story-style-tag"><%= EscapeUtil.html(post.getStyleLabel()) %></span>
+        </div>
 
         <h3><a href="<%= contextPath %>/post/view?bno=<%= post.getBno() %>"><%= EscapeUtil.html(post.getTitle()) %></a></h3>
 

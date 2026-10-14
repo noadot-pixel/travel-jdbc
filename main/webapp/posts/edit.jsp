@@ -30,6 +30,7 @@
     String titleValue = request.getParameter("writeTitle") != null ? request.getParameter("writeTitle") : post.getTitle();
     String bodyValue = request.getParameter("writeBody") != null ? request.getParameter("writeBody") : post.getContent();
     String countryValue = request.getParameter("country") != null ? request.getParameter("country") : post.getCountry();
+    String regionValue = request.getParameter("region") != null ? request.getParameter("region") : post.getRegion();
     String styleValue = request.getParameter("style") != null ? request.getParameter("style") : post.getStyle();
 %>
 
@@ -44,11 +45,7 @@
 
     <title>게시글 수정 - 여행만들기</title>
 
-    <link rel="stylesheet"
-          href="<%= contextPath %>/css/common.css">
-
-    <link rel="stylesheet"
-          href="<%= contextPath %>/css/mystyle.css">
+    <%@ include file="/common/css-links.jspf" %>
 </head>
 
 <body>
@@ -82,7 +79,6 @@
 
         <form id="editForm"
               method="post"
-              enctype="multipart/form-data"
               action="<%= contextPath %>/post/modify">
 
             <input type="hidden" name="bno" value="<%= post.getBno() %>">
@@ -102,6 +98,7 @@
             </div>
 
             <input type="hidden" id="countryInput" name="country" value="<%= countryValue %>">
+            <input type="hidden" id="regionInput" name="region" value="<%= regionValue != null ? regionValue : "" %>">
             <input type="hidden" id="styleInput" name="style" value="<%= styleValue %>">
 
             <div class="filter-group" id="writeCountryGroup">
@@ -111,6 +108,34 @@
                 <button type="button" class="filter-button <%= "KR".equals(countryValue) ? "active" : "" %>" data-country="KR">국내여행</button>
                 <button type="button" class="filter-button <%= "JP".equals(countryValue) ? "active" : "" %>" data-country="JP">일본여행</button>
                 <button type="button" class="filter-button <%= "ETC".equals(countryValue) ? "active" : "" %>" data-country="ETC">해외여행</button>
+
+            </div>
+
+            <div class="filter-group" id="writeKoreaRegionGroup" <%= "KR".equals(countryValue) ? "" : "hidden" %>>
+
+                <p class="filter-label">국내 지역</p>
+
+                <button type="button" class="filter-button <%= "KR_CAPITAL".equals(regionValue) ? "active" : "" %>" data-region="KR_CAPITAL">서울·경기·인천</button>
+                <button type="button" class="filter-button <%= "KR_GANGWON".equals(regionValue) ? "active" : "" %>" data-region="KR_GANGWON">강원도</button>
+                <button type="button" class="filter-button <%= "KR_CHUNGCHEONG".equals(regionValue) ? "active" : "" %>" data-region="KR_CHUNGCHEONG">충청도</button>
+                <button type="button" class="filter-button <%= "KR_JEOLLA".equals(regionValue) ? "active" : "" %>" data-region="KR_JEOLLA">전라도</button>
+                <button type="button" class="filter-button <%= "KR_GYEONGSANG".equals(regionValue) ? "active" : "" %>" data-region="KR_GYEONGSANG">경상도</button>
+                <button type="button" class="filter-button <%= "KR_JEJU".equals(regionValue) ? "active" : "" %>" data-region="KR_JEJU">제주도</button>
+
+            </div>
+
+            <div class="filter-group" id="writeJapanRegionGroup" <%= "JP".equals(countryValue) ? "" : "hidden" %>>
+
+                <p class="filter-label">일본 지역</p>
+
+                <button type="button" class="filter-button <%= "JP_HOKKAIDO".equals(regionValue) ? "active" : "" %>" data-region="JP_HOKKAIDO">홋카이도 지방</button>
+                <button type="button" class="filter-button <%= "JP_TOHOKU".equals(regionValue) ? "active" : "" %>" data-region="JP_TOHOKU">도호쿠 지방</button>
+                <button type="button" class="filter-button <%= "JP_KANTO".equals(regionValue) ? "active" : "" %>" data-region="JP_KANTO">간토 지방</button>
+                <button type="button" class="filter-button <%= "JP_CHUBU".equals(regionValue) ? "active" : "" %>" data-region="JP_CHUBU">주부 지방</button>
+                <button type="button" class="filter-button <%= "JP_KANSAI".equals(regionValue) ? "active" : "" %>" data-region="JP_KANSAI">긴키·간사이 지방</button>
+                <button type="button" class="filter-button <%= "JP_CHUGOKU".equals(regionValue) ? "active" : "" %>" data-region="JP_CHUGOKU">주고쿠 지방</button>
+                <button type="button" class="filter-button <%= "JP_SHIKOKU".equals(regionValue) ? "active" : "" %>" data-region="JP_SHIKOKU">시코쿠 지방</button>
+                <button type="button" class="filter-button <%= "JP_KYUSHU_OKINAWA".equals(regionValue) ? "active" : "" %>" data-region="JP_KYUSHU_OKINAWA">규슈·오키나와 지방</button>
 
             </div>
 
@@ -127,37 +152,17 @@
 
             <div class="write-field">
 
-                <label for="writeBody">
+                <label for="writeBodyEditor">
                     본문
                 </label>
 
-                <textarea id="writeBody"
-                          name="writeBody"
-                          rows="10"
-                          placeholder="여행 이야기를 자유롭게 남겨주세요"><%= EscapeUtil.html(bodyValue) %></textarea>
-
-            </div>
-
-            <div class="write-field">
-
-                <label for="writePhoto">
-                    사진 첨부
-                </label>
-
-                <input type="file"
-                       id="writePhoto"
-                       name="writePhoto"
-                       accept="image/*">
+                <div id="writeBodyEditor" class="quill-editor-container"></div>
+                <input type="hidden" id="writeBody" name="writeBody">
 
                 <p class="write-field-note">
-                    5MB 미만의 이미지 파일만 올릴 수 있습니다.
-                    새 사진을 고르지 않으면 지금 사진이 그대로 유지됩니다.
+                    이미지 버튼으로 본문 중간에 사진을 넣을 수 있어요(5MB 미만). 본문의 첫 사진이
+                    목록 카드 썸네일로 쓰이고, 사진이 없으면 여행지 구분에 맞는 기본 이미지가 쓰입니다.
                 </p>
-
-                <img id="writePhotoPreview"
-                     class="post-image-preview"
-                     src="<%= contextPath %>/<%= post.getImgPath() %>"
-                     alt="게시글 사진 미리보기">
 
             </div>
 
@@ -172,8 +177,18 @@
 </main>
 
 <%@ include file="/common/footer.jsp" %>
+<%@ include file="/common/quill-assets.jspf" %>
 
 <script>
+    const editQuill = initQuillEditor({
+        containerId: "writeBodyEditor",
+        hiddenInputId: "writeBody",
+        initialHtml: "<%= EscapeUtil.json(bodyValue) %>",
+        uploadUrl: "<%= contextPath %>/post/uploadImage",
+        loginUrl: "<%= contextPath %>/member/login",
+        placeholder: "여행 이야기를 자유롭게 남겨주세요"
+    });
+
     function bindFilterGroup(groupId, hiddenInputId, datasetKey) {
 
         const group = document.getElementById(groupId);
@@ -199,49 +214,59 @@
     }
 
     bindFilterGroup("writeCountryGroup", "countryInput", "country");
+    bindFilterGroup("writeKoreaRegionGroup", "regionInput", "region");
+    bindFilterGroup("writeJapanRegionGroup", "regionInput", "region");
     bindFilterGroup("writeStyleGroup", "styleInput", "style");
 
-    const writePhotoInput = document.getElementById("writePhoto");
-    const writePhotoPreview = document.getElementById("writePhotoPreview");
-    const originalPhotoSrc = writePhotoPreview.src;
+    /*
+     * 여행지 구분을 바꾸면 지역 선택지를 보여주거나 숨긴다. 처음 로딩 때는 기존 글의
+     * 국가에 맞는 그룹이 이미 서버에서 보여지는 상태로 내려오므로(hidden 속성), 여기서는
+     * "사용자가 버튼을 눌러 바꿨을 때"만 처리하면 된다.
+     */
 
-    writePhotoInput.addEventListener("change", function () {
+    const regionInput = document.getElementById("regionInput");
+    const koreaRegionGroup = document.getElementById("writeKoreaRegionGroup");
+    const japanRegionGroup = document.getElementById("writeJapanRegionGroup");
+    let previousCountry = document.getElementById("countryInput").value;
 
-        const file = writePhotoInput.files[0];
+    document.querySelectorAll("#writeCountryGroup .filter-button").forEach(function (button) {
 
-        if (!file) {
-            writePhotoPreview.src = originalPhotoSrc;
-            return;
-        }
+        button.addEventListener("click", function () {
 
-        if (!file.type.startsWith("image/")) {
-            alert("이미지 파일만 선택할 수 있습니다.");
-            writePhotoInput.value = "";
-            writePhotoPreview.src = originalPhotoSrc;
-            return;
-        }
+            const selectedCountry = button.dataset.country;
 
-        if (file.size >= 5 * 1024 * 1024) {
-            alert("5MB 미만의 이미지만 첨부할 수 있습니다.");
-            writePhotoInput.value = "";
-            writePhotoPreview.src = originalPhotoSrc;
-            return;
-        }
+            if (previousCountry !== selectedCountry) {
+                regionInput.value = "";
+                document.querySelectorAll("#writeKoreaRegionGroup .filter-button, #writeJapanRegionGroup .filter-button")
+                    .forEach(function (regionButton) {
+                        regionButton.classList.remove("active");
+                    });
+            }
 
-        writePhotoPreview.src = URL.createObjectURL(file);
+            koreaRegionGroup.hidden = selectedCountry !== "KR";
+            japanRegionGroup.hidden = selectedCountry !== "JP";
+
+            previousCountry = selectedCountry;
+
+        });
 
     });
 
     document.getElementById("editForm").addEventListener("submit", function (event) {
 
+        const selectedCountry = document.getElementById("countryInput").value;
+        const regionRequired = selectedCountry === "KR" || selectedCountry === "JP";
+        const bodyIsEmpty = editQuill.getText().trim() === "" && editQuill.root.querySelectorAll("img").length === 0;
+
         if (document.getElementById("writeTitle").value.trim() === ""
-            || document.getElementById("writeBody").value.trim() === ""
-            || document.getElementById("countryInput").value === ""
-            || document.getElementById("styleInput").value === "") {
+            || bodyIsEmpty
+            || selectedCountry === ""
+            || document.getElementById("styleInput").value === ""
+            || (regionRequired && regionInput.value === "")) {
 
             event.preventDefault();
 
-            alert("제목, 본문, 여행지 구분, 여행 성향을 모두 입력/선택해 주세요.");
+            alert("제목, 본문, 여행지 구분, 지역, 여행 성향을 모두 입력/선택해 주세요.");
         }
 
     });

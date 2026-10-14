@@ -31,11 +31,7 @@
 
     <title>여행 이야기 작성 - 여행만들기</title>
 
-    <link rel="stylesheet"
-          href="<%= contextPath %>/css/common.css">
-
-    <link rel="stylesheet"
-          href="<%= contextPath %>/css/mystyle.css">
+    <%@ include file="/common/css-links.jspf" %>
 </head>
 
 <body>
@@ -67,10 +63,9 @@
 
     <section class="write-section">
 
-        <!-- 파일을 보내려면 enctype="multipart/form-data" 필수 (없으면 파일 이름만 가고 내용은 안 간다) -->
+        <!-- 사진은 에디터가 /post/uploadImage로 별도 업로드하므로, 이 폼 자체는 파일을 보내지 않는다 -->
         <form id="writeForm"
               method="post"
-              enctype="multipart/form-data"
               action="<%= contextPath %>/post/write">
 
             <div class="write-field">
@@ -89,6 +84,7 @@
 
             <!-- 선택한 값은 JS가 이 hidden input에 채워서 서버로 보낸다 -->
             <input type="hidden" id="countryInput" name="country" value="">
+            <input type="hidden" id="regionInput" name="region" value="">
             <input type="hidden" id="styleInput" name="style" value="">
 
             <div class="filter-group" id="writeCountryGroup">
@@ -98,6 +94,36 @@
                 <button type="button" class="filter-button" data-country="KR">국내여행</button>
                 <button type="button" class="filter-button" data-country="JP">일본여행</button>
                 <button type="button" class="filter-button" data-country="ETC">해외여행</button>
+
+            </div>
+
+            <!-- 국내여행을 선택했을 때만 보여준다 -->
+            <div class="filter-group" id="writeKoreaRegionGroup" hidden>
+
+                <p class="filter-label">국내 지역</p>
+
+                <button type="button" class="filter-button" data-region="KR_CAPITAL">서울·경기·인천</button>
+                <button type="button" class="filter-button" data-region="KR_GANGWON">강원도</button>
+                <button type="button" class="filter-button" data-region="KR_CHUNGCHEONG">충청도</button>
+                <button type="button" class="filter-button" data-region="KR_JEOLLA">전라도</button>
+                <button type="button" class="filter-button" data-region="KR_GYEONGSANG">경상도</button>
+                <button type="button" class="filter-button" data-region="KR_JEJU">제주도</button>
+
+            </div>
+
+            <!-- 일본여행을 선택했을 때만 보여준다 -->
+            <div class="filter-group" id="writeJapanRegionGroup" hidden>
+
+                <p class="filter-label">일본 지역</p>
+
+                <button type="button" class="filter-button" data-region="JP_HOKKAIDO">홋카이도 지방</button>
+                <button type="button" class="filter-button" data-region="JP_TOHOKU">도호쿠 지방</button>
+                <button type="button" class="filter-button" data-region="JP_KANTO">간토 지방</button>
+                <button type="button" class="filter-button" data-region="JP_CHUBU">주부 지방</button>
+                <button type="button" class="filter-button" data-region="JP_KANSAI">긴키·간사이 지방</button>
+                <button type="button" class="filter-button" data-region="JP_CHUGOKU">주고쿠 지방</button>
+                <button type="button" class="filter-button" data-region="JP_SHIKOKU">시코쿠 지방</button>
+                <button type="button" class="filter-button" data-region="JP_KYUSHU_OKINAWA">규슈·오키나와 지방</button>
 
             </div>
 
@@ -114,37 +140,17 @@
 
             <div class="write-field">
 
-                <label for="writeBody">
+                <label for="writeBodyEditor">
                     본문
                 </label>
 
-                <textarea id="writeBody"
-                          name="writeBody"
-                          rows="10"
-                          placeholder="여행 이야기를 자유롭게 남겨주세요"><%= EscapeUtil.html(request.getParameter("writeBody")) %></textarea>
-
-            </div>
-
-            <div class="write-field">
-
-                <label for="writePhoto">
-                    사진 첨부
-                </label>
-
-                <input type="file"
-                       id="writePhoto"
-                       name="writePhoto"
-                       accept="image/*">
+                <div id="writeBodyEditor" class="quill-editor-container"></div>
+                <input type="hidden" id="writeBody" name="writeBody">
 
                 <p class="write-field-note">
-                    5MB 미만의 이미지 파일만 올릴 수 있습니다.
-                    사진을 올리지 않으면 여행지 구분에 맞는 기본 이미지가 사용됩니다.
+                    이미지 버튼으로 본문 중간에 사진을 넣을 수 있어요(5MB 미만). 본문의 첫 사진이
+                    목록 카드 썸네일로 쓰이고, 사진이 없으면 여행지 구분에 맞는 기본 이미지가 쓰입니다.
                 </p>
-
-                <img id="writePhotoPreview"
-                     class="post-image-preview"
-                     alt="첨부할 사진 미리보기"
-                     hidden>
 
             </div>
 
@@ -159,8 +165,17 @@
 </main>
 
 <%@ include file="/common/footer.jsp" %>
+<%@ include file="/common/quill-assets.jspf" %>
 
 <script>
+    const writeQuill = initQuillEditor({
+        containerId: "writeBodyEditor",
+        hiddenInputId: "writeBody",
+        uploadUrl: "<%= contextPath %>/post/uploadImage",
+        loginUrl: "<%= contextPath %>/member/login",
+        placeholder: "여행 이야기를 자유롭게 남겨주세요"
+    });
+
     /*
      * 여행지 구분 / 여행 성향은 각 그룹에서 하나만 선택되도록 처리하고,
      * 고른 값을 hidden input에 채워서 폼 제출 때 서버로 보낸다.
@@ -191,59 +206,62 @@
     }
 
     bindFilterGroup("writeCountryGroup", "countryInput", "country");
+    bindFilterGroup("writeKoreaRegionGroup", "regionInput", "region");
+    bindFilterGroup("writeJapanRegionGroup", "regionInput", "region");
     bindFilterGroup("writeStyleGroup", "styleInput", "style");
 
 
     /*
-     * 첨부할 사진을 고르면 바로 미리보기를 보여준다. 실제 업로드는 등록할 때 한 번만 일어난다.
+     * 여행지 구분(국내/일본/해외)에 따라 지역 선택지를 보여주거나 숨긴다.
+     * 다른 국가로 바꾸면 이전에 골랐던 지역 선택은 초기화한다(해외로 바꿨는데
+     * "제주도"가 그대로 남아있으면 안 되니까).
      */
 
-    const writePhotoInput = document.getElementById("writePhoto");
-    const writePhotoPreview = document.getElementById("writePhotoPreview");
+    const regionInput = document.getElementById("regionInput");
+    const koreaRegionGroup = document.getElementById("writeKoreaRegionGroup");
+    const japanRegionGroup = document.getElementById("writeJapanRegionGroup");
 
-    writePhotoInput.addEventListener("change", function () {
+    document.querySelectorAll("#writeCountryGroup .filter-button").forEach(function (button) {
 
-        const file = writePhotoInput.files[0];
+        button.addEventListener("click", function () {
 
-        if (!file) {
-            writePhotoPreview.hidden = true;
-            return;
-        }
+            const selectedCountry = button.dataset.country;
 
-        if (!file.type.startsWith("image/")) {
-            alert("이미지 파일만 선택할 수 있습니다.");
-            writePhotoInput.value = "";
-            writePhotoPreview.hidden = true;
-            return;
-        }
+            regionInput.value = "";
+            document.querySelectorAll("#writeKoreaRegionGroup .filter-button, #writeJapanRegionGroup .filter-button")
+                .forEach(function (regionButton) {
+                    regionButton.classList.remove("active");
+                });
 
-        if (file.size >= 5 * 1024 * 1024) {
-            alert("5MB 미만의 이미지만 첨부할 수 있습니다.");
-            writePhotoInput.value = "";
-            writePhotoPreview.hidden = true;
-            return;
-        }
+            koreaRegionGroup.hidden = selectedCountry !== "KR";
+            japanRegionGroup.hidden = selectedCountry !== "JP";
 
-        writePhotoPreview.src = URL.createObjectURL(file);
-        writePhotoPreview.hidden = false;
+        });
 
     });
 
 
     /*
      * 제출 전 마지막 확인 (서버도 다시 검사하지만, 사용자 편의를 위해 미리 알려준다)
+     * 본문이 비었는지는 에디터의 hidden input 값이 아니라(에디터가 비어 있어도
+     * "<p><br></p>"처럼 글자가 들어가므로) Quill의 getText()로 직접 확인한다.
      */
 
     document.getElementById("writeForm").addEventListener("submit", function (event) {
 
+        const selectedCountry = document.getElementById("countryInput").value;
+        const regionRequired = selectedCountry === "KR" || selectedCountry === "JP";
+        const bodyIsEmpty = writeQuill.getText().trim() === "" && writeQuill.root.querySelectorAll("img").length === 0;
+
         if (document.getElementById("writeTitle").value.trim() === ""
-            || document.getElementById("writeBody").value.trim() === ""
-            || document.getElementById("countryInput").value === ""
-            || document.getElementById("styleInput").value === "") {
+            || bodyIsEmpty
+            || selectedCountry === ""
+            || document.getElementById("styleInput").value === ""
+            || (regionRequired && regionInput.value === "")) {
 
             event.preventDefault();
 
-            alert("제목, 본문, 여행지 구분, 여행 성향을 모두 입력/선택해 주세요.");
+            alert("제목, 본문, 여행지 구분, 지역, 여행 성향을 모두 입력/선택해 주세요.");
         }
 
     });

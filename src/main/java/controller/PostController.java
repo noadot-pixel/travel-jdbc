@@ -15,11 +15,13 @@ import service.CommentWriteCommand;
 import service.LikeCommand;
 import service.MainCommand;
 import service.PostDeleteCommand;
+import service.PostImageUploadCommand;
 import service.PostListCommand;
 import service.PostModifyCommand;
 import service.PostModifyFormCommand;
 import service.PostViewCommand;
 import service.PostWriteCommand;
+import service.RankingCommand;
 import service.ScrapCommand;
 
 /**
@@ -29,7 +31,8 @@ import service.ScrapCommand;
  */
 @WebServlet({"/main",
 			 "/post/list", "/post/view", "/post/write", "/post/modify", "/post/delete",
-			 "/post/like", "/post/scrap", "/comment/write", "/comment/delete"})
+			 "/post/like", "/post/scrap", "/post/ranking", "/post/uploadImage",
+			 "/comment/write", "/comment/delete"})
 @MultipartConfig(maxFileSize = 5 * 1024 * 1024, maxRequestSize = 10 * 1024 * 1024)
 //글쓰기/수정 폼이 파일을 보내는 multipart/form-data 형식이라 이 설정이 있어야 getPart()/getParameter()를 쓸 수 있다.
 //파일 하나 최대 5MB, 요청 전체 최대 10MB.
@@ -116,6 +119,15 @@ public class PostController extends HttpServlet {
 			}
 			case "/post/scrap": {                         // Ajax - JSON 응답
 				cmd = new ScrapCommand();
+				break;
+			}
+			case "/post/ranking": {
+				cmd = new RankingCommand();
+				page = "/posts/ranking.jsp";
+				break;
+			}
+			case "/post/uploadImage": {                   // Ajax - JSON 응답 (에디터 본문 이미지 업로드)
+				cmd = new PostImageUploadCommand();
 				break;
 			}
 			case "/comment/write": {                      // Ajax - JSON 응답

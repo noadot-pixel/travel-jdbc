@@ -51,6 +51,32 @@ public class ProfileEditCommand implements Command {
 		dto.setBirthday(request.getParameter("profileBirthday"));
 		dto.setBirthdayPublic(!"private".equals(request.getParameter("birthdayVisibility")));
 
+		//성별은 이 기능 이전 가입자(gender가 아직 null)에게만 이 화면에서 한 번 필수로 입력받는다.
+		//한 번 입력하면 edit.jsp가 그 필드를 다시는 보여주지 않으므로, 그 다음부터는 기존 값을 그대로 유지한다.
+		//나이는 별도로 안 받고 생일에서 계산하므로(MemberDTO.getAge() 참고) 여기서 다룰 값이 없다.
+		if (loginMember.getGender() == null) {
+
+			String genderParam = request.getParameter("gender");
+			String privacyAgree = request.getParameter("privacyAgree");
+
+			if (!"M".equals(genderParam) && !"F".equals(genderParam)) {
+				request.setAttribute("msg", "성별을 선택해 주세요.");
+				return true;
+			}
+
+			if (!"Y".equals(privacyAgree)) {
+				request.setAttribute("msg", "개인정보 수집·이용에 동의해야 저장할 수 있습니다.");
+				return true;
+			}
+
+			dto.setGender(genderParam);
+			dto.setGenderPublic(!"private".equals(request.getParameter("genderVisibility")));
+
+		} else {
+			dto.setGender(loginMember.getGender());
+			dto.setGenderPublic(loginMember.isGenderPublic());
+		}
+
 		//새 사진을 고르지 않았으면 기존 사진 경로를 그대로 유지한다.
 		String photoPath = loginMember.getPhotoPath();
 

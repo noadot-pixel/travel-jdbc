@@ -16,7 +16,7 @@ public class MemberDAO {
 	private static final String COLUMNS =
 			"ID, PWD, NICKNAME, IS_ADMIN, TO_CHAR(JOIN_DATE, 'YYYY-MM-DD') JOIN_DATE, "
 		  + "BIO, COUNTRY, COUNTRY_OTHER, REAL_NAME, NAME_PUBLIC, "
-		  + "BIRTHDAY, BIRTHDAY_PUBLIC, PHOTO_PATH ";
+		  + "BIRTHDAY, BIRTHDAY_PUBLIC, PHOTO_PATH, GENDER, GENDER_PUBLIC ";
 
 	private MemberDTO toDto(ResultSet rs) throws Exception {
 
@@ -33,6 +33,8 @@ public class MemberDAO {
 		dto.setBirthday(rs.getString("BIRTHDAY"));
 		dto.setBirthdayPublic(!"N".equals(rs.getString("BIRTHDAY_PUBLIC")));
 		dto.setPhotoPath(rs.getString("PHOTO_PATH"));
+		dto.setGender(rs.getString("GENDER"));
+		dto.setGenderPublic(!"N".equals(rs.getString("GENDER_PUBLIC")));
 		// PWD는 세션에 들고 다닐 필요가 없으므로 DTO에 담지 않는다.
 		return dto;
 	}
@@ -62,7 +64,7 @@ public class MemberDAO {
 	//회원가입 - 성공하면 1, 실패하면 0
 	public int join(MemberDTO dto) {
 
-		String sql = "insert into members(id, pwd, nickname) values(?, ?, ?)";
+		String sql = "insert into members(id, pwd, nickname, gender) values(?, ?, ?, ?)";
 		//나머지 컬럼은 전부 DEFAULT(IS_ADMIN='N', JOIN_DATE=SYSDATE)거나 NULL 허용이라 안 넣어도 된다.
 
 		int result = 0;
@@ -73,6 +75,7 @@ public class MemberDAO {
 			pstmt.setString(1, dto.getId());
 			pstmt.setString(2, dto.getPwd());
 			pstmt.setString(3, dto.getNickname());
+			pstmt.setString(4, dto.getGender());
 			result = pstmt.executeUpdate();
 
 		} catch (Exception e) {
@@ -136,7 +139,8 @@ public class MemberDAO {
 
 		String sql = "update members set "
 				   + "nickname = ?, bio = ?, country = ?, country_other = ?, "
-				   + "real_name = ?, name_public = ?, birthday = ?, birthday_public = ?, photo_path = ? "
+				   + "real_name = ?, name_public = ?, birthday = ?, birthday_public = ?, photo_path = ?, "
+				   + "gender = ?, gender_public = ? "
 				   + "where id = ?";
 
 		int result = 0;
@@ -155,7 +159,9 @@ public class MemberDAO {
 			pstmt.setString(7, birthday);
 			pstmt.setString(8, dto.isBirthdayPublic() ? "Y" : "N");
 			pstmt.setString(9, dto.getPhotoPath());
-			pstmt.setString(10, dto.getId());
+			pstmt.setString(10, dto.getGender());
+			pstmt.setString(11, dto.isGenderPublic() ? "Y" : "N");
+			pstmt.setString(12, dto.getId());
 			result = pstmt.executeUpdate();
 
 		} catch (Exception e) {

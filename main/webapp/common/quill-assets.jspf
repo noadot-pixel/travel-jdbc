@@ -1,0 +1,169 @@
+<%@ page pageEncoding="UTF-8" %>
+<%--
+    Quill(https://quilljs.com/) 리치 텍스트 에디터 - CDN 로드 + 공통 초기화 함수.
+    사용하는 페이지는 이 파일을 include한 다음 initQuillEditor({...})를 직접 호출해야 한다.
+
+    글쓰기/수정(write.jsp, edit.jsp), 공지사항 등록/수정(admin/notices.jsp)이 전부 이 하나를 같이 쓴다.
+    에디터가 만든 HTML은 서버(HtmlSanitizer)에서 다시 한 번 걸러서 저장하므로, 여기서 어떤 태그를
+    허용하느냐(툴바 구성)와 서버가 어떤 태그를 허용하느냐가 같은 목록이어야 한다.
+--%>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css">
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+
+<script>
+    /*
+     * options:
+     *   containerId   - 에디터를 넣을 <div> id
+     *   hiddenInputId - 제출할 "본문" hidden input id (폼 제출 시 에디터 HTML로 채워짐)
+     *   initialHtml   - 기존 글 수정일 때 미리 채울 HTML (없으면 빈 에디터로 시작)
+     *   uploadUrl     - 본문 이미지 업로드 API 주소
+     *   loginUrl      - 업로드 도중 로그인이 풀려있으면 보낼 주소
+     *   placeholder   - 빈 에디터에 보여줄 안내 문구
+     *
+     * 돌려주는 quill 인스턴스로 quill.getText()/quill.root 등을 직접 써서
+     * 페이지마다 필요한 제출 전 검사(예: 본문이 비었는지)를 할 수 있다.
+     */
+    //파일 하나를 업로드하고, 성공하면 에디터 커서 위치에 <img>로 끼워 넣는다.
+    //클릭으로 올리든, 붙여넣기(Ctrl+V)로 넣든, 끌어다 놓든 전부 이 한 경로로만 들어오게 해야 한다 -
+    //Quill 기본 동작(클립보드/드롭 이미지를 base64로 통째로 본문에 박아버림)을 그대로 두면
+    //사진 한두 장만으로도 본문이 수 MB짜리 글자 덩어리가 되어, 폼 전송 자체가 조용히 실패한다
+    //(서버 쪽 요청 크기 제한에 걸려도 에러 메시지 하나 없이 그냥 안 올라간다).
+    function uploadAndInsertImage(quill, file, options) {
+
+        if (!file || file.type.indexOf("image") !== 0) {
+            return;
+        }
+
+        if (file.size >= 5 * 1024 * 1024) {
+            alert("5MB 미만의 이미지만 올릴 수 있습니다.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("image", file);
+
+        fetch(options.uploadUrl, { method: "POST", body: formData })
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+
+                if (data.result === "login") {
+                    location.href = options.loginUrl;
+                    return;
+                }
+
+                if (data.result !== "ok") {
+                    alert("이미지 업로드에 실패했습니다.");
+                    return;
+                }
+
+                const range = quill.getSelection(true) || { index: quill.getLength() };
+                quill.insertEmbed(range.index, "image", data.url);
+                quill.setSelection(range.index + 1);
+
+            });
+    }
+
+    function initQuillEditor(options) {
+
+        const quill = new Quill("#" + options.containerId, {
+            theme: "snow",
+            placeholder: options.placeholder || "",
+            modules: {
+                toolbar: {
+                    container: [
+                        ["bold", "italic", "underline"],
+                        [{ header: [1, 2, 3, false] }],
+                        [{ list: "ordered" }, { list: "bullet" }],
+                        ["link", "image"]
+                    ],
+                    handlers: {
+                        //툴바의 이미지 버튼 - 파일 선택 창을 띄운다.
+                        image: function () {
+
+                            const input = document.createElement("input");
+                            input.setAttribute("type", "file");
+                            input.setAttribute("accept", "image/*");
+                            input.click();
+
+                            input.addEventListener("change", function () {
+                                uploadAndInsertImage(quill, input.files[0], options);
+                            });
+
+                        }
+                    }
+                }
+            }
+        });
+
+        if (options.initialHtml) {
+            quill.root.innerHTML = options.initialHtml;
+        }
+
+        //붙여넣기(클립보드 이미지)도 업로드 경로로 보낸다. capture 단계에서 먼저 가로채고
+        //stopImmediatePropagation으로 Quill 자체의 base64 붙여넣기 처리를 막는다.
+        quill.root.addEventListener("paste", function (event) {
+
+            const items = (event.clipboardData || window.clipboardData).items;
+
+            if (!items) {
+                return;
+            }
+
+            for (let i = 0; i < items.length; i++) {
+
+                if (items[i].type.indexOf("image") === 0) {
+
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+
+                    uploadAndInsertImage(quill, items[i].getAsFile(), options);
+
+                    return;
+                }
+
+            }
+
+        }, true);
+
+        //끌어다 놓기(드래그 앤 드롭)도 같은 이유로 가로챈다.
+        quill.root.addEventListener("dragover", function (event) {
+            event.preventDefault();
+        }, true);
+
+        quill.root.addEventListener("drop", function (event) {
+
+            const files = event.dataTransfer && event.dataTransfer.files;
+
+            if (!files || files.length === 0) {
+                return;
+            }
+
+            for (let i = 0; i < files.length; i++) {
+
+                if (files[i].type.indexOf("image") === 0) {
+
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+
+                    uploadAndInsertImage(quill, files[i], options);
+
+                    return;
+                }
+
+            }
+
+        }, true);
+
+        const hiddenInput = document.getElementById(options.hiddenInputId);
+        const form = hiddenInput.closest("form");
+
+        //제출 순간의 에디터 내용을 hidden input에 채운다. 이 리스너를 가장 먼저 등록해야
+        //(즉 페이지의 다른 제출 전 검사 스크립트보다 initQuillEditor를 먼저 호출해야)
+        //검사 스크립트가 "방금 채워진" 값을 보고 판단할 수 있다.
+        form.addEventListener("submit", function () {
+            hiddenInput.value = quill.root.innerHTML;
+        });
+
+        return quill;
+    }
+</script>

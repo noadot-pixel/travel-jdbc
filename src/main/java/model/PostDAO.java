@@ -18,7 +18,7 @@ public class PostDAO {
 
 	//목록/상세에서 공통으로 쓰는 컬럼. writer_nick은 members와 join해서 가져온다.
 	private static final String COLUMNS =
-			"p.bno, p.writer, m.nickname writer_nick, p.title, p.country, p.style, p.img_path, "
+			"p.bno, p.writer, m.nickname writer_nick, p.title, p.country, p.region, p.style, p.img_path, "
 		  + "p.view_cnt, p.like_cnt, to_char(p.reg_date, 'YYYY-MM-DD') reg_date, "
 		  + "to_char(p.mod_date, 'YYYY-MM-DD') mod_date ";
 	//추가시작-경민
@@ -59,6 +59,7 @@ public class PostDAO {
 		dto.setWriterNick(rs.getString("writer_nick"));
 		dto.setTitle(rs.getString("title"));
 		dto.setCountry(rs.getString("country"));
+		dto.setRegion(rs.getString("region"));
 		dto.setStyle(rs.getString("style"));
 		dto.setImgPath(rs.getString("img_path"));
 		dto.setViewCnt(rs.getInt("view_cnt"));
@@ -261,6 +262,30 @@ public class PostDAO {
 		return dto;
 	}
 
+	//댓글/좋아요 알림을 만들 때 글 전체를 불러올 필요 없이 작성자 id만 가볍게 조회한다.
+	public String getWriter(int bno) {
+
+		String sql = "select writer from posts where bno = ?";
+
+		String writer = null;
+
+		try (Connection conn = DBUtil.getInstance();
+			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			pstmt.setInt(1, bno);
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					writer = rs.getString("writer");
+				}
+			}
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
+		return writer;
+	}
+
 	//조회수 1 증가
 	public void increaseViewCnt(int bno) {
 
@@ -282,8 +307,8 @@ public class PostDAO {
 	public int insert(PostDTO dto) {
 
 		String seqSql = "select seq_posts.nextval from dual";
-		String sql = "insert into posts(bno, writer, title, content, country, style, img_path) "
-				   + "values(?, ?, ?, ?, ?, ?, ?)";
+		String sql = "insert into posts(bno, writer, title, content, country, region, style, img_path) "
+				   + "values(?, ?, ?, ?, ?, ?, ?, ?)";
 
 		int bno = 0;
 
@@ -302,8 +327,9 @@ public class PostDAO {
 			pstmt.setString(3, dto.getTitle());
 			pstmt.setString(4, dto.getContent());
 			pstmt.setString(5, dto.getCountry());
-			pstmt.setString(6, dto.getStyle());
-			pstmt.setString(7, dto.getImgPath());
+			pstmt.setString(6, dto.getRegion());
+			pstmt.setString(7, dto.getStyle());
+			pstmt.setString(8, dto.getImgPath());
 
 			if (pstmt.executeUpdate() == 0) {
 				bno = 0;
@@ -320,7 +346,7 @@ public class PostDAO {
 	//글수정 - where에 writer까지 걸어서 "본인 글일 때만" 수정되게 한다 (관리자는 Command에서 별도 처리)
 	public int update(PostDTO dto) {
 
-		String sql = "update posts set title = ?, content = ?, country = ?, style = ?, img_path = ?, mod_date = sysdate "
+		String sql = "update posts set title = ?, content = ?, country = ?, region = ?, style = ?, img_path = ?, mod_date = sysdate "
 				   + "where bno = ? and writer = ?";
 
 		int result = 0;
@@ -331,10 +357,11 @@ public class PostDAO {
 			pstmt.setString(1, dto.getTitle());
 			pstmt.setString(2, dto.getContent());
 			pstmt.setString(3, dto.getCountry());
-			pstmt.setString(4, dto.getStyle());
-			pstmt.setString(5, dto.getImgPath());
-			pstmt.setInt(6, dto.getBno());
-			pstmt.setString(7, dto.getWriter());
+			pstmt.setString(4, dto.getRegion());
+			pstmt.setString(5, dto.getStyle());
+			pstmt.setString(6, dto.getImgPath());
+			pstmt.setInt(7, dto.getBno());
+			pstmt.setString(8, dto.getWriter());
 			result = pstmt.executeUpdate();
 
 		} catch (Exception e) {
@@ -347,7 +374,7 @@ public class PostDAO {
 	//관리자가 남의 글을 수정할 때 쓰는 버전 - writer 조건 없이 bno만으로 수정한다.
 	public int updateByAdmin(PostDTO dto) {
 
-		String sql = "update posts set title = ?, content = ?, country = ?, style = ?, img_path = ?, mod_date = sysdate "
+		String sql = "update posts set title = ?, content = ?, country = ?, region = ?, style = ?, img_path = ?, mod_date = sysdate "
 				   + "where bno = ?";
 
 		int result = 0;
@@ -358,9 +385,10 @@ public class PostDAO {
 			pstmt.setString(1, dto.getTitle());
 			pstmt.setString(2, dto.getContent());
 			pstmt.setString(3, dto.getCountry());
-			pstmt.setString(4, dto.getStyle());
-			pstmt.setString(5, dto.getImgPath());
-			pstmt.setInt(6, dto.getBno());
+			pstmt.setString(4, dto.getRegion());
+			pstmt.setString(5, dto.getStyle());
+			pstmt.setString(6, dto.getImgPath());
+			pstmt.setInt(7, dto.getBno());
 			result = pstmt.executeUpdate();
 
 		} catch (Exception e) {

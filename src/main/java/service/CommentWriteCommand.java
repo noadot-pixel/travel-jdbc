@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.CommentDAO;
 import model.MemberDTO;
+import model.NotificationDAO;
+import model.PostDAO;
 import util.EscapeUtil;
 import util.ParamUtil;
 
@@ -50,6 +52,12 @@ public class CommentWriteCommand implements Command {
 		if (cno == 0) {
 			out.print("{\"result\":\"fail\"}");
 			return false;
+		}
+
+		//글쓴이에게 알림 (자기 글에 자기가 댓글을 단 경우는 NotificationDAO.insert()가 알아서 건너뛴다)
+		String postWriter = new PostDAO().getWriter(bno);
+		if (postWriter != null) {
+			new NotificationDAO().insert(postWriter, "COMMENT", bno, loginMember.getId());
 		}
 
 		String json = "{\"result\":\"ok\","

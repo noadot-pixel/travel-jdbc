@@ -45,11 +45,7 @@
 
     <title><%= EscapeUtil.html(post.getTitle()) %> - 여행만들기</title>
 
-    <link rel="stylesheet"
-          href="<%= contextPath %>/css/common.css">
-
-    <link rel="stylesheet"
-          href="<%= contextPath %>/css/mystyle.css">
+    <%@ include file="/common/css-links.jspf" %>
 </head>
 
 <body>
@@ -79,6 +75,9 @@
 
             <div class="detail-tags">
                 <span class="story-category"><%= EscapeUtil.html(post.getCountryLabel()) %></span>
+                <% if (post.getRegion() != null && !post.getRegion().isEmpty()) { %>
+                <span class="story-region-tag"><%= EscapeUtil.html(post.getRegionLabel()) %></span>
+                <% } %>
                 <span class="detail-style-tag"><%= EscapeUtil.html(post.getStyleLabel()) %></span>
             </div>
 
@@ -93,11 +92,10 @@
 
         </div>
 
-        <div class="detail-image">
-            <img src="<%= contextPath %>/<%= post.getImgPath() %>" alt="<%= EscapeUtil.html(post.getTitle()) %>">
-        </div>
-
-        <div class="detail-body"><%= EscapeUtil.html(post.getContent()) %></div>
+        <%-- 본문 안에 쓴 이미지가 그대로 보이므로(에디터로 작성), 따로 대표 이미지를 안 보여준다.
+             post.getContent()는 PostWriteCommand/PostModifyCommand가 저장 전에 HtmlSanitizer로
+             걸러낸 HTML이라 그대로 출력해도 안전하다 (EscapeUtil.html을 쓰면 서식이 다 깨진다). --%>
+        <div class="detail-body"><%= post.getContent() %></div>
 
         <div class="detail-reactions">
 

@@ -11,6 +11,7 @@ public class PostDTO {
 	private String title;
 	private String content;
 	private String country;      // KR / JP / ETC
+	private String region;       // country=KR/JP일 때만 값 있음(세부 지역). ETC는 null.
 	private String style;        // healing / food / activity / shopping
 	private String imgPath;      // "images/korea.jpg"(기본) 또는 "upload/xxx.jpg"(업로드)
 	private int viewCnt;
@@ -53,6 +54,12 @@ public class PostDTO {
 	}
 	public void setCountry(String country) {
 		this.country = country;
+	}
+	public String getRegion() {
+		return region;
+	}
+	public void setRegion(String region) {
+		this.region = region;
 	}
 	public String getStyle() {
 		return style;
@@ -106,6 +113,32 @@ public class PostDTO {
 		if ("activity".equals(style)) return "액티비티";
 		if ("shopping".equals(style)) return "쇼핑";
 		return style;
+	}
+
+	//세부 지역 코드를 화면에 보여줄 이름으로 바꿔준다 (country=ETC면 region 자체가 null)
+	public String getRegionLabel() {
+		return labelForRegion(region);
+	}
+
+	//위와 같은 변환을 랭킹 화면(RegionRankDTO)에서도 써야 해서 static으로 빼둔다.
+	public static String labelForRegion(String region) {
+		if ("KR_CAPITAL".equals(region)) return "서울·경기·인천";
+		if ("KR_GANGWON".equals(region)) return "강원도";
+		if ("KR_CHUNGCHEONG".equals(region)) return "충청도";
+		if ("KR_JEOLLA".equals(region)) return "전라도";
+		if ("KR_GYEONGSANG".equals(region)) return "경상도";
+		if ("KR_JEJU".equals(region)) return "제주도";
+
+		if ("JP_HOKKAIDO".equals(region)) return "홋카이도 지방";
+		if ("JP_TOHOKU".equals(region)) return "도호쿠 지방";
+		if ("JP_KANTO".equals(region)) return "간토 지방";
+		if ("JP_CHUBU".equals(region)) return "주부 지방";
+		if ("JP_KANSAI".equals(region)) return "긴키·간사이 지방";
+		if ("JP_CHUGOKU".equals(region)) return "주고쿠 지방";
+		if ("JP_SHIKOKU".equals(region)) return "시코쿠 지방";
+		if ("JP_KYUSHU_OKINAWA".equals(region)) return "규슈·오키나와 지방";
+
+		return region;
 	}
 
 }

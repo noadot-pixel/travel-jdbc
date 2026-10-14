@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.MemberDTO;
+import model.NotificationDAO;
 import model.PostDAO;
 import util.ParamUtil;
 
@@ -43,6 +44,14 @@ public class LikeCommand implements Command {
 
 		boolean liked = dao.isLiked(bno, loginMember.getId());
 		int likeCnt = dao.getLikeCnt(bno);
+
+		//좋아요를 누른 경우에만 알림 (취소할 때는 알리지 않는다. 자기 글이면 insert()가 알아서 건너뛴다)
+		if (liked) {
+			String postWriter = dao.getWriter(bno);
+			if (postWriter != null) {
+				new NotificationDAO().insert(postWriter, "LIKE", bno, loginMember.getId());
+			}
+		}
 
 		out.print("{\"result\":\"ok\",\"liked\":" + liked + ",\"likeCnt\":" + likeCnt + "}");
 		return false;

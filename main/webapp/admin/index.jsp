@@ -31,11 +31,7 @@
 
     <title>관리자 - 여행만들기</title>
 
-    <link rel="stylesheet"
-          href="<%= contextPath %>/css/common.css">
-
-    <link rel="stylesheet"
-          href="<%= contextPath %>/css/mystyle.css">
+    <%@ include file="/common/css-links.jspf" %>
 </head>
 
 <body>
@@ -69,6 +65,28 @@
 
             <p>
                 게시글 작성·수정·삭제 이력을 조회합니다.
+            </p>
+
+        </a>
+
+        <a href="<%= contextPath %>/admin/notices"
+           class="admin-menu-card">
+
+            <h2>공지사항 관리</h2>
+
+            <p>
+                공지를 등록/삭제합니다. 등록한 공지는 모든 회원의 알림 벨과 공지사항 페이지에 표시됩니다.
+            </p>
+
+        </a>
+
+        <a href="<%= contextPath %>/admin/faqs"
+           class="admin-menu-card">
+
+            <h2>FAQ 관리</h2>
+
+            <p>
+                자주 묻는 질문을 등록/수정/삭제합니다. 문의하기 페이지 상단에 표시됩니다.
             </p>
 
         </a>

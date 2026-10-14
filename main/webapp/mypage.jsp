@@ -49,11 +49,7 @@
 
     <title>마이페이지 - 여행만들기</title>
 
-    <link rel="stylesheet"
-          href="<%= contextPath %>/css/common.css">
-
-    <link rel="stylesheet"
-          href="<%= contextPath %>/css/mystyle.css">
+    <%@ include file="/common/css-links.jspf" %>
 </head>
 
 <body>
@@ -105,6 +101,11 @@
                 <div class="profile-personal">
                     <%
                         java.util.List<String> personalParts = new java.util.ArrayList<String>();
+
+                        if (loginMember.getGender() != null) {
+                            personalParts.add("성별 " + loginMember.getGenderLabel()
+                                + (loginMember.isGenderPublic() ? " (공개)" : " (비공개)"));
+                        }
 
                         if (loginMember.getBirthday() != null && !loginMember.getBirthday().isEmpty()) {
                             personalParts.add("생일 " + loginMember.getBirthday()

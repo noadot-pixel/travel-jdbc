@@ -1,4 +1,6 @@
 {
+    "brand.logoFile": "logo_ja.png",
+    "brand.logoAlt": "旅づくりロゴ",
     "nav.home": "ホーム",
     "nav.community": "コミュニティ",
     "nav.ranking": "ランキング",

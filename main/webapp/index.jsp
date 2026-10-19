@@ -105,12 +105,12 @@
 
             <div class="recommend-keywords">
 
-                <button type="button" data-keyword="서울" data-i18n="home.keyword.seoul">#서울</button>
-                <button type="button" data-keyword="제주도" data-i18n="home.keyword.jeju">#제주도</button>
-                <button type="button" data-keyword="도쿄" data-i18n="home.keyword.tokyo">#도쿄</button>
-                <button type="button" data-keyword="오사카" data-i18n="home.keyword.osaka">#오사카</button>
-                <button type="button" data-keyword="후쿠오카" data-i18n="home.keyword.fukuoka">#후쿠오카</button>
-                <button type="button" data-keyword="바르셀로나" data-i18n="home.keyword.barcelona">#바르셀로나</button>
+                <button type="button" data-i18n="home.keyword.seoul">#서울</button>
+                <button type="button" data-i18n="home.keyword.jeju">#제주도</button>
+                <button type="button" data-i18n="home.keyword.tokyo">#도쿄</button>
+                <button type="button" data-i18n="home.keyword.osaka">#오사카</button>
+                <button type="button" data-i18n="home.keyword.fukuoka">#후쿠오카</button>
+                <button type="button" data-i18n="home.keyword.barcelona">#바르셀로나</button>
 
             </div>
 
@@ -475,7 +475,10 @@
 
         button.addEventListener("click", function () {
 
-            searchInput.value = button.dataset.keyword;
+            //버튼에 보이는 글자(언어 전환이 이미 반영된 상태)를 그대로 검색어로 쓴다.
+            //주의: 실제 게시글 제목은 한국어로만 쓰여 있어서, 영어/일본어 UI에서는
+            //이 검색어로 결과가 0건이 나올 수 있다(의도적으로 감수하기로 한 선택).
+            searchInput.value = button.textContent.replace(/^#/, "").trim();
 
             searchInput.focus();
         });

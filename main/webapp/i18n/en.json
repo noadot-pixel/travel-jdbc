@@ -1,4 +1,6 @@
 {
+    "brand.logoFile": "logo_en.png",
+    "brand.logoAlt": "Trable logo",
     "nav.home": "Home",
     "nav.community": "Community",
     "nav.ranking": "Ranking",

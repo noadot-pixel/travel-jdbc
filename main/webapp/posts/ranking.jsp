@@ -373,7 +373,27 @@
             applyViewBox();
         }
 
+        //모바일에서 지도를 세로로 드래그하면 페이지 스크롤이 먹통되던 문제 때문에 추가함:
+        //(1) 확대를 전혀 안 한 상태(scale=1)면 애초에 패닝이 불가능하므로(clampCenter가
+        //    중심을 고정값으로 되돌림) 세로 드래그를 그대로 페이지 스크롤로 넘긴다.
+        //(2) 확대한 상태여도, 이미 위/아래 끝까지 패닝한 상태에서 같은 방향으로 더 끌면
+        //    (centerY가 clampCenter 전후로 거의 안 바뀜) 그 만큼도 페이지 스크롤로 넘긴다.
+        //즉 "더 이상 지도가 움직일 수 없는 세로 드래그"는 전부 페이지 스크롤이 가져간다.
+        //common.css에 html { scroll-behavior: smooth }가 전역으로 걸려있어서, 옵션 없이
+        //scrollBy()를 부르면 매번 "부드럽게 애니메이션"으로 스크롤하려다가 드래그 중
+        //다음 pointermove가 바로 또 scrollBy를 불러서 이전 애니메이션을 취소해버린다
+        //(그래서 체감상 거의 안 움직이고 1px씩 끊겨 보였음). behavior:"instant"로
+        //손가락 움직임만큼 즉시 점프시켜야 자연스럽게 따라온다.
+        function scrollPageBy(dyPx) {
+            window.scrollBy({ top: -dyPx, left: 0, behavior: "instant" });
+        }
+
         function panBy(dxPx, dyPx) {
+
+            if (scale <= 1.001) {
+                scrollPageBy(dyPx);
+                return;
+            }
 
             const rect = container.getBoundingClientRect();
 
@@ -383,12 +403,17 @@
 
             const visW = baseW / scale;
             const visH = baseH / scale;
+            const beforeY = centerY;
 
             centerX -= (dxPx / rect.width) * visW;
             centerY -= (dyPx / rect.height) * visH;
 
             clampCenter();
             applyViewBox();
+
+            if (dyPx !== 0 && Math.abs(centerY - beforeY) < 0.001) {
+                scrollPageBy(dyPx);
+            }
         }
 
         function resetView() {

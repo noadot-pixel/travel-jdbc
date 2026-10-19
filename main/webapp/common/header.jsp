@@ -28,6 +28,12 @@
         headerUnreadTotal = new NoticeDAO().countUnread(headerMember.getId())
                            + new NotificationDAO().countUnread(headerMember.getId());
     }
+
+    //브랜드 로고 - 언어별로 다른 이미지 파일(logo_kr.png/logo_ja.png)을 쓴다. css-links.jspf와
+    //같은 이유로 Cloudflare 캐시를 피하려고 파일 수정 시각을 쿼리스트링에 붙인다.
+    long headerLogoKrVer = new java.io.File(application.getRealPath("/images/logo_kr.png")).lastModified();
+    long headerLogoJaVer = new java.io.File(application.getRealPath("/images/logo_ja.png")).lastModified();
+    long headerLogoEnVer = new java.io.File(application.getRealPath("/images/logo_en.png")).lastModified();
 %>
 
 <header class="header" id="siteHeader">
@@ -37,8 +43,11 @@
         <a href="<%= contextPath %>/main"
            class="top-logo">
 
-            <img src="<%= contextPath %>/images/logo.png"
-                 alt="여행만들기 로고">
+            <img src="<%= contextPath %>/images/logo_ja.png?v=<%= headerLogoJaVer %>"
+                 alt="여행만들기 로고"
+                 class="brand-logo-image"
+                 data-i18n="brand.logoAlt"
+                 data-i18n-attr="alt">
         </a>
 
         <button type="button"
@@ -326,10 +335,12 @@
             }
         });
 
+        //뷰포트 폭이 바뀔 때마다(모바일<->PC 양쪽 방향 다) 열림 상태를 다시 계산한다.
+        //예전엔 "열려있을 때 PC 폭으로 커지는" 경우만 처리했는데, 그러면 모바일 폭에서
+        //드로어를 한 번도 안 열고 그대로 PC 폭으로 키웠을 때 panel.inert가 true로 남아서
+        //데스크톱 메뉴 전체가 클릭·포커스가 전혀 안 먹는 상태로 고정되는 문제가 있었다.
         window.addEventListener("resize", function () {
-            if (window.innerWidth > 1024 && header.classList.contains("mobile-menu-open")) {
-                setMenuOpen(false);
-            }
+            setMenuOpen(header.classList.contains("mobile-menu-open"));
         });
 
         setMenuOpen(false);
@@ -414,6 +425,38 @@
 
             applyTranslations(newLang);
 
+        });
+
+    })();
+
+    /*
+     * 브랜드 로고 - 언어별로 다른 이미지 파일을 쓴다(한국어/영어는 logo_kr.png,
+     * 일본어는 logo_ja.png - 영어 전용 로고는 아직 없어서 당분간 한국어판으로 대신한다).
+     * data-i18n-attr 방식은 값을 통째로 바꿔치기만 해서 contextPath/캐시버스터 쿼리스트링을
+     * 못 붙이므로, 여기서는 i18n:applied 이벤트를 직접 받아서 src를 조립한다.
+     */
+    (function () {
+
+        const contextPath = "<%= contextPath %>";
+        const logoVersions = {
+            "logo_kr.png": "<%= headerLogoKrVer %>",
+            "logo_ja.png": "<%= headerLogoJaVer %>",
+            "logo_en.png": "<%= headerLogoEnVer %>"
+        };
+
+        function applyLogo(lang, dict) {
+
+            const file = (dict && dict["brand.logoFile"]) || "logo_kr.png";
+            const version = logoVersions[file] || Date.now();
+            const src = contextPath + "/images/" + file + "?v=" + version;
+
+            document.querySelectorAll(".brand-logo-image").forEach(function (img) {
+                img.src = src;
+            });
+        }
+
+        $(document).on("i18n:applied", function (event, lang, dict) {
+            applyLogo(lang, dict);
         });
 
     })();

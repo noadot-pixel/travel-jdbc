@@ -1,4 +1,6 @@
 {
+    "brand.logoFile": "logo_kr.png",
+    "brand.logoAlt": "여행만들기 로고",
     "nav.home": "홈",
     "nav.community": "커뮤니티",
     "nav.ranking": "랭킹",

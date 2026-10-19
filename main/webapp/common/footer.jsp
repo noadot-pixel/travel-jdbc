@@ -4,6 +4,11 @@
 
         String contextPath = request.getContextPath();
 --%>
+<%
+    //헤더와 같은 이유(Cloudflare 캐시 우회)로 로고 버전을 따로 계산한다 - header.jsp와는
+    //별개 include라서 거기서 만든 headerLogoJaVer를 그대로 쓸 수 없다.
+    long footerLogoJaVer = new java.io.File(application.getRealPath("/images/logo_ja.png")).lastModified();
+%>
 
 <footer class="footer">
 
@@ -14,8 +19,11 @@
             <a href="<%= contextPath %>/main"
                class="bottom-logo">
 
-                <img src="<%= contextPath %>/images/logo.png"
-                     alt="여행만들기 로고">
+                <img src="<%= contextPath %>/images/logo_ja.png?v=<%= footerLogoJaVer %>"
+                     alt="여행만들기 로고"
+                     class="brand-logo-image"
+                     data-i18n="brand.logoAlt"
+                     data-i18n-attr="alt">
             </a>
 
             <p data-i18n="footer.tagline">

@@ -18,7 +18,7 @@
                      alt="여행만들기 로고">
             </a>
 
-            <p>
+            <p data-i18n="footer.tagline">
                 함께 만드는, 더 넓은 여행의 세상
             </p>
 
@@ -28,26 +28,26 @@
 
             <strong>여행만들기</strong>
 
-            <a href="<%= contextPath %>/about.jsp">소개</a>
-            <a href="#" class="footer-placeholder-link" data-message="이용약관 페이지는 준비 중입니다.">이용약관</a>
-            <a href="<%= contextPath %>/auth/privacy.jsp">개인정보처리방침</a>
+            <a href="<%= contextPath %>/about" data-i18n="footer.about">소개</a>
+            <a href="#" class="footer-placeholder-link" data-i18n="footer.terms" data-message="이용약관 페이지는 준비 중입니다.">이용약관</a>
+            <a href="<%= contextPath %>/privacy" data-i18n="footer.privacy">개인정보처리방침</a>
 
         </div>
 
         <div class="footer-menu">
 
-            <strong>고객지원</strong>
+            <strong data-i18n="footer.support">고객지원</strong>
 
-            <a href="<%= contextPath %>/notice/list">공지사항</a>
-            <a href="<%= contextPath %>/support#faq">자주 묻는 질문</a>
-            <a href="<%= contextPath %>/support#contact">문의하기</a>
+            <a href="<%= contextPath %>/notice/list" data-i18n="footer.notices">공지사항</a>
+            <a href="<%= contextPath %>/support#faq" data-i18n="footer.faq">자주 묻는 질문</a>
+            <a href="<%= contextPath %>/support#contact" data-i18n="footer.contact">문의하기</a>
 
         </div>
 
     </div>
 
     <p class="copyright">
-        © 2026 여행만들기. All rights reserved.
+        <span data-i18n="footer.copyright">© 2026 여행만들기. All rights reserved.</span>
     </p>
 
 </footer>

@@ -26,7 +26,7 @@
 %>
 
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" <%= (loginMember != null && loginMember.isDarkMode()) ? "data-theme=\"dark\"" : "" %>>
 
 <head>
     <meta charset="UTF-8">
@@ -49,13 +49,13 @@
     <section class="page-heading" id="faq">
 
         <p class="breadcrumb">
-            <a href="<%= contextPath %>/main">홈</a>
-            〉 자주 묻는 질문 · 문의하기
+            <a href="<%= contextPath %>/main" data-i18n="nav.home">홈</a>
+            〉 <span data-i18n="support.breadcrumb">자주 묻는 질문 · 문의하기</span>
         </p>
 
-        <h1>자주 묻는 질문</h1>
+        <h1 data-i18n="footer.faq">자주 묻는 질문</h1>
 
-        <p class="page-description">
+        <p class="page-description" data-i18n="support.faqPageDesc">
             자주 나오는 질문을 먼저 확인해 보세요. 찾는 답이 없다면 아래에서 바로 문의할 수 있습니다.
         </p>
 
@@ -64,7 +64,7 @@
     <section class="faq-section">
 
         <% if (faqList.isEmpty()) { %>
-        <p class="ranking-empty">등록된 FAQ가 없습니다.</p>
+        <p class="ranking-empty" data-i18n="support.noFaq">등록된 FAQ가 없습니다.</p>
         <% } else { %>
         <ul class="faq-list">
             <% for (FaqDTO faq : faqList) { %>
@@ -88,9 +88,9 @@
 
     <section class="page-heading" id="contact">
 
-        <h1>문의하기</h1>
+        <h1 data-i18n="support.contactHeading">문의하기</h1>
 
-        <p class="page-description">
+        <p class="page-description" data-i18n="support.contactPageDesc">
             궁금한 점을 남겨주시면 다른 분들도 함께 볼 수 있어요.
         </p>
 
@@ -105,7 +105,7 @@
         <% if (loginMember == null) { %>
 
         <p class="write-field-note">
-            문의를 남기려면 <a href="<%= contextPath %>/member/login">로그인</a>이 필요합니다.
+            <span data-i18n="support.loginRequiredPrefix">문의를 남기려면</span> <a href="<%= contextPath %>/member/login" data-i18n="nav.login">로그인</a><span data-i18n="support.loginRequiredSuffix">이 필요합니다.</span>
         </p>
 
         <% } else { %>
@@ -115,22 +115,33 @@
               action="<%= contextPath %>/support/write">
 
             <div class="write-field">
-                <label for="inquiryTitle">제목</label>
+                <label for="inquiryTitle" data-i18n="write.titleLabel">제목</label>
                 <input type="text"
                        id="inquiryTitle"
                        name="title"
+                       data-i18n="support.inquiryTitlePlaceholder"
+                       data-i18n-attr="placeholder"
                        placeholder="문의 제목을 입력해 주세요">
             </div>
 
             <div class="write-field">
-                <label for="inquiryContent">내용</label>
+                <label for="inquiryContent" data-i18n="support.contentLabel">내용</label>
                 <textarea id="inquiryContent"
                           name="content"
                           rows="4"
+                          data-i18n="support.inquiryContentPlaceholder"
+                          data-i18n-attr="placeholder"
                           placeholder="문의 내용을 입력해 주세요"></textarea>
             </div>
 
-            <button type="submit" class="auth-submit">문의 남기기</button>
+            <div class="write-field">
+                <label class="auth-agree-label">
+                    <input type="checkbox" id="inquiryPrivate" name="isPrivate" value="Y">
+                    <span data-i18n="support.privateCheckbox">비공개로 남기기 (나와 관리자만 볼 수 있어요)</span>
+                </label>
+            </div>
+
+            <button type="submit" class="auth-submit" data-i18n="support.submitInquiry">문의 남기기</button>
 
         </form>
 
@@ -141,7 +152,7 @@
     <section class="inquiry-list-section">
 
         <% if (inquiryList.isEmpty()) { %>
-        <p class="ranking-empty">등록된 문의가 없습니다.</p>
+        <p class="ranking-empty" data-i18n="support.noInquiries">등록된 문의가 없습니다.</p>
         <% } else { %>
         <ul class="inquiry-list">
             <% for (InquiryDTO inquiry : inquiryList) { %>
@@ -149,6 +160,9 @@
 
                 <div class="inquiry-item-head">
                     <strong><%= EscapeUtil.html(inquiry.getTitle()) %></strong>
+                    <% if (inquiry.isPrivate()) { %>
+                    <span class="inquiry-private-badge" data-i18n="mypage.private">비공개</span>
+                    <% } %>
                     <span><%= inquiry.getRegDate() %> · <%= EscapeUtil.html(inquiry.getWriterNick()) %></span>
                 </div>
 

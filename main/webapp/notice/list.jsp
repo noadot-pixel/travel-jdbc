@@ -3,11 +3,14 @@
     pageEncoding="UTF-8" %>
 
 <%@ page import="java.util.List" %>
+<%@ page import="model.MemberDTO" %>
 <%@ page import="model.NoticeDTO" %>
 <%@ page import="util.EscapeUtil" %>
 
 <%
     String contextPath = request.getContextPath();
+
+    MemberDTO themeMember = (MemberDTO) session.getAttribute("loginMember");
 
     //이 페이지는 반드시 NoticeController(/notice/list)를 거쳐서 와야 한다.
     List<NoticeDTO> noticeList = (List<NoticeDTO>) request.getAttribute("noticeList");
@@ -19,7 +22,7 @@
 %>
 
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" <%= (themeMember != null && themeMember.isDarkMode()) ? "data-theme=\"dark\"" : "" %>>
 
 <head>
     <meta charset="UTF-8">
@@ -42,13 +45,13 @@
     <section class="page-heading">
 
         <p class="breadcrumb">
-            <a href="<%= contextPath %>/main">홈</a>
-            〉 공지사항
+            <a href="<%= contextPath %>/main" data-i18n="nav.home">홈</a>
+            〉 <span data-i18n="footer.notices">공지사항</span>
         </p>
 
-        <h1>공지사항</h1>
+        <h1 data-i18n="footer.notices">공지사항</h1>
 
-        <p class="page-description">
+        <p class="page-description" data-i18n="notice.pageDesc">
             여행만들기의 새 소식을 확인하세요.
         </p>
 
@@ -57,7 +60,7 @@
     <section class="notice-list-section">
 
         <% if (noticeList.isEmpty()) { %>
-        <p class="ranking-empty">등록된 공지가 없습니다.</p>
+        <p class="ranking-empty" data-i18n="notice.empty">등록된 공지가 없습니다.</p>
         <% } else { %>
         <ul class="notice-list">
             <% for (NoticeDTO notice : noticeList) { %>

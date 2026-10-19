@@ -41,7 +41,7 @@ public class SeedCommand implements Command {
 		MemberDTO loginMember = (MemberDTO) request.getSession().getAttribute("loginMember");
 
 		PostDAO postDAO = new PostDAO();
-		List<PostDTO> existing = postDAO.getList("ALL", "ALL", "");
+		List<PostDTO> existing = postDAO.getList("ALL", "ALL", "ALL", "");
 
 		if (!existing.isEmpty()) {
 			out.print("{\"result\":\"ok\",\"added\":0}");

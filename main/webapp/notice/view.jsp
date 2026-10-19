@@ -2,11 +2,14 @@
     contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8" %>
 
+<%@ page import="model.MemberDTO" %>
 <%@ page import="model.NoticeDTO" %>
 <%@ page import="util.EscapeUtil" %>
 
 <%
     String contextPath = request.getContextPath();
+
+    MemberDTO themeMember = (MemberDTO) session.getAttribute("loginMember");
 
     //이 페이지는 반드시 NoticeViewCommand(/notice/view)를 거쳐서 와야 한다.
     NoticeDTO notice = (NoticeDTO) request.getAttribute("notice");
@@ -18,7 +21,7 @@
 %>
 
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" <%= (themeMember != null && themeMember.isDarkMode()) ? "data-theme=\"dark\"" : "" %>>
 
 <head>
     <meta charset="UTF-8">
@@ -41,9 +44,9 @@
     <section class="page-heading">
 
         <p class="breadcrumb">
-            <a href="<%= contextPath %>/main">홈</a>
-            〉 <a href="<%= contextPath %>/notice/list">공지사항</a>
-            〉 상세
+            <a href="<%= contextPath %>/main" data-i18n="nav.home">홈</a>
+            〉 <a href="<%= contextPath %>/notice/list" data-i18n="footer.notices">공지사항</a>
+            〉 <span data-i18n="detail.breadcrumb">상세</span>
         </p>
 
     </section>
@@ -66,7 +69,7 @@
 
         <div class="detail-back">
             <a href="<%= contextPath %>/notice/list">
-                〈 목록으로
+                〈 <span data-i18n="detail.backToList">목록으로</span>
             </a>
         </div>
 

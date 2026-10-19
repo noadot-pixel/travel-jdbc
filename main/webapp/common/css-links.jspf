@@ -10,9 +10,19 @@
 <%
     long commonCssVer = new java.io.File(application.getRealPath("/css/common.css")).lastModified();
     long myStyleCssVer = new java.io.File(application.getRealPath("/css/mystyle.css")).lastModified();
+    long mobileCssVer = new java.io.File(application.getRealPath("/css/mobile.css")).lastModified();
 %>
 <link rel="stylesheet"
       href="<%= contextPath %>/css/common.css?v=<%= commonCssVer %>">
 
 <link rel="stylesheet"
       href="<%= contextPath %>/css/mystyle.css?v=<%= myStyleCssVer %>">
+
+<%-- 모바일 전용 확장 레이어(1024px 이하) - 데스크톱 색/변수는 mystyle.css 그대로 쓰고
+     레이아웃만 덮어쓰므로, 반드시 mystyle.css 다음에 로드돼야 한다. --%>
+<link rel="stylesheet"
+      href="<%= contextPath %>/css/mobile.css?v=<%= mobileCssVer %>">
+
+<%-- jQuery - 다국어(i18n) 번역 로딩에 $.getJSON을 쓰려고 추가함. 이 파일이 모든 페이지에서
+     이미 공통으로 include되고 있어서, 새 공용 스크립트를 추가할 자리로 여기를 그대로 썼다. --%>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>

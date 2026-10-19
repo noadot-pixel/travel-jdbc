@@ -132,6 +132,91 @@ public class CommentDAO {
 		return result;
 	}
 
+	public static final int MYPAGE_PAGE_SIZE = 10;
+
+	//마이페이지 "내가 쓴 댓글" - 내용 검색 + 페이지네이션. page는 1부터 시작.
+	public List<CommentDTO> getListByWriter(String writer, String keyword, int page) {
+
+		if (page < 1) page = 1;
+
+		int startRow = (page - 1) * MYPAGE_PAGE_SIZE;
+		int endRow = startRow + MYPAGE_PAGE_SIZE;
+
+		boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
+
+		String sql = "select * from ( "
+				   + "  select a.*, rownum rnum from ( "
+				   + "    select c.cno, c.bno, c.writer, m.nickname writer_nick, c.content, "
+				   + "           p.title post_title, "
+				   + "           to_char(c.reg_date, 'YYYY-MM-DD HH24:MI') reg_date "
+				   + "    from comments c "
+				   + "    join members m on c.writer = m.id "
+				   + "    join posts p on c.bno = p.bno "
+				   + "    where c.writer = ? "
+				   + (hasKeyword ? "and c.content like ? " : "")
+				   + "    order by c.cno desc "
+				   + "  ) a where rownum <= ? "
+				   + ") where rnum > ?";
+
+		List<CommentDTO> list = new ArrayList<CommentDTO>();
+
+		try (Connection conn = DBUtil.getInstance();
+			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			int idx = 1;
+			pstmt.setString(idx++, writer);
+			if (hasKeyword) {
+				pstmt.setString(idx++, "%" + keyword.trim() + "%");
+			}
+			pstmt.setInt(idx++, endRow);
+			pstmt.setInt(idx++, startRow);
+
+			try (ResultSet rs = pstmt.executeQuery()) {
+				while (rs.next()) {
+					CommentDTO dto = toDto(rs);
+					dto.setPostTitle(rs.getString("post_title"));
+					list.add(dto);
+				}
+			}
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
+		return list;
+	}
+
+	public int getCountByWriter(String writer, String keyword) {
+
+		boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
+
+		String sql = "select count(*) from comments c where c.writer = ? "
+				   + (hasKeyword ? "and c.content like ?" : "");
+
+		int count = 0;
+
+		try (Connection conn = DBUtil.getInstance();
+			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			int idx = 1;
+			pstmt.setString(idx++, writer);
+			if (hasKeyword) {
+				pstmt.setString(idx++, "%" + keyword.trim() + "%");
+			}
+
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					count = rs.getInt(1);
+				}
+			}
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
+		return count;
+	}
+
 	public int countByPost(int bno) {
 
 		String sql = "select count(*) from comments where bno = ?";

@@ -20,12 +20,15 @@ NCS 시험용 "여행 커뮤니티" 웹사이트의 **실제 제출용 구현**.
 - JDK 17, Tomcat 10.1.x (Jakarta EE, `jakarta.servlet.*`)
 - **Oracle Database 11g Express Edition (11.2.0.2.0)**, SID `XE`
 - JDBC 드라이버: `ojdbc11.jar`(Oracle 23ai 클라이언트, 구버전 DB에도 하위호환으로 정상 접속됨)
+- HTML sanitizer: `jsoup-1.18.1.jar`(글쓰기 리치텍스트 에디터가 보낸 HTML을 서버에서 한 번 더 걸러낼 때 씀 — `util/HtmlSanitizer.java`)
 - 패키지 구조: `controller`(서블릿) / `service`(Command) / `model`(DTO+DAO) / `util`(DBUtil 등) — `BlogProject`와 동일
 
 ## 시작하는 법
 
 1. 이 저장소를 clone한 뒤, Eclipse에서 **Dynamic Web Project**로 열거나(`main/webapp` 웹 루트, `src/main/java` 소스 폴더), Tomcat `webapps`에 정션/복사로 바로 배포해도 된다.
-2. Oracle JDBC 드라이버(`ojdbc11.jar`)를 `main/webapp/WEB-INF/lib/`에 넣는다 (저장소에는 포함 안 함 — `.gitignore` 참고. `reference/BlogProject`에 같은 파일이 있다면 그걸 복사해도 된다).
+2. 아래 두 jar를 `main/webapp/WEB-INF/lib/`에 넣는다 (저장소에는 둘 다 포함 안 함 — `.gitignore` 참고):
+   - Oracle JDBC 드라이버 `ojdbc11.jar` (`reference/BlogProject`에 같은 파일이 있다면 그걸 복사해도 된다)
+   - `jsoup-1.18.1.jar` ([jsoup.org](https://jsoup.org/download) 또는 Maven Central에서 받기) — **없으면 글쓰기/알림 관련 클래스가 `ClassNotFoundException`으로 전부 깨진다.**
 3. Oracle에 애플리케이션 계정을 만든다 (SYS로 접속해서):
    ```sql
    CREATE USER trable IDENTIFIED BY "원하는_비밀번호" DEFAULT TABLESPACE USERS TEMPORARY TABLESPACE TEMP;

@@ -11,6 +11,7 @@ public class CommentDTO {
 	private String writerNick;
 	private String content;
 	private String regDate;     // "YYYY-MM-DD HH24:MI"
+	private String postTitle;   // 마이페이지 "내가 쓴 댓글" 목록에서만 채워짐 (어느 글의 댓글인지 보여주려고)
 
 	public int getCno() {
 		return cno;
@@ -47,6 +48,12 @@ public class CommentDTO {
 	}
 	public void setRegDate(String regDate) {
 		this.regDate = regDate;
+	}
+	public String getPostTitle() {
+		return postTitle;
+	}
+	public void setPostTitle(String postTitle) {
+		this.postTitle = postTitle;
 	}
 
 }

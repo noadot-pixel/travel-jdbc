@@ -11,6 +11,7 @@ public class InquiryDTO {
 	private String writer;
 	private String writerNick;
 	private String regDate;
+	private boolean isPrivate;
 
 	public int getInquiryId() {
 		return inquiryId;
@@ -47,6 +48,12 @@ public class InquiryDTO {
 	}
 	public void setRegDate(String regDate) {
 		this.regDate = regDate;
+	}
+	public boolean isPrivate() {
+		return isPrivate;
+	}
+	public void setPrivate(boolean isPrivate) {
+		this.isPrivate = isPrivate;
 	}
 
 }

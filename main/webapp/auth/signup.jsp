@@ -53,20 +53,18 @@
                         TRAVEL MAKER
                     </p>
 
-                    <h1>
-                        여행만들기와 함께<br>
-                        첫 이야기를 시작해요
+                    <h1 data-i18n="auth.signupHeroTitle">
+                        여행만들기와 함께 첫 이야기를 시작해요
                     </h1>
 
-                    <p>
-                        가입하면 여행 이야기를 작성하고<br>
-                        나만의 기록을 남길 수 있어요.
+                    <p data-i18n="auth.signupHeroDesc">
+                        가입하면 여행 이야기를 작성하고 나만의 기록을 남길 수 있어요.
                     </p>
 
                     <div class="auth-visual-tags" aria-hidden="true">
-                        <span>#서울</span>
-                        <span>#도쿄</span>
-                        <span>#제주</span>
+                        <span data-i18n="home.keyword.seoul">#서울</span>
+                        <span data-i18n="home.keyword.tokyo">#도쿄</span>
+                        <span data-i18n="auth.tagJeju">#제주</span>
                     </div>
                 </div>
             </div>
@@ -78,9 +76,9 @@
                     <div class="auth-title-area">
                         <span class="auth-title-mark">✈</span>
 
-                        <h2>회원가입</h2>
+                        <h2 data-i18n="nav.join">회원가입</h2>
 
-                        <p class="auth-description">
+                        <p class="auth-description" data-i18n="auth.signupDesc">
                             기본 정보를 입력하고 여행만들기를 시작하세요.
                         </p>
                     </div>
@@ -94,7 +92,7 @@
                           action="<%= contextPath %>/member/join">
 
                         <div class="auth-field">
-                            <label for="signupNickname">
+                            <label for="signupNickname" data-i18n="auth.nicknameLabel">
                                 닉네임
                             </label>
 
@@ -102,12 +100,14 @@
                                    id="signupNickname"
                                    name="signupNickname"
                                    value="<%= EscapeUtil.html(request.getParameter("signupNickname")) %>"
+                                   data-i18n="auth.nicknamePlaceholder"
+                                   data-i18n-attr="placeholder"
                                    placeholder="사용할 닉네임을 입력해 주세요"
                                    autocomplete="nickname">
                         </div>
 
                         <div class="auth-field">
-                            <label for="signupEmail">
+                            <label for="signupEmail" data-i18n="auth.emailLabel">
                                 이메일
                             </label>
 
@@ -115,30 +115,36 @@
                                    id="signupEmail"
                                    name="signupEmail"
                                    value="<%= EscapeUtil.html(request.getParameter("signupEmail")) %>"
+                                   data-i18n="auth.emailPlaceholder"
+                                   data-i18n-attr="placeholder"
                                    placeholder="이메일을 입력해 주세요"
                                    autocomplete="username">
                         </div>
 
                         <div class="auth-field">
-                            <label for="signupPassword">
+                            <label for="signupPassword" data-i18n="auth.passwordLabel">
                                 비밀번호
                             </label>
 
                             <input type="password"
                                    id="signupPassword"
                                    name="signupPassword"
+                                   data-i18n="auth.passwordMinPlaceholder"
+                                   data-i18n-attr="placeholder"
                                    placeholder="6자 이상 입력해 주세요"
                                    autocomplete="new-password">
                         </div>
 
                         <div class="auth-field">
-                            <label for="signupPasswordConfirm">
+                            <label for="signupPasswordConfirm" data-i18n="auth.passwordConfirmLabel">
                                 비밀번호 확인
                             </label>
 
                             <input type="password"
                                    id="signupPasswordConfirm"
                                    name="signupPasswordConfirm"
+                                   data-i18n="auth.passwordConfirmPlaceholder"
+                                   data-i18n-attr="placeholder"
                                    placeholder="비밀번호를 다시 입력해 주세요"
                                    autocomplete="new-password">
                         </div>
@@ -147,13 +153,13 @@
                         <input type="hidden" id="genderInput" name="gender" value="">
 
                         <div class="auth-field">
-                            <label>
+                            <label data-i18n="mypage.genderLabel">
                                 성별
                             </label>
 
                             <div class="filter-group" id="signupGenderGroup">
-                                <button type="button" class="filter-button" data-gender="M">남성</button>
-                                <button type="button" class="filter-button" data-gender="F">여성</button>
+                                <button type="button" class="filter-button" data-gender="M" data-i18n="gender.male">남성</button>
+                                <button type="button" class="filter-button" data-gender="F" data-i18n="gender.female">여성</button>
                             </div>
                         </div>
 
@@ -165,13 +171,14 @@
                                        value="Y">
 
                                 <span>
-                                    [필수] <a href="<%= contextPath %>/auth/privacy.jsp" target="_blank">개인정보 수집·이용</a>에 동의합니다.
+                                    <span data-i18n="editProfile.privacyRequired">[필수]</span> <a href="<%= contextPath %>/privacy" target="_blank" data-i18n="editProfile.privacyLinkText">개인정보 수집·이용</a><span data-i18n="editProfile.privacyAgreeSuffix">에 동의합니다.</span>
                                 </span>
                             </label>
                         </div>
 
                         <button type="submit"
-                                class="auth-submit">
+                                class="auth-submit"
+                                data-i18n="nav.join">
                             회원가입
                         </button>
 
@@ -182,9 +189,9 @@
                     </div>
 
                     <div class="auth-links">
-                        <a href="<%= contextPath %>/member/login">로그인</a>
+                        <a href="<%= contextPath %>/member/login" data-i18n="nav.login">로그인</a>
                         <span aria-hidden="true"></span>
-                        <a href="<%= contextPath %>/main">메인으로 돌아가기</a>
+                        <a href="<%= contextPath %>/main" data-i18n="auth.backToMain">메인으로 돌아가기</a>
                     </div>
 
                 </div>
@@ -247,25 +254,25 @@
         if (nickname === "" || email === "" || password === "" || passwordConfirm === ""
             || gender === "") {
             event.preventDefault();
-            alert("모든 항목을 입력해 주세요.");
+            alert(window.t("auth.fillAllAlert", "모든 항목을 입력해 주세요."));
             return;
         }
 
         if (password !== passwordConfirm) {
             event.preventDefault();
-            alert("비밀번호가 서로 일치하지 않습니다.");
+            alert(window.t("auth.passwordMismatchAlert", "비밀번호가 서로 일치하지 않습니다."));
             return;
         }
 
         if (password.length < 6) {
             event.preventDefault();
-            alert("비밀번호는 6자 이상이어야 합니다.");
+            alert(window.t("auth.passwordTooShortAlert", "비밀번호는 6자 이상이어야 합니다."));
             return;
         }
 
         if (!privacyAgree) {
             event.preventDefault();
-            alert("개인정보 수집·이용에 동의해야 가입할 수 있습니다.");
+            alert(window.t("auth.privacyRequiredJoinAlert", "개인정보 수집·이용에 동의해야 가입할 수 있습니다."));
         }
 
     });

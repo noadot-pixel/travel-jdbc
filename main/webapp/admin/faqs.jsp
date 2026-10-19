@@ -17,7 +17,7 @@
         return;
     }
 
-    if (!loginMember.isAdmin()) {
+    if (!loginMember.isModerator()) {
         response.sendRedirect(contextPath + "/main");
         return;
     }
@@ -32,7 +32,7 @@
 %>
 
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" <%= (loginMember != null && loginMember.isDarkMode()) ? "data-theme=\"dark\"" : "" %>>
 
 <head>
     <meta charset="UTF-8">
@@ -55,15 +55,15 @@
     <section class="page-heading">
 
         <p class="breadcrumb">
-            <a href="<%= contextPath %>/main">홈</a>
-            〉 <a href="<%= contextPath %>/admin/index.jsp">관리자</a>
-            〉 FAQ 관리
+            <a href="<%= contextPath %>/main" data-i18n="nav.home">홈</a>
+            〉 <a href="<%= contextPath %>/admin" data-i18n="nav.admin">관리자</a>
+            〉 <span data-i18n="admin.menuFaqsTitle">FAQ 관리</span>
         </p>
 
-        <h1>자주 묻는 질문 관리</h1>
+        <h1 data-i18n="adminFaqs.heading">자주 묻는 질문 관리</h1>
 
         <p class="page-description">
-            등록한 질문/답변은 <a href="<%= contextPath %>/support#faq">문의하기 페이지</a>의 "자주 묻는 질문"에 바로 표시됩니다.
+            <span data-i18n="adminFaqs.pageDescPrefix">등록한 질문/답변은</span> <a href="<%= contextPath %>/support#faq" data-i18n="adminFaqs.supportPageLink">문의하기 페이지</a><span data-i18n="adminFaqs.pageDescSuffix">의 "자주 묻는 질문"에 바로 표시됩니다.</span>
         </p>
 
     </section>
@@ -73,16 +73,16 @@
         <form id="faqForm">
 
             <div class="write-field">
-                <label for="faqQuestion">질문</label>
-                <input type="text" id="faqQuestion" placeholder="질문을 입력해 주세요">
+                <label for="faqQuestion" data-i18n="adminFaqs.questionLabel">질문</label>
+                <input type="text" id="faqQuestion" data-i18n="adminFaqs.questionPlaceholder" data-i18n-attr="placeholder" placeholder="질문을 입력해 주세요">
             </div>
 
             <div class="write-field">
-                <label for="faqAnswer">답변</label>
-                <textarea id="faqAnswer" rows="3" placeholder="답변을 입력해 주세요"></textarea>
+                <label for="faqAnswer" data-i18n="adminFaqs.answerLabel">답변</label>
+                <textarea id="faqAnswer" rows="3" data-i18n="adminFaqs.answerPlaceholder" data-i18n-attr="placeholder" placeholder="답변을 입력해 주세요"></textarea>
             </div>
 
-            <button type="submit" class="auth-submit">등록하기</button>
+            <button type="submit" class="auth-submit" data-i18n="write.submit">등록하기</button>
 
         </form>
 
@@ -91,7 +91,7 @@
     <section class="admin-faq-list-section">
 
         <% if (faqList.isEmpty()) { %>
-        <p class="ranking-empty">등록된 FAQ가 없습니다.</p>
+        <p class="ranking-empty" data-i18n="support.noFaq">등록된 FAQ가 없습니다.</p>
         <% } else { %>
         <ul class="admin-faq-list">
             <% for (FaqDTO faq : faqList) { %>
@@ -107,8 +107,8 @@
                     <p>A. <%= EscapeUtil.html(faq.getAnswer()) %></p>
 
                     <div class="admin-faq-actions">
-                        <button type="button" class="admin-faq-edit-button">수정</button>
-                        <button type="button" class="admin-faq-delete-button">삭제</button>
+                        <button type="button" class="admin-faq-edit-button" data-i18n="common.edit">수정</button>
+                        <button type="button" class="admin-faq-delete-button" data-i18n="common.delete">삭제</button>
                     </div>
 
                 </div>
@@ -124,8 +124,8 @@
                     </div>
 
                     <div class="admin-faq-actions">
-                        <button type="button" class="auth-submit admin-faq-save-button">저장</button>
-                        <button type="button" class="admin-faq-cancel-button">취소</button>
+                        <button type="button" class="auth-submit admin-faq-save-button" data-i18n="adminFaqs.save">저장</button>
+                        <button type="button" class="admin-faq-cancel-button" data-i18n="adminFaqs.cancel">취소</button>
                     </div>
 
                 </div>
@@ -150,7 +150,7 @@
         const answer = document.getElementById("faqAnswer").value.trim();
 
         if (question === "" || answer === "") {
-            alert("질문과 답변을 모두 입력해 주세요.");
+            alert(window.t("adminFaqs.fillAllAlert", "질문과 답변을 모두 입력해 주세요."));
             return;
         }
 
@@ -163,7 +163,7 @@
             .then(function (data) {
 
                 if (data.result !== "ok") {
-                    alert("등록에 실패했습니다.");
+                    alert(window.t("adminFaqs.createFailedAlert", "등록에 실패했습니다."));
                     return;
                 }
 
@@ -194,7 +194,7 @@
             const answer = item.querySelector(".admin-faq-edit-answer").value.trim();
 
             if (question === "" || answer === "") {
-                alert("질문과 답변을 모두 입력해 주세요.");
+                alert(window.t("adminFaqs.fillAllAlert", "질문과 답변을 모두 입력해 주세요."));
                 return;
             }
 
@@ -208,7 +208,7 @@
                 .then(function (data) {
 
                     if (data.result !== "ok") {
-                        alert("수정에 실패했습니다.");
+                        alert(window.t("adminFaqs.updateFailedAlert", "수정에 실패했습니다."));
                         return;
                     }
 
@@ -219,7 +219,7 @@
 
         item.querySelector(".admin-faq-delete-button").addEventListener("click", function () {
 
-            if (!confirm("이 FAQ를 삭제할까요?")) {
+            if (!confirm(window.t("adminFaqs.confirmDelete", "이 FAQ를 삭제할까요?"))) {
                 return;
             }
 
@@ -231,7 +231,7 @@
                 .then(function (data) {
 
                     if (data.result !== "ok") {
-                        alert("삭제에 실패했습니다.");
+                        alert(window.t("adminNotices.deleteFailedAlert", "삭제에 실패했습니다."));
                         return;
                     }
 

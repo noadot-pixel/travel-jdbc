@@ -50,7 +50,7 @@ public class CommentDeleteCommand implements Command {
 		boolean isCommentWriter = loginMember.getId().equals(comment.getWriter());
 		boolean isPostWriter = post != null && loginMember.getId().equals(post.getWriter());
 
-		if (!isCommentWriter && !isPostWriter && !loginMember.isAdmin()) {
+		if (!isCommentWriter && !isPostWriter && !loginMember.isModerator()) {
 			out.print("{\"result\":\"forbidden\"}");
 			return false;
 		}

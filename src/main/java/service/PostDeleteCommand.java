@@ -35,9 +35,9 @@ public class PostDeleteCommand implements Command {
 			return false;
 		}
 
-		boolean isAdmin = loginMember.isAdmin();
+		boolean isModerator = loginMember.isModerator();
 
-		int deletedRows = isAdmin
+		int deletedRows = isModerator
 			? postDAO.deleteByAdmin(bno)
 			: postDAO.delete(bno, loginMember.getId());
 

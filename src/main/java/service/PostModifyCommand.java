@@ -34,9 +34,9 @@ public class PostModifyCommand implements Command {
 			return false;
 		}
 
-		boolean isAdmin = loginMember.isAdmin();
+		boolean isModerator = loginMember.isModerator();
 
-		if (!loginMember.getId().equals(original.getWriter()) && !isAdmin) {
+		if (!loginMember.getId().equals(original.getWriter()) && !isModerator) {
 			request.getSession().setAttribute("flashMsg", "본인이 작성한 게시글만 수정할 수 있습니다.");
 			response.sendRedirect(request.getContextPath() + "/post/view?bno=" + bno);
 			return false;
@@ -72,7 +72,7 @@ public class PostModifyCommand implements Command {
 		dto.setImgPath(imgPath);
 
 		//일반 회원은 본인 글만(where writer=?), 관리자는 전부 수정 가능
-		int updatedRows = isAdmin ? postDAO.updateByAdmin(dto) : postDAO.update(dto);
+		int updatedRows = isModerator ? postDAO.updateByAdmin(dto) : postDAO.update(dto);
 
 		if (updatedRows == 0) {
 			request.setAttribute("post", original);

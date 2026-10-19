@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import model.MemberDAO;
 import model.MemberDTO;
 import model.NotificationDAO;
 import model.PostDAO;
@@ -34,6 +35,11 @@ public class LikeCommand implements Command {
 			return false;
 		}
 
+		if (new MemberDAO().isSuspendedNow(loginMember.getId())) {
+			out.print("{\"result\":\"suspended\"}");
+			return false;
+		}
+
 		int bno = ParamUtil.toInt(request.getParameter("bno"), 0);
 		PostDAO dao = new PostDAO();
 
@@ -45,8 +51,10 @@ public class LikeCommand implements Command {
 		boolean liked = dao.isLiked(bno, loginMember.getId());
 		int likeCnt = dao.getLikeCnt(bno);
 
-		//좋아요를 누른 경우에만 알림 (취소할 때는 알리지 않는다. 자기 글이면 insert()가 알아서 건너뛴다)
-		if (liked) {
+		//좋아요를 누른 경우에만, 그리고 좋아요 수가 "마일스톤"에 막 도달했을 때만 알린다
+		//(매번 알리면 너무 잦아서 5/10/15/20/30/50/100/150, 그 이후로는 50단위로만 알림).
+		//취소할 때는 알리지 않는다. 자기 글이면 insert()가 알아서 건너뛴다.
+		if (liked && isMilestone(likeCnt)) {
 			String postWriter = dao.getWriter(bno);
 			if (postWriter != null) {
 				new NotificationDAO().insert(postWriter, "LIKE", bno, loginMember.getId());
@@ -55,6 +63,19 @@ public class LikeCommand implements Command {
 
 		out.print("{\"result\":\"ok\",\"liked\":" + liked + ",\"likeCnt\":" + likeCnt + "}");
 		return false;
+	}
+
+	private static final int[] EARLY_MILESTONES = {5, 10, 15, 20, 30, 50};
+
+	private boolean isMilestone(int count) {
+
+		for (int m : EARLY_MILESTONES) {
+			if (count == m) {
+				return true;
+			}
+		}
+
+		return count >= 100 && count % 50 == 0;
 	}
 
 }

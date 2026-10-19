@@ -22,23 +22,23 @@
     <div class="story-content">
 
         <div class="story-tags">
-            <span class="story-category"><%= EscapeUtil.html(post.getCountryLabel()) %></span>
+            <span class="story-category" data-i18n="country.<%= post.getCountry() %>"><%= EscapeUtil.html(post.getCountryLabel()) %></span>
             <% if (post.getRegion() != null && !post.getRegion().isEmpty()) { %>
-            <span class="story-region-tag"><%= EscapeUtil.html(post.getRegionLabel()) %></span>
+            <span class="story-region-tag" data-i18n="region.<%= post.getRegion() %>"><%= EscapeUtil.html(post.getRegionLabel()) %></span>
             <% } %>
-            <span class="story-style-tag"><%= EscapeUtil.html(post.getStyleLabel()) %></span>
+            <span class="story-style-tag" data-i18n="style.<%= post.getStyle() %>"><%= EscapeUtil.html(post.getStyleLabel()) %></span>
         </div>
 
         <h3><a href="<%= contextPath %>/post/view?bno=<%= post.getBno() %>"><%= EscapeUtil.html(post.getTitle()) %></a></h3>
 
         <div class="story-information">
-            <span><%= EscapeUtil.html(post.getWriterNick()) %></span>
+            <span><a href="<%= contextPath %>/member/profile?id=<%= post.getWriter() %>" class="story-writer-link"><%= EscapeUtil.html(post.getWriterNick()) %></a></span>
             <% if (showMyBadge) { %>
-            <span class="my-post-badge">내 글</span>
+            <span class="my-post-badge" data-i18n="common.myPost">내 글</span>
             <% } %>
             <span><%= post.getRegDate() %></span>
-            <span>조회 <%= post.getViewCnt() %></span>
-            <span>좋아요 <%= post.getLikeCnt() %></span>
+            <span><span data-i18n="common.viewCount">조회</span> <%= post.getViewCnt() %></span>
+            <span><span data-i18n="common.likeCount">좋아요</span> <%= post.getLikeCnt() %></span>
         </div>
 
         <% if (actionsHtml != null) { %>

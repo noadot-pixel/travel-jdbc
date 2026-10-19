@@ -126,7 +126,7 @@ MEMBERS 1 ──< POSTS 1 ──< COMMENTS
 
 | 테이블 | 기본키 | 설명 |
 |---|---|---|
-| `members` | `id` (VARCHAR2, = 이메일) | 회원. `is_admin`='Y'면 관리자. `gender`는 랭킹 화면용(이 기능 이전 가입자는 NULL). 나이는 컬럼 없이 `birthday`에서 계산(`MemberDTO.getAge()`). `MemberDAO` |
+| `members` | `id` (VARCHAR2, = 이메일) | 회원. `admin_level`: 0=일반회원, 1=moderator, 2=admin (권한 레벨 변경 자체는 admin만 가능). `gender`는 랭킹 화면용(이 기능 이전 가입자는 NULL). 나이는 컬럼 없이 `birthday`에서 계산(`MemberDTO.getAge()`). `suspended`='Y'면 댓글/좋아요/글쓰기 금지(스크랩은 허용; moderator/admin 계정은 정지 대상에서 제외). `dark_mode`='Y'면 모든 페이지가 다크 테마로 렌더링됨. `MemberDAO` |
 | `posts` | `bno` (시퀀스 `seq_posts`) | 게시글. `writer`는 `members.id` 참조. `PostDAO` |
 | `comments` | `cno` (시퀀스 `seq_comments`) | 댓글. `bno`는 `posts.bno` 참조(`ON DELETE CASCADE`). `CommentDAO` |
 | `post_likes` | `(bno, member_id)` | 좋아요. 문서가 아니라 행 존재 여부로 판단. `PostDAO`에 같이 있음 |
@@ -135,7 +135,7 @@ MEMBERS 1 ──< POSTS 1 ──< COMMENTS
 | `notices` | `notice_id` (시퀀스 `seq_notices`) | 관리자 공지. 모든 회원의 알림 벨에 표시됨. `NoticeDAO` |
 | `notifications` | `notif_id` (시퀀스 `seq_notifications`) | 개인 알림(내 글에 댓글/좋아요). 자기 글에 자기 행동은 안 쌓음. `NotificationDAO` |
 | `faqs` | `faq_id` (시퀀스 `seq_faqs`) | 자주 묻는 질문. 관리자가 `/admin/faqs`에서 등록/수정/삭제. `FaqDAO` |
-| `inquiries` | `inquiry_id` (시퀀스 `seq_inquiries`) | 문의하기 게시판. 누구나 보고 로그인한 회원이면 남길 수 있음(답변 기능 없음). `InquiryDAO` |
+| `inquiries` | `inquiry_id` (시퀀스 `seq_inquiries`) | 문의하기 게시판. 로그인한 회원이면 남길 수 있음(답변 기능 없음). `is_private`='Y'면 작성자 본인과 관리자만 볼 수 있음. `InquiryDAO` |
 
 ### Firestore 필드 → 컬럼 대응 (1번과 비교용)
 
@@ -147,7 +147,7 @@ MEMBERS 1 ──< POSTS 1 ──< COMMENTS
 | `name`, `nameVisibility` | `real_name`, `name_public`('Y'/'N') | |
 | `birthday`, `birthdayVisibility` | `birthday`, `birthday_public`('Y'/'N') | |
 | `photoUrl` | `photo_path` | Storage URL 대신 서버 업로드 경로("upload/profile/xxx.jpg") |
-| (`admins` 컬렉션) | `members.is_admin` | 별도 테이블 대신 컬럼 |
+| (`admins` 컬렉션) | `members.admin_level` | 별도 테이블 대신 컬럼(0/1/2) |
 | `posts/{id}` 문서 id | `posts.bno` | |
 | `authorUid`, `authorNickname` | `posts.writer` (닉네임은 `members`와 JOIN) | 닉네임을 중복 저장하지 않아서, 닉네임을 바꾸면 옛 글에도 바로 반영됨 |
 | `countryLabel` | (저장 안 함) | `PostDTO.getCountryLabel()`에서 즉석으로 변환 |
@@ -169,7 +169,7 @@ MEMBERS 1 ──< POSTS 1 ──< COMMENTS
 insert into members(id, pwd, nickname) values(?, ?, ?);
 
 -- 로그인 (MemberDAO.login)
-select id, pwd, nickname, is_admin, ... from members where id = ? and pwd = ?;
+select id, pwd, nickname, admin_level, ... from members where id = ? and pwd = ?;
 
 -- 게시글 등록 (PostDAO.insert) - bno는 시퀀스에서 먼저 뽑아서 insert에 그대로 쓴다
 select seq_posts.nextval from dual;
@@ -193,7 +193,7 @@ delete from posts where bno = ? and writer = ?;
 
 ## 4. 수정/삭제 권한
 
-글 수정/삭제는 **세션의 로그인 아이디와 글의 writer가 같을 때만** 가능하다. 예외는 관리자(`is_admin = 'Y'`)이다.
+글 수정/삭제는 **세션의 로그인 아이디와 글의 writer가 같을 때만** 가능하다. 예외는 moderator 이상(`admin_level >= 1`)이다.
 
 | | 검사 위치 |
 |---|---|

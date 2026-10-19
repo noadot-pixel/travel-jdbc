@@ -31,7 +31,7 @@ public class PostModifyFormCommand implements Command {
 
 		MemberDTO loginMember = (MemberDTO) request.getSession().getAttribute("loginMember");
 
-		if (!loginMember.getId().equals(post.getWriter()) && !loginMember.isAdmin()) {
+		if (!loginMember.getId().equals(post.getWriter()) && !loginMember.isModerator()) {
 
 			request.getSession().setAttribute("flashMsg", "본인이 작성한 게시글만 수정할 수 있습니다.");
 			response.sendRedirect(request.getContextPath() + "/post/view?bno=" + bno);

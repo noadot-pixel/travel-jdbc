@@ -87,7 +87,7 @@ public class ProfileEditCommand implements Command {
 			String newPath = UploadUtil.save(photoPart, request.getServletContext(), "profile");
 
 			if (newPath == null) {
-				request.setAttribute("msg", "이미지 파일(5MB 이하)만 업로드할 수 있습니다.");
+				request.setAttribute("msg", "이미지 파일(10MB 이하)만 업로드할 수 있습니다.");
 				return true;
 			}
 

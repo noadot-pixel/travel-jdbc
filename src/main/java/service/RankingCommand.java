@@ -2,12 +2,16 @@ package service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import model.PostDAO;
+import model.PostDTO;
 import model.RankingDAO;
 import model.RegionRankDTO;
+import util.EscapeUtil;
 
 /**
  * 게시글 랭킹(GET /post/ranking) - 국가(KR/JP) x 성별(M/F)별 인기 지역 순위.
@@ -29,12 +33,52 @@ public class RankingCommand implements Command {
 		RankingDAO dao = new RankingDAO();
 		List<RegionRankDTO> maleRanking = dao.getRegionRanking(country, "M");
 		List<RegionRankDTO> femaleRanking = dao.getRegionRanking(country, "F");
+		List<RegionRankDTO> totalRanking = dao.getRegionRankingTotal(country);
 
 		request.setAttribute("country", country);
 		request.setAttribute("maleRanking", maleRanking);
 		request.setAttribute("femaleRanking", femaleRanking);
+		request.setAttribute("totalRanking", totalRanking);
+
+		//지도 hover 미리보기용 - 지역마다 좋아요 많은 순 3개, JSON 문자열로 미리 만들어서 넘긴다
+		//(JSP 스크립틀릿에서 직접 만들면 이스케이프 실수가 나기 쉬워서 여기서 처리한다).
+		Map<String, List<PostDTO>> topPostsByRegion = new PostDAO().getTopPostsByRegion(country, 3);
+		request.setAttribute("topPostsByRegionJson", buildTopPostsJson(topPostsByRegion));
 
 		return true;   // posts/ranking.jsp로 forward
+	}
+
+	private String buildTopPostsJson(Map<String, List<PostDTO>> topPostsByRegion) {
+
+		StringBuilder json = new StringBuilder("{");
+		boolean firstRegion = true;
+
+		for (Map.Entry<String, List<PostDTO>> entry : topPostsByRegion.entrySet()) {
+
+			if (!firstRegion) json.append(",");
+			firstRegion = false;
+
+			json.append("\"").append(entry.getKey()).append("\":[");
+
+			List<PostDTO> posts = entry.getValue();
+			for (int i = 0; i < posts.size(); i++) {
+
+				if (i > 0) json.append(",");
+
+				PostDTO post = posts.get(i);
+				json.append("{")
+					.append("\"bno\":").append(post.getBno()).append(",")
+					.append("\"title\":\"").append(EscapeUtil.json(post.getTitle())).append("\",")
+					.append("\"img\":\"").append(EscapeUtil.json(post.getImgPath())).append("\",")
+					.append("\"likeCnt\":").append(post.getLikeCnt())
+					.append("}");
+			}
+
+			json.append("]");
+		}
+
+		json.append("}");
+		return json.toString();
 	}
 
 }

@@ -22,7 +22,7 @@ CREATE TABLE members (
     id               VARCHAR2(100)  PRIMARY KEY,
     pwd              VARCHAR2(100)  NOT NULL,
     nickname         VARCHAR2(30)   NOT NULL,
-    is_admin         CHAR(1)        DEFAULT 'N' NOT NULL,
+    admin_level      NUMBER         DEFAULT 0 NOT NULL,   -- 0 = regular member, 1 = moderator, 2 = admin
     join_date        DATE           DEFAULT SYSDATE NOT NULL,
     bio              VARCHAR2(500),
     country          VARCHAR2(10),                -- KR / JP / ETC
@@ -34,15 +34,21 @@ CREATE TABLE members (
     photo_path       VARCHAR2(300),
     gender           VARCHAR2(1),                 -- M / F, asked at signup (ranking feature). NULL for members who joined before this.
     gender_public    CHAR(1)        DEFAULT 'Y' NOT NULL,
-    last_notice_seen DATE                         -- last time this member opened the notification bell. NULL = never.
+    last_notice_seen DATE,                        -- last time this member opened the notification bell. NULL = never.
+    suspended        CHAR(1)        DEFAULT 'N' NOT NULL,  -- admin-set; blocks comment/like/post-write, not scraps
+    dark_mode        CHAR(1)        DEFAULT 'N' NOT NULL   -- self-set in mypage; applied to every page via <html data-theme>
+
     -- Age is NOT stored as a column: MemberDTO.getAge() computes it from birthday instead,
     -- so there is nothing to keep in sync as time passes. (An age/age_public column pair
     -- existed briefly for this project's ranking feature and was dropped in favor of this.)
 );
 
--- Make an account an admin (sign up through the normal form first, then run):
--- UPDATE members SET is_admin = 'Y' WHERE id = 'the email you signed up with';
+-- Make an account a moderator or admin (sign up through the normal form first, then run):
+-- UPDATE members SET admin_level = 1 WHERE id = 'the email you signed up with';  -- moderator
+-- UPDATE members SET admin_level = 2 WHERE id = 'the email you signed up with';  -- admin
 -- COMMIT;
+-- After the first admin exists, everyone else can instead be promoted from
+-- /admin/members (only an admin, level 2, can change another account's level).
 
 
 -- 2. Posts
@@ -159,5 +165,6 @@ CREATE TABLE inquiries (
     title       VARCHAR2(200)   NOT NULL,
     content     VARCHAR2(2000)  NOT NULL,
     writer      VARCHAR2(100)   NOT NULL REFERENCES members(id),
-    reg_date    DATE            DEFAULT SYSDATE NOT NULL
+    reg_date    DATE            DEFAULT SYSDATE NOT NULL,
+    is_private  CHAR(1)         DEFAULT 'N' NOT NULL   -- 'Y'면 작성자 본인과 관리자만 볼 수 있음
 );

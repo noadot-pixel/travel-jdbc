@@ -37,7 +37,7 @@
 %>
 
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" <%= (loginMember != null && loginMember.isDarkMode()) ? "data-theme=\"dark\"" : "" %>>
 
 <head>
     <meta charset="UTF-8">
@@ -60,14 +60,14 @@
     <section class="page-heading">
 
         <p class="breadcrumb">
-            <a href="<%= contextPath %>/main">홈</a>
-            〉 <a href="<%= contextPath %>/member/mypage">마이페이지</a>
-            〉 회원정보 수정
+            <a href="<%= contextPath %>/main" data-i18n="nav.home">홈</a>
+            〉 <a href="<%= contextPath %>/member/mypage" data-i18n="mypage.title">마이페이지</a>
+            〉 <span data-i18n="editProfile.breadcrumb">회원정보 수정</span>
         </p>
 
-        <h1>회원정보 수정</h1>
+        <h1 data-i18n="editProfile.heading">회원정보 수정</h1>
 
-        <p class="page-description">
+        <p class="page-description" data-i18n="editProfile.pageDesc">
             내 프로필 정보를 수정하세요.
         </p>
 
@@ -86,7 +86,7 @@
 
             <div class="write-field">
 
-                <label for="profilePhoto">
+                <label for="profilePhoto" data-i18n="editProfile.photoLabel">
                     프로필 이미지
                 </label>
 
@@ -95,6 +95,8 @@
                     <img id="profilePhotoPreview"
                          class="profile-photo-preview"
                          src="<%= loginMember.getPhotoPath() != null ? (contextPath + "/" + loginMember.getPhotoPath()) : (contextPath + "/images/logo.png") %>"
+                         data-i18n="editProfile.photoPreviewAlt"
+                         data-i18n-attr="alt"
                          alt="프로필 이미지 미리보기">
 
                     <input type="file"
@@ -104,15 +106,15 @@
 
                 </div>
 
-                <p class="write-field-note">
-                    5MB 이하 이미지 파일만 업로드할 수 있습니다.
+                <p class="write-field-note" data-i18n="editProfile.photoNote">
+                    10MB 이하 이미지 파일만 업로드할 수 있습니다.
                 </p>
 
             </div>
 
             <div class="write-field">
 
-                <label for="profileNickname">
+                <label for="profileNickname" data-i18n="editProfile.nicknameLabel">
                     닉네임
                 </label>
 
@@ -125,27 +127,29 @@
 
             <div class="write-field">
 
-                <label for="profileBio">
+                <label for="profileBio" data-i18n="editProfile.bioLabel">
                     자기소개
                 </label>
 
                 <textarea id="profileBio"
                           name="profileBio"
                           rows="4"
+                          data-i18n="editProfile.bioPlaceholder"
+                          data-i18n-attr="placeholder"
                           placeholder="자신을 간단히 소개해 주세요"><%= EscapeUtil.html(bioValue) %></textarea>
 
             </div>
 
             <div class="write-field">
 
-                <label for="profileCountry">
+                <label for="profileCountry" data-i18n="mypage.countryLabel">
                     국가
                 </label>
 
                 <select id="profileCountry" name="profileCountry">
-                    <option value="KR" <%= "KR".equals(countryValue) ? "selected" : "" %>>한국</option>
-                    <option value="JP" <%= "JP".equals(countryValue) ? "selected" : "" %>>일본</option>
-                    <option value="ETC" <%= "ETC".equals(countryValue) ? "selected" : "" %>>기타</option>
+                    <option value="KR" data-i18n="filter.korea" <%= "KR".equals(countryValue) ? "selected" : "" %>>한국</option>
+                    <option value="JP" data-i18n="filter.japan" <%= "JP".equals(countryValue) ? "selected" : "" %>>일본</option>
+                    <option value="ETC" data-i18n="editProfile.countryOther" <%= "ETC".equals(countryValue) ? "selected" : "" %>>기타</option>
                 </select>
 
             </div>
@@ -154,7 +158,7 @@
                  id="profileCountryOtherField"
                  <%= "ETC".equals(countryValue) ? "" : "hidden" %>>
 
-                <label for="profileCountryOther">
+                <label for="profileCountryOther" data-i18n="editProfile.countryOtherLabel">
                     국가 직접 입력
                 </label>
 
@@ -162,17 +166,19 @@
                        id="profileCountryOther"
                        name="profileCountryOther"
                        value="<%= EscapeUtil.html(countryOtherValue) %>"
+                       data-i18n="editProfile.countryOtherPlaceholder"
+                       data-i18n-attr="placeholder"
                        placeholder="국가를 입력해 주세요">
 
             </div>
 
             <div class="mypage-personal-section">
 
-                <p class="filter-label">개인정보</p>
+                <p class="filter-label" data-i18n="editProfile.personalInfo">개인정보</p>
 
                 <% if (loginMember.getGender() == null) { %>
 
-                <p class="write-field-note">
+                <p class="write-field-note" data-i18n="editProfile.genderNote">
                     성별은 성별/여행지별 인기 게시글 통계(랭킹)에 쓰이며, 한 번 저장하면
                     이 화면에서 다시 바꿀 수 없습니다. 공개 여부는 자유롭게 선택하세요.
                     (나이는 따로 받지 않고 아래 생일로 계산해서 보여줘요)
@@ -182,23 +188,23 @@
 
                 <div class="write-field">
 
-                    <label>성별</label>
+                    <label data-i18n="mypage.genderLabel">성별</label>
 
                     <div class="filter-group" id="profileGenderGroup">
-                        <button type="button" class="filter-button" data-gender="M">남성</button>
-                        <button type="button" class="filter-button" data-gender="F">여성</button>
+                        <button type="button" class="filter-button" data-gender="M" data-i18n="gender.male">남성</button>
+                        <button type="button" class="filter-button" data-gender="F" data-i18n="gender.female">여성</button>
                     </div>
 
                     <div class="radio-group">
 
                         <label class="radio-option">
                             <input type="radio" name="genderVisibility" value="public" checked>
-                            공개
+                            <span data-i18n="mypage.public">공개</span>
                         </label>
 
                         <label class="radio-option">
                             <input type="radio" name="genderVisibility" value="private">
-                            비공개
+                            <span data-i18n="mypage.private">비공개</span>
                         </label>
 
                     </div>
@@ -209,7 +215,7 @@
                     <label class="auth-agree-label">
                         <input type="checkbox" id="privacyAgree" name="privacyAgree" value="Y">
                         <span>
-                            [필수] <a href="<%= contextPath %>/auth/privacy.jsp" target="_blank">개인정보 수집·이용</a>에 동의합니다.
+                            <span data-i18n="editProfile.privacyRequired">[필수]</span> <a href="<%= contextPath %>/privacy" target="_blank" data-i18n="editProfile.privacyLinkText">개인정보 수집·이용</a><span data-i18n="editProfile.privacyAgreeSuffix">에 동의합니다.</span>
                         </span>
                     </label>
                 </div>
@@ -218,7 +224,7 @@
 
                 <div class="write-field">
 
-                    <label for="profileBirthday">
+                    <label for="profileBirthday" data-i18n="mypage.birthdayLabel">
                         생일
                     </label>
 
@@ -231,12 +237,12 @@
 
                         <label class="radio-option">
                             <input type="radio" name="birthdayVisibility" value="public" <%= birthdayPublicValue ? "checked" : "" %>>
-                            공개
+                            <span data-i18n="mypage.public">공개</span>
                         </label>
 
                         <label class="radio-option">
                             <input type="radio" name="birthdayVisibility" value="private" <%= birthdayPublicValue ? "" : "checked" %>>
-                            비공개
+                            <span data-i18n="mypage.private">비공개</span>
                         </label>
 
                     </div>
@@ -245,7 +251,7 @@
 
                 <div class="write-field">
 
-                    <label for="profileName">
+                    <label for="profileName" data-i18n="mypage.nameLabel">
                         이름
                     </label>
 
@@ -253,18 +259,20 @@
                            id="profileName"
                            name="profileName"
                            value="<%= EscapeUtil.html(nameValue) %>"
+                           data-i18n="editProfile.namePlaceholder"
+                           data-i18n-attr="placeholder"
                            placeholder="이름을 입력해 주세요">
 
                     <div class="radio-group">
 
                         <label class="radio-option">
                             <input type="radio" name="nameVisibility" value="public" <%= namePublicValue ? "checked" : "" %>>
-                            공개
+                            <span data-i18n="mypage.public">공개</span>
                         </label>
 
                         <label class="radio-option">
                             <input type="radio" name="nameVisibility" value="private" <%= namePublicValue ? "" : "checked" %>>
-                            비공개
+                            <span data-i18n="mypage.private">비공개</span>
                         </label>
 
                     </div>
@@ -273,7 +281,7 @@
 
             </div>
 
-            <button type="submit" class="auth-submit">
+            <button type="submit" class="auth-submit" data-i18n="editProfile.save">
                 저장하기
             </button>
 
@@ -356,13 +364,13 @@
 
         if (genderInput.value === "") {
             event.preventDefault();
-            alert("성별을 선택해 주세요.");
+            alert(window.t("editProfile.genderRequiredAlert", "성별을 선택해 주세요."));
             return;
         }
 
         if (!privacyAgree) {
             event.preventDefault();
-            alert("개인정보 수집·이용에 동의해야 저장할 수 있습니다.");
+            alert(window.t("editProfile.privacyRequiredAlert", "개인정보 수집·이용에 동의해야 저장할 수 있습니다."));
         }
 
     });

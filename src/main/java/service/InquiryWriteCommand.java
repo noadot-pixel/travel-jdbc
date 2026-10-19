@@ -22,15 +22,16 @@ public class InquiryWriteCommand implements Command {
 
 		String title = request.getParameter("title");
 		String content = request.getParameter("content");
+		boolean isPrivate = "Y".equals(request.getParameter("isPrivate"));
 
 		if (title == null || title.trim().isEmpty() || content == null || content.trim().isEmpty()) {
 			request.setAttribute("msg", "제목과 내용을 모두 입력해 주세요.");
 			request.setAttribute("faqList", new model.FaqDAO().getList());
-			request.setAttribute("inquiryList", new InquiryDAO().getList());
+			request.setAttribute("inquiryList", new InquiryDAO().getList(loginMember.getId(), loginMember.isModerator()));
 			return true;   // support.jsp로 다시 forward
 		}
 
-		new InquiryDAO().insert(title.trim(), content.trim(), loginMember.getId());
+		new InquiryDAO().insert(title.trim(), content.trim(), loginMember.getId(), isPrivate);
 
 		//새로고침해도 문의가 두 번 등록되지 않도록 redirect. #contact로 돌아가 방금 올린 글을 바로 본다.
 		response.sendRedirect(request.getContextPath() + "/support#contact");

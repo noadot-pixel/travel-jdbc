@@ -14,7 +14,7 @@ public class MemberDTO {
 	private String id;             // 로그인 아이디 = 이메일
 	private String pwd;
 	private String nickname;
-	private boolean admin;         // IS_ADMIN = 'Y' 여부
+	private int adminLevel;        // ADMIN_LEVEL: 0=일반회원, 1=moderator, 2=admin
 	private String joinDate;       // "YYYY-MM-DD"
 
 	private String bio;
@@ -27,6 +27,8 @@ public class MemberDTO {
 	private String photoPath;      // 업로드 경로 ("upload/xxx.jpg"), 없으면 null
 	private String gender;         // M / F. 이 기능 이전 가입자는 null
 	private boolean genderPublic;
+	private boolean suspended;     // 관리자가 활동 정지시킨 계정인지 (댓글/좋아요/글쓰기 금지, 스크랩은 허용)
+	private boolean darkMode;      // 마이페이지에서 본인이 켜고 끄는 다크모드 선호
 
 	public String getId() {
 		return id;
@@ -46,11 +48,20 @@ public class MemberDTO {
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
 	}
-	public boolean isAdmin() {
-		return admin;
+	public int getAdminLevel() {
+		return adminLevel;
 	}
-	public void setAdmin(boolean admin) {
-		this.admin = admin;
+	public void setAdminLevel(int adminLevel) {
+		this.adminLevel = adminLevel;
+	}
+	//관리자 화면에 들어올 수 있는지(모더레이터 이상) - 공지/FAQ/회원 정지/게시글·댓글 관리 등
+	//권한 지정을 제외한 거의 모든 관리 기능에서 이 기준을 쓴다.
+	public boolean isModerator() {
+		return adminLevel >= 1;
+	}
+	//최상위 관리자인지 - 다른 사람의 권한 레벨을 바꿀 수 있는 건 이 레벨뿐이다.
+	public boolean isAdmin() {
+		return adminLevel >= 2;
 	}
 	public String getJoinDate() {
 		return joinDate;
@@ -117,6 +128,18 @@ public class MemberDTO {
 	}
 	public void setGenderPublic(boolean genderPublic) {
 		this.genderPublic = genderPublic;
+	}
+	public boolean isSuspended() {
+		return suspended;
+	}
+	public void setSuspended(boolean suspended) {
+		this.suspended = suspended;
+	}
+	public boolean isDarkMode() {
+		return darkMode;
+	}
+	public void setDarkMode(boolean darkMode) {
+		this.darkMode = darkMode;
 	}
 
 	//성별 코드를 화면에 보여줄 이름으로 바꿔준다 (이 기능 이전 가입자는 gender가 null이라 그대로 null 반환)

@@ -14,14 +14,14 @@
         return;
     }
 
-    if (!loginMember.isAdmin()) {
+    if (!loginMember.isModerator()) {
         response.sendRedirect(contextPath + "/main");
         return;
     }
 %>
 
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" <%= (loginMember != null && loginMember.isDarkMode()) ? "data-theme=\"dark\"" : "" %>>
 
 <head>
     <meta charset="UTF-8">
@@ -44,13 +44,13 @@
     <section class="page-heading">
 
         <p class="breadcrumb">
-            <a href="<%= contextPath %>/main">홈</a>
-            〉 관리자
+            <a href="<%= contextPath %>/main" data-i18n="nav.home">홈</a>
+            〉 <span data-i18n="nav.admin">관리자</span>
         </p>
 
-        <h1>관리자</h1>
+        <h1 data-i18n="nav.admin">관리자</h1>
 
-        <p class="page-description">
+        <p class="page-description" data-i18n="admin.pageDesc">
             게시글 로그를 확인하고, 예시 게시글을 추가할 수 있습니다.
         </p>
 
@@ -61,9 +61,9 @@
         <a href="<%= contextPath %>/admin/postLogs"
            class="admin-menu-card">
 
-            <h2>게시글 로그</h2>
+            <h2 data-i18n="admin.menuLogsTitle">게시글 로그</h2>
 
-            <p>
+            <p data-i18n="admin.menuLogsDesc">
                 게시글 작성·수정·삭제 이력을 조회합니다.
             </p>
 
@@ -72,9 +72,9 @@
         <a href="<%= contextPath %>/admin/notices"
            class="admin-menu-card">
 
-            <h2>공지사항 관리</h2>
+            <h2 data-i18n="admin.menuNoticesTitle">공지사항 관리</h2>
 
-            <p>
+            <p data-i18n="admin.menuNoticesDesc">
                 공지를 등록/삭제합니다. 등록한 공지는 모든 회원의 알림 벨과 공지사항 페이지에 표시됩니다.
             </p>
 
@@ -83,10 +83,21 @@
         <a href="<%= contextPath %>/admin/faqs"
            class="admin-menu-card">
 
-            <h2>FAQ 관리</h2>
+            <h2 data-i18n="admin.menuFaqsTitle">FAQ 관리</h2>
 
-            <p>
+            <p data-i18n="admin.menuFaqsDesc">
                 자주 묻는 질문을 등록/수정/삭제합니다. 문의하기 페이지 상단에 표시됩니다.
+            </p>
+
+        </a>
+
+        <a href="<%= contextPath %>/admin/members"
+           class="admin-menu-card">
+
+            <h2 data-i18n="admin.menuMembersTitle">회원 관리</h2>
+
+            <p data-i18n="admin.menuMembersDesc">
+                전체 회원 목록을 확인하고, 계정의 활동(댓글/좋아요/글쓰기)을 정지/해제합니다.
             </p>
 
         </a>
@@ -100,14 +111,15 @@
 
     <section class="admin-seed-section">
 
-        <p class="admin-seed-description">
+        <p class="admin-seed-description" data-i18n="admin.seedDesc">
             게시판이 비어 있을 때 예시 게시글 9개를 한 번에 채워 넣습니다.
             이미 게시글이 있으면 아무 것도 바뀌지 않습니다.
         </p>
 
         <button type="button"
                 id="seedButton"
-                class="auth-submit admin-seed-button">
+                class="auth-submit admin-seed-button"
+                data-i18n="admin.seedButton">
             예시 게시글 시드 추가
         </button>
 
@@ -126,9 +138,9 @@
                 .then(function (data) {
 
                     if (data.added === 0) {
-                        alert("이미 게시글이 있어서 시드를 추가하지 않았습니다.");
+                        alert(window.t("admin.seedAlreadyExists", "이미 게시글이 있어서 시드를 추가하지 않았습니다."));
                     } else {
-                        alert(data.added + "개의 예시 게시글을 추가했습니다.");
+                        alert(data.added + window.t("admin.seedAddedSuffix", "개의 예시 게시글을 추가했습니다."));
                     }
 
                 });

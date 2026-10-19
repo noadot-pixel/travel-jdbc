@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.CommentDAO;
+import model.MemberDAO;
 import model.MemberDTO;
 import model.NotificationDAO;
 import model.PostDAO;
@@ -30,6 +31,11 @@ public class CommentWriteCommand implements Command {
 
 		if (loginMember == null) {
 			out.print("{\"result\":\"login\"}");
+			return false;
+		}
+
+		if (new MemberDAO().isSuspendedNow(loginMember.getId())) {
+			out.print("{\"result\":\"suspended\"}");
 			return false;
 		}
 

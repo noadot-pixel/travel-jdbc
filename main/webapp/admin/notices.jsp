@@ -17,7 +17,7 @@
         return;
     }
 
-    if (!loginMember.isAdmin()) {
+    if (!loginMember.isModerator()) {
         response.sendRedirect(contextPath + "/main");
         return;
     }
@@ -32,7 +32,7 @@
 %>
 
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" <%= (loginMember != null && loginMember.isDarkMode()) ? "data-theme=\"dark\"" : "" %>>
 
 <head>
     <meta charset="UTF-8">
@@ -55,14 +55,14 @@
     <section class="page-heading">
 
         <p class="breadcrumb">
-            <a href="<%= contextPath %>/main">홈</a>
-            〉 <a href="<%= contextPath %>/admin/index.jsp">관리자</a>
-            〉 공지사항 관리
+            <a href="<%= contextPath %>/main" data-i18n="nav.home">홈</a>
+            〉 <a href="<%= contextPath %>/admin" data-i18n="nav.admin">관리자</a>
+            〉 <span data-i18n="admin.menuNoticesTitle">공지사항 관리</span>
         </p>
 
-        <h1>공지사항 관리</h1>
+        <h1 data-i18n="admin.menuNoticesTitle">공지사항 관리</h1>
 
-        <p class="page-description">
+        <p class="page-description" data-i18n="adminNotices.pageDesc">
             등록한 공지는 모든 회원의 알림 벨에 표시됩니다.
         </p>
 
@@ -73,17 +73,17 @@
         <form id="noticeForm">
 
             <div class="write-field">
-                <label for="noticeTitle">제목</label>
-                <input type="text" id="noticeTitle" placeholder="공지 제목을 입력해 주세요">
+                <label for="noticeTitle" data-i18n="write.titleLabel">제목</label>
+                <input type="text" id="noticeTitle" data-i18n="adminNotices.titlePlaceholder" data-i18n-attr="placeholder" placeholder="공지 제목을 입력해 주세요">
             </div>
 
             <div class="write-field">
-                <label for="noticeContentEditor">내용</label>
+                <label for="noticeContentEditor" data-i18n="support.contentLabel">내용</label>
                 <div id="noticeContentEditor" class="quill-editor-container"></div>
                 <input type="hidden" id="noticeContent" name="content">
             </div>
 
-            <button type="submit" class="auth-submit">등록하기</button>
+            <button type="submit" class="auth-submit" data-i18n="write.submit">등록하기</button>
 
         </form>
 
@@ -92,7 +92,7 @@
     <section class="admin-notice-list-section">
 
         <% if (noticeList.isEmpty()) { %>
-        <p class="ranking-empty">등록된 공지가 없습니다.</p>
+        <p class="ranking-empty" data-i18n="notice.empty">등록된 공지가 없습니다.</p>
         <% } else { %>
         <ul class="admin-notice-list">
             <% for (NoticeDTO notice : noticeList) { %>
@@ -105,7 +105,7 @@
 
                 <div class="detail-body admin-notice-content"><%= notice.getContent() %></div>
 
-                <button type="button" class="admin-notice-delete-button" data-notice-id="<%= notice.getNoticeId() %>">삭제</button>
+                <button type="button" class="admin-notice-delete-button" data-notice-id="<%= notice.getNoticeId() %>" data-i18n="common.delete">삭제</button>
 
             </li>
             <% } %>
@@ -125,7 +125,7 @@
         hiddenInputId: "noticeContent",
         uploadUrl: "<%= contextPath %>/post/uploadImage",
         loginUrl: "<%= contextPath %>/member/login",
-        placeholder: "공지 내용을 입력해 주세요"
+        placeholder: window.t("adminNotices.contentPlaceholder", "공지 내용을 입력해 주세요")
     });
 
     document.getElementById("noticeForm").addEventListener("submit", function (event) {
@@ -136,7 +136,7 @@
         const bodyIsEmpty = noticeQuill.getText().trim() === "" && noticeQuill.root.querySelectorAll("img").length === 0;
 
         if (title === "" || bodyIsEmpty) {
-            alert("제목과 내용을 모두 입력해 주세요.");
+            alert(window.t("adminNotices.fillAllAlert", "제목과 내용을 모두 입력해 주세요."));
             return;
         }
 
@@ -151,7 +151,7 @@
             .then(function (data) {
 
                 if (data.result !== "ok") {
-                    alert("공지 등록에 실패했습니다.");
+                    alert(window.t("adminNotices.createFailedAlert", "공지 등록에 실패했습니다."));
                     return;
                 }
 
@@ -164,7 +164,7 @@
 
         button.addEventListener("click", function () {
 
-            if (!confirm("이 공지를 삭제할까요?")) {
+            if (!confirm(window.t("adminNotices.confirmDelete", "이 공지를 삭제할까요?"))) {
                 return;
             }
 
@@ -176,7 +176,7 @@
                 .then(function (data) {
 
                     if (data.result !== "ok") {
-                        alert("삭제에 실패했습니다.");
+                        alert(window.t("adminNotices.deleteFailedAlert", "삭제에 실패했습니다."));
                         return;
                     }
 

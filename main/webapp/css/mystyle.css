@@ -8,6 +8,57 @@
     --gray-color: #687486;
     --border-color: #e5eaf0;
     --white: #ffffff;
+    --input-bg: #f8fbfe;
+    --body-bg: #ffffff;
+    --error: #d64545;
+    --error-bg: #fdf0f0;
+    --error-border: #f0c6c6;
+    --warning: #9a7b12;
+    --warning-bg: #fdf3d9;
+
+    --shadow:
+        0 12px 30px rgba(20, 54, 91, 0.13);
+}
+
+/*
+ * 다크모드 - 순검정이 아니라 쿨톤(남색 계열) 기준. 마이페이지의 토글을 켜면 서버가
+ * <html data-theme="dark">를 내려주고, 이 색상들이 사이트 전체에 쓰이는 --navy/--blue 등을
+ * 전부 다시 정의한다. 개별 컴포넌트 CSS를 거의 안 건드려도 되는 이유가 이것 - 대부분의
+ * 규칙이 처음부터 색을 직접 적지 않고 var(--xxx)로 가져다 썼기 때문.
+ */
+:root[data-theme="dark"] {
+    --navy: #e8edf5;
+    --blue: #4a7fd6;   /* 버튼 배경(흰 글씨)과 어두운 바탕 위 글자색, 둘 다로 쓰여서 너무 밝지 않게 맞춤 */
+    --light-blue: #16263d;
+    --text-color: #c9d4e3;
+    --gray-color: #8b98ab;
+    --border-color: #2a3a52;
+    --white: #16202f;
+    --input-bg: #1c2a40;
+    --body-bg: #0f1724;
+    --error: #e8828a;
+    --error-bg: #3a1f24;
+    --error-border: #5a2e35;
+    --warning: #e0b84a;
+    --warning-bg: #3a331a;
+
+    --shadow:
+        0 12px 30px rgba(0, 0, 0, 0.45);
+
+    /* 달력 입력창(생일), 스크롤바 같은 브라우저 기본 UI도 같이 어둡게 맞춘다 */
+    color-scheme: dark;
+}
+
+/*
+ * 메인 히어로(.main-visual)와 로그인/가입 사진 패널(.auth-visual)은 배경 사진 자체가
+ * 테마에 따라 바뀌지 않으므로, 다크모드에서도 원래(라이트) 색상 그대로 쓰도록 변수를
+ * 되돌려준다. 안 그러면 사진 위 글자색이 테마를 따라가면서 가독성이 깨짐.
+ */
+:root[data-theme="dark"] .main-visual,
+:root[data-theme="dark"] .auth-visual {
+    --navy: #0c2f5d;
+    --blue: #3272dc;
+    --white: #ffffff;
 
     --shadow:
         0 12px 30px rgba(20, 54, 91, 0.13);
@@ -22,7 +73,7 @@
     top: 0;
     z-index: 100;
     height: 82px;
-    background-color: white;
+    background-color: var(--white);
 
     box-shadow:
         0 1px 10px rgba(15, 47, 82, 0.08);
@@ -32,8 +83,7 @@
     display: flex;
     align-items: center;
     gap: 35px;
-    width: 100%;
-    max-width: 1280px;
+    width: 90%;
     height: 100%;
     margin: 0 auto;
     padding: 0 24px;
@@ -136,7 +186,7 @@
 .main-content {
     position: relative;
     z-index: 2;
-    max-width: 1180px;
+    width: 90%;
     margin: 0 auto;
     padding: 63px 24px;
 }
@@ -156,7 +206,7 @@
     letter-spacing: -2px;
 }
 
-.main-content h1 span {
+.main-content h1 .hero-title-highlight {
     display: block;
     font-size: 41px;
 }
@@ -176,7 +226,7 @@
     margin-top: 25px;
     padding: 5px 6px 5px 20px;
     border-radius: 30px;
-    background-color: white;
+    background-color: var(--white);
     box-shadow: var(--shadow);
 }
 
@@ -253,22 +303,55 @@
 ========================= */
 
 .category-section {
-    max-width: 1180px;
+    width: 90%;
     margin: 60px auto;
     padding: 0 24px;
 }
 
+.category-carousel {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.category-viewport {
+    overflow: hidden;
+    width: 100%;
+}
+
 .category-list {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    display: flex;
     gap: 18px;
+    transition: transform 0.3s ease;
+}
+
+.category-nav {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    color: var(--gray-color);
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    background-color: var(--white);
+    font-size: 20px;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+}
+
+.category-nav:hover {
+    color: var(--blue);
+    border-color: var(--blue);
 }
 
 .category-card {
+    flex: 0 0 calc((100% - 3 * 18px) / 4);
     overflow: hidden;
     border: 1px solid var(--border-color);
     border-radius: 15px;
-    background-color: white;
+    background-color: var(--white);
 
     box-shadow:
         0 6px 18px rgba(25, 50, 80, 0.09);
@@ -310,7 +393,7 @@
 ========================= */
 
 .story-section {
-    max-width: 1180px;
+    width: 90%;
     margin: 75px auto;
     padding: 0 24px;
 }
@@ -325,7 +408,7 @@
     justify-content: space-between;
     margin-bottom: 17px;
     padding-bottom: 12px;
-    border-bottom: 2px solid #dce8f4;
+    border-bottom: 2px solid var(--border-color);
 }
 
 .country-heading h3 {
@@ -343,7 +426,7 @@
     padding: 5px 11px;
     color: var(--blue);
     border-radius: 15px;
-    background-color: #edf5ff;
+    background-color: var(--light-blue);
     font-size: 12px;
     font-weight: 700;
 }
@@ -357,7 +440,7 @@
 
 .country-card-list {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 24px;
 }
 
@@ -368,7 +451,7 @@
     min-height: 420px;
     border: 1px solid var(--border-color);
     border-radius: 14px;
-    background-color: white;
+    background-color: var(--white);
 
     box-shadow:
         0 5px 18px rgba(25, 50, 80, 0.09);
@@ -430,8 +513,8 @@
 	display: inline-block;
 	padding: 4px 10px;
 	border-radius: 20px;
-	background-color: #e8f3ff;
-	color: #2878d0;
+	background-color: var(--light-blue);
+	color: var(--blue);
 	font-size: 13px;
 	font-weight: 600;
 }
@@ -459,7 +542,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 8px 12px;
-    color: #8993a2;
+    color: var(--gray-color);
     font-size: 11px;
 }
 
@@ -473,11 +556,11 @@
     min-height: 420px;
     padding: 30px;
 
-    border: 2px dashed #d8e0e9;
+    border: 2px dashed var(--border-color);
     border-radius: 14px;
 
-    color: #9ca6b3;
-    background-color: #f9fbfd;
+    color: var(--gray-color);
+    background-color: var(--input-bg);
     text-align: center;
 }
 
@@ -543,7 +626,7 @@
     padding: 13px 24px;
     color: var(--navy);
     border-radius: 25px;
-    background-color: white;
+    background-color: var(--white);
     font-weight: 700;
 }
 
@@ -608,7 +691,7 @@
 .copyright {
     max-width: 1132px;
     margin: 35px auto 0;
-    color: #7d8794;
+    color: var(--gray-color);
     font-size: 12px;
 }
 
@@ -617,7 +700,7 @@
 ========================= */
 
 .page-heading {
-    max-width: 1180px;
+    width: 90%;
     margin: 50px auto 30px;
     padding: 0 24px;
 }
@@ -652,12 +735,12 @@
 ========================= */
 
 .filter-section {
-    max-width: 1180px;
+    width: 90%;
     margin: 0 auto 40px;
     padding: 24px;
     border: 1px solid var(--border-color);
     border-radius: 16px;
-    background-color: white;
+    background-color: var(--white);
 
     box-shadow:
         0 6px 18px rgba(25, 50, 80, 0.06);
@@ -688,7 +771,7 @@
     color: var(--gray-color);
     border: 1px solid var(--border-color);
     border-radius: 20px;
-    background-color: white;
+    background-color: var(--white);
     font-size: 13px;
     cursor: pointer;
 }
@@ -712,7 +795,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    max-width: 1180px;
+    width: 90%;
     margin: 0 auto 20px;
     padding: 0 24px;
 }
@@ -736,7 +819,7 @@
     color: var(--gray-color);
     border: 1px solid var(--border-color);
     border-radius: 16px;
-    background-color: white;
+    background-color: var(--white);
     font-size: 13px;
     cursor: pointer;
 }
@@ -753,15 +836,15 @@
 
 .post-list {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 24px;
-    max-width: 1180px;
-    margin: 0 auto;
+    width: 90%;
+    margin: 0 auto 60px;
     padding: 0 24px;
 }
 
 .empty-result {
-    max-width: 1180px;
+    width: 90%;
     margin: 40px auto;
     padding: 0 24px;
     color: var(--gray-color);
@@ -776,20 +859,24 @@
 .pagination {
     display: flex;
     justify-content: center;
-    gap: 8px;
-    max-width: 1180px;
-    margin: 40px auto 80px;
+    align-items: center;
+    gap: 10px;
+    width: 90%;
+    margin: 10px auto 80px;
     padding: 0 24px;
 }
 
 .page-button {
-    width: 36px;
-    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
     color: var(--gray-color);
     border: 1px solid var(--border-color);
     border-radius: 50%;
-    background-color: white;
-    font-size: 13px;
+    background-color: var(--white);
+    font-size: 14px;
     cursor: pointer;
 }
 
@@ -812,7 +899,7 @@
     min-height: calc(100vh - 82px);
     padding: 54px 24px 70px;
     background:
-        linear-gradient(180deg, #f5faff 0%, #ffffff 62%);
+        linear-gradient(180deg, var(--light-blue) 0%, var(--body-bg) 62%);
 }
 
 .auth-layout {
@@ -972,7 +1059,7 @@
     border: 1px solid var(--border-color);
     border-radius: 12px;
     outline: none;
-    background-color: #f8fbfe;
+    background-color: var(--input-bg);
     color: var(--text-color);
     font-size: 14px;
     transition:
@@ -982,11 +1069,11 @@
 }
 
 .auth-box input::placeholder {
-    color: #9aa6b4;
+    color: var(--gray-color);
 }
 
 .auth-box input:hover {
-    border-color: #c9d8e8;
+    border-color: var(--border-color);
     background-color: var(--white);
 }
 
@@ -1000,7 +1087,7 @@
     width: 100%;
     height: 52px;
     margin-top: 4px;
-    color: var(--white);
+    color: #fff;
     border: 0;
     border-radius: 12px;
     background-color: var(--blue);
@@ -1030,7 +1117,7 @@
     align-items: center;
     gap: 12px;
     margin: 28px 0 18px;
-    color: #9ca8b7;
+    color: var(--gray-color);
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 1.3px;
@@ -1245,7 +1332,7 @@
     padding: 10px 20px;
     border: 1px solid var(--border-color);
     border-radius: 10px;
-    background-color: white;
+    background-color: var(--white);
     font-size: 14px;
     font-weight: 700;
     cursor: pointer;
@@ -1261,12 +1348,12 @@
 }
 
 .detail-delete-button {
-    color: #d64545;
-    border-color: #f0c6c6;
+    color: var(--error);
+    border-color: var(--error-border);
 }
 
 .detail-delete-button:hover {
-    background-color: #fdf0f0;
+    background-color: var(--error-bg);
 }
 
 .detail-back a {
@@ -1307,7 +1394,7 @@
     padding: 16px 18px;
     border: 1px solid var(--border-color);
     border-radius: 10px;
-    background-color: #f8fbfe;
+    background-color: var(--input-bg);
     color: var(--text-color);
     font-size: 14px;
     font-family: inherit;
@@ -1319,7 +1406,7 @@
 .write-field textarea:focus {
     outline: none;
     border-color: var(--blue);
-    background-color: white;
+    background-color: var(--white);
 }
 
 .write-field input[type="file"] {
@@ -1358,7 +1445,7 @@
     padding: 14px 40px 14px 16px;
     border: 1px solid var(--border-color);
     border-radius: 10px;
-    background-color: #f8fbfe;
+    background-color: var(--input-bg);
     color: var(--text-color);
     font-size: 14px;
     font-family: inherit;
@@ -1377,13 +1464,13 @@
 .write-field select:focus {
     outline: none;
     border-color: var(--blue);
-    background-color: white;
+    background-color: var(--white);
 }
 
 .write-field select option {
     padding: 10px;
     color: var(--text-color);
-    background-color: white;
+    background-color: var(--white);
 }
 
 .email-input-group {
@@ -1410,7 +1497,7 @@
     padding: 20px;
     border: 1px solid var(--border-color);
     border-radius: 12px;
-    background-color: #f9fbfd;
+    background-color: var(--input-bg);
 }
 
 .mypage-personal-section .filter-label {
@@ -1453,7 +1540,7 @@
     padding: 26px;
     border: 1px solid var(--border-color);
     border-radius: 16px;
-    background-color: white;
+    background-color: var(--white);
 
     box-shadow:
         0 6px 18px rgba(25, 50, 80, 0.06);
@@ -1502,7 +1589,7 @@
     overflow: hidden;
     border: 1px solid var(--border-color);
     border-radius: 12px;
-    background-color: white;
+    background-color: var(--white);
 }
 
 .admin-table th,
@@ -1537,8 +1624,8 @@
 }
 
 .admin-status-suspended {
-    color: #d64545;
-    background-color: #fdeaea;
+    color: var(--error);
+    background-color: var(--error-bg);
 }
 
 .admin-log-type {
@@ -1554,13 +1641,13 @@
 }
 
 .admin-log-update {
-    color: #9a7b12;
-    background-color: #fdf3d9;
+    color: var(--warning);
+    background-color: var(--warning-bg);
 }
 
 .admin-log-delete {
-    color: #d64545;
-    background-color: #fdeaea;
+    color: var(--error);
+    background-color: var(--error-bg);
 }
 
 .admin-seed-section {
@@ -1652,7 +1739,7 @@
     padding: 28px;
     border: 1px solid var(--border-color);
     border-radius: 16px;
-    background-color: white;
+    background-color: var(--white);
     box-shadow: 0 6px 18px rgba(25, 50, 80, 0.06);
 }
 
@@ -1702,6 +1789,112 @@
 }
 
 /* =========================
+   내 활동 (게시글/댓글/스크랩 탭, mypage.jsp)
+========================= */
+
+.activity-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 90%;
+    margin: 0 auto 24px;
+    padding: 0 24px;
+}
+
+/* 헤더의 다크/화이트 모드 토글(.theme-select-wrap)과 같은 디자인의 알약형 라디오 */
+.pill-radio-wrap {
+    display: flex;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.pill-radio-option {
+    position: relative;
+    padding: 8px 18px;
+    color: var(--gray-color);
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+.pill-radio-option + .pill-radio-option {
+    border-left: 1px solid var(--border-color);
+}
+
+.pill-radio-option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.pill-radio-option:hover:not(.active) {
+    color: var(--blue);
+    background-color: var(--light-blue);
+}
+
+.pill-radio-option.active {
+    color: white;
+    background-color: var(--blue);
+    font-weight: 700;
+}
+
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 90%;
+    margin: 0 auto 60px;
+    padding: 0 24px;
+    list-style: none;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    background-color: var(--white);
+}
+
+.activity-item-link {
+    display: block;
+    min-width: 0;
+    flex: 1;
+    color: inherit;
+}
+
+.activity-item-title {
+    display: block;
+    overflow: hidden;
+    color: var(--navy);
+    font-size: 15px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.activity-item-desc {
+    overflow: hidden;
+    margin-top: 4px;
+    color: var(--gray-color);
+    font-size: 13px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.activity-item-date {
+    display: block;
+    margin-top: 4px;
+    color: var(--gray-color);
+    font-size: 12px;
+}
+
+/* =========================
    프로필 이미지 업로드 (mypage/edit.jsp)
 ========================= */
 
@@ -1745,7 +1938,7 @@
     padding: 10px 12px;
     border: 1px solid var(--border-color);
     border-radius: 10px;
-    background-color: #f9fbfd;
+    background-color: var(--input-bg);
 }
 
 .author-info-photo {
@@ -1804,7 +1997,7 @@
     padding: 10px 20px;
     border: 1px solid var(--border-color);
     border-radius: 24px;
-    background-color: white;
+    background-color: var(--white);
     color: var(--gray-color);
     font-size: 14px;
     font-weight: 700;
@@ -1827,9 +2020,9 @@
 }
 
 #likeButton.active {
-    color: #d64545;
-    border-color: #f0c6c6;
-    background-color: #fdf0f0;
+    color: var(--error);
+    border-color: var(--error-border);
+    background-color: var(--error-bg);
 }
 
 /* =========================
@@ -1861,7 +2054,7 @@
     padding: 14px 16px;
     border: 1px solid var(--border-color);
     border-radius: 10px;
-    background-color: #f8fbfe;
+    background-color: var(--input-bg);
     color: var(--text-color);
     font-size: 14px;
     font-family: inherit;
@@ -1872,7 +2065,7 @@
 .comment-form textarea:focus {
     outline: none;
     border-color: var(--blue);
-    background-color: white;
+    background-color: var(--white);
 }
 
 .comment-submit {
@@ -1919,16 +2112,16 @@
 .comment-delete {
     margin-left: auto;
     padding: 4px 10px;
-    border: 1px solid #f0c6c6;
+    border: 1px solid var(--error-border);
     border-radius: 8px;
-    background-color: white;
-    color: #d64545;
+    background-color: var(--white);
+    color: var(--error);
     font-size: 12px;
     cursor: pointer;
 }
 
 .comment-delete:hover {
-    background-color: #fdf0f0;
+    background-color: var(--error-bg);
 }
 
 .comment-body {
@@ -1963,8 +2156,8 @@
 }
 
 .field-error {
-    color: #d64545;
-    background-color: #fdf0f0;
+    color: var(--error);
+    background-color: var(--error-bg);
 }
 
 .field-msg {
@@ -2060,22 +2253,16 @@ label.auth-agree-label {
 }
 
 .ranking-section {
-    max-width: 1180px;
+    width: 90%;
     margin: 0 auto 80px;
     padding: 0 24px;
-}
-
-.ranking-columns {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
 }
 
 .ranking-column {
     padding: 24px;
     border: 1px solid var(--border-color);
     border-radius: 16px;
-    background-color: white;
+    background-color: var(--white);
 
     box-shadow:
         0 6px 18px rgba(25, 50, 80, 0.06);
@@ -2094,15 +2281,23 @@ label.auth-agree-label {
 }
 
 .ranking-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 4px;
     border-bottom: 1px solid var(--border-color);
 }
 
 .ranking-item:last-child {
     border-bottom: 0;
+}
+
+.ranking-item a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 4px;
+    border-radius: 8px;
+}
+
+.ranking-item a:hover {
+    background-color: var(--light-blue);
 }
 
 .ranking-rank {
@@ -2136,6 +2331,185 @@ label.auth-agree-label {
     font-size: 12px;
 }
 
+/* =========================
+   지역별 게시글 분포 지도 (posts/ranking.jsp)
+========================= */
+
+.ranking-layout {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    align-items: start;
+    gap: 24px;
+}
+
+.ranking-lists-col {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.ranking-map-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.ranking-map-head h2 {
+    color: var(--navy);
+    font-size: 16px;
+}
+
+/* 지도 카드 안쪽에 겹쳐 놓는 범례 - 항상 흰 배경 카드 위에 놓이므로(zoom 버튼과 같은 이유)
+   테마 변수 대신 고정 색상을 쓴다. */
+.region-map-legend {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 12;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 20px;
+    background-color: #fff;
+    box-shadow: 0 4px 10px rgba(25, 50, 80, 0.12);
+    color: #687486;
+    font-size: 12px;
+    pointer-events: none;
+}
+
+.ranking-map-legend-bar {
+    display: inline-block;
+    width: 90px;
+    height: 10px;
+    border-radius: 5px;
+    background: linear-gradient(90deg, hsl(215, 60%, 88%), hsl(215, 62%, 43%));
+}
+
+.region-map-wrap {
+    position: relative;
+}
+
+/* 지도 자체는 라이트 배경 위에서 색을 계산해뒀으므로(main-visual/auth-visual과 같은 이유),
+   다크모드에서도 카드 배경만큼은 항상 밝게 고정한다. */
+.region-map-container {
+    padding: 20px 20px 32px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    background-color: #fff;
+    box-shadow: 0 6px 18px rgba(25, 50, 80, 0.06);
+    cursor: grab;
+    touch-action: none;
+}
+
+.region-map-container.is-dragging {
+    cursor: grabbing;
+}
+
+.region-map-container svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+    object-fit: contain;
+}
+
+.region-map-zoom-controls {
+    position: absolute;
+    right: 14px;
+    bottom: 14px;
+    z-index: 15;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.region-map-zoom-button {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #d9e2ec;
+    border-radius: 50%;
+    background-color: #fff;
+    color: #0c2f5d;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(25, 50, 80, 0.12);
+    transition: background-color 0.15s ease;
+}
+
+.region-map-zoom-button:hover {
+    background-color: #edf7ff;
+}
+
+.region-map-zoom-reset {
+    font-size: 14px;
+}
+
+.region-map-tooltip {
+    position: absolute;
+    z-index: 20;
+    width: 230px;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background-color: #fff;
+    box-shadow: 0 12px 30px rgba(20, 54, 91, 0.18);
+    pointer-events: none;
+    transform: translate(-50%, -100%) translateY(-10px);
+}
+
+.region-map-tooltip-title {
+    margin-bottom: 8px;
+    color: #0c2f5d;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.region-map-tooltip-empty {
+    color: #687486;
+    font-size: 12px;
+}
+
+.region-map-tooltip-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.region-map-tooltip-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    pointer-events: auto;
+}
+
+.region-map-tooltip-item img {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    object-fit: cover;
+    background-color: #edf7ff;
+}
+
+.region-map-tooltip-item span {
+    overflow: hidden;
+    color: #17243a;
+    font-size: 12px;
+    line-height: 1.4;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 @media (max-width: 720px) {
 
     .ranking-heading {
@@ -2143,7 +2517,7 @@ label.auth-agree-label {
         align-items: flex-start;
     }
 
-    .ranking-columns {
+    .ranking-layout {
         grid-template-columns: 1fr;
     }
 
@@ -2172,8 +2546,9 @@ label.auth-agree-label {
     right: -6px;
     padding: 1px 5px;
     color: white;
+    border: 1px solid var(--white);
     border-radius: 10px;
-    background-color: #d64545;
+    background-color: var(--error);
     font-size: 11px;
     font-weight: 700;
 }
@@ -2189,7 +2564,7 @@ label.auth-agree-label {
     padding: 8px;
     border: 1px solid var(--border-color);
     border-radius: 14px;
-    background-color: white;
+    background-color: var(--white);
 
     box-shadow: var(--shadow);
 }
@@ -2240,6 +2615,12 @@ a.notif-item:hover {
     background-color: var(--light-blue);
 }
 
+/* 이미 읽은 개인 알림(.notif-unread가 없는 알림)은 글자색을 한 단계 죽여서
+   "이미 확인함"을 표시한다 (화이트: 채도/명도 낮은 회색, 다크: 채도 낮고 명도 높은 회색). */
+.notif-alert-item:not(.notif-unread) span:first-child {
+    color: var(--gray-color);
+}
+
 /* =========================
    공지사항 관리 (admin/notices.jsp)
 ========================= */
@@ -2258,7 +2639,7 @@ a.notif-item:hover {
     padding: 18px 90px 18px 18px;
     border: 1px solid var(--border-color);
     border-radius: 14px;
-    background-color: white;
+    background-color: var(--white);
 }
 
 .admin-notice-item-head {
@@ -2288,10 +2669,10 @@ a.notif-item:hover {
     top: 18px;
     right: 18px;
     padding: 6px 12px;
-    color: #d64545;
-    border: 1px solid #f0d0d0;
+    color: var(--error);
+    border: 1px solid var(--error-border);
     border-radius: 16px;
-    background-color: white;
+    background-color: var(--white);
     font-size: 12px;
 }
 
@@ -2315,7 +2696,7 @@ a.notif-item:hover {
     padding: 18px;
     border: 1px solid var(--border-color);
     border-radius: 14px;
-    background-color: white;
+    background-color: var(--white);
 }
 
 .notice-item-head {
@@ -2357,7 +2738,7 @@ a.notif-item:hover {
     padding: 18px;
     border: 1px solid var(--border-color);
     border-radius: 14px;
-    background-color: white;
+    background-color: var(--white);
 }
 
 .admin-faq-item-head {
@@ -2396,13 +2777,13 @@ a.notif-item:hover {
     padding: 6px 12px;
     border: 1px solid var(--border-color);
     border-radius: 16px;
-    background-color: white;
+    background-color: var(--white);
     font-size: 12px;
 }
 
 .admin-faq-delete-button {
-    color: #d64545;
-    border-color: #f0d0d0;
+    color: var(--error);
+    border-color: var(--error-bg);
 }
 
 .admin-faq-edit-form .write-field {
@@ -2413,7 +2794,7 @@ a.notif-item:hover {
     width: auto;
     height: auto;
     padding: 8px 18px;
-    color: var(--white);
+    color: #fff;
     background-color: var(--blue);
     font-size: 13px;
 }
@@ -2437,7 +2818,7 @@ a.notif-item:hover {
 .faq-item {
     border: 1px solid var(--border-color);
     border-radius: 14px;
-    background-color: white;
+    background-color: var(--white);
     overflow: hidden;
 }
 
@@ -2486,7 +2867,7 @@ a.notif-item:hover {
     padding: 18px;
     border: 1px solid var(--border-color);
     border-radius: 14px;
-    background-color: white;
+    background-color: var(--white);
 }
 
 .inquiry-item-head {
@@ -2518,13 +2899,13 @@ a.notif-item:hover {
 ========================= */
 
 .quill-editor-container {
-    background-color: #f8fbfe;
+    background-color: var(--input-bg);
 }
 
 .quill-editor-container .ql-toolbar.ql-snow {
     border-color: var(--border-color);
     border-radius: 10px 10px 0 0;
-    background-color: white;
+    background-color: var(--white);
 }
 
 .quill-editor-container .ql-container.ql-snow {
@@ -2536,10 +2917,251 @@ a.notif-item:hover {
 
 .quill-editor-container .ql-editor {
     min-height: 240px;
+    max-height: 600px;
     padding: 16px 18px;
+    overflow-y: auto;
 }
 
 .quill-editor-container .ql-editor.ql-blank::before {
-    color: #9aa6b4;
+    color: var(--gray-color);
     font-style: normal;
+}
+
+/* Quill 자체 스타일시트(quill.snow.css)는 글자/아이콘 색을 #444 등으로 직접 박아두고
+   있어서, 다크모드일 땐 이 부분만 따로 덮어써야 한다(에디터 본문/툴바가 var(--xxx)를
+   안 쓰는 유일한 곳). */
+[data-theme="dark"] .quill-editor-container .ql-editor {
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .quill-editor-container .ql-snow .ql-stroke,
+[data-theme="dark"] .quill-editor-container .ql-snow .ql-stroke-miter {
+    stroke: var(--gray-color);
+}
+
+[data-theme="dark"] .quill-editor-container .ql-snow .ql-fill,
+[data-theme="dark"] .quill-editor-container .ql-snow .ql-stroke.ql-fill {
+    fill: var(--gray-color);
+}
+
+[data-theme="dark"] .quill-editor-container .ql-snow .ql-picker {
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .quill-editor-container .ql-snow .ql-picker-options {
+    background-color: var(--white);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .quill-editor-container .ql-snow.ql-toolbar button:hover .ql-stroke,
+[data-theme="dark"] .quill-editor-container .ql-snow.ql-toolbar button.ql-active .ql-stroke,
+[data-theme="dark"] .quill-editor-container .ql-snow.ql-toolbar .ql-picker-label:hover {
+    stroke: var(--blue);
+    color: var(--blue);
+}
+
+/* =========================
+   다른 회원 프로필 보기 (member/profile.jsp)
+========================= */
+
+.story-writer-link:hover {
+    text-decoration: underline;
+}
+
+/* =========================
+   비공개 문의 배지 (support.jsp)
+========================= */
+
+.inquiry-private-badge {
+    padding: 2px 8px;
+    color: var(--warning);
+    border-radius: 10px;
+    background-color: var(--warning-bg);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* =========================
+   언어 선택 (헤더)
+========================= */
+
+.lang-select-wrap {
+    margin-left: 12px;
+}
+
+.lang-select-wrap select {
+    padding: 6px 28px 6px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    background-color: var(--white);
+    color: var(--text-color);
+    font-size: 13px;
+    cursor: pointer;
+
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%23687486' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 7.5l5 5 5-5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 12px;
+}
+
+.lang-select-wrap select:hover {
+    border-color: var(--blue);
+}
+
+/* =========================
+   화이트/다크 모드 전환 (헤더)
+========================= */
+
+.theme-select-wrap {
+    display: flex;
+    margin-left: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.theme-option {
+    position: relative;
+    padding: 6px 14px;
+    color: var(--gray-color);
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+.theme-option + .theme-option {
+    border-left: 1px solid var(--border-color);
+}
+
+.theme-option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.theme-option:hover:not(.active) {
+    color: var(--blue);
+    background-color: var(--light-blue);
+}
+
+.theme-option.active {
+    color: white;
+    background-color: var(--blue);
+    font-weight: 700;
+}
+
+/* =========================
+   회원 관리 (admin/members.jsp)
+========================= */
+
+.admin-member-list-section {
+    max-width: 960px;
+    margin: 0 auto 80px;
+    padding: 0 24px;
+}
+
+.admin-member-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.admin-member-table th,
+.admin-member-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 13px;
+    text-align: left;
+}
+
+.admin-member-table th {
+    color: var(--navy);
+    background-color: var(--light-blue);
+    font-weight: 700;
+}
+
+.admin-member-table tr:last-child td {
+    border-bottom: 0;
+}
+
+.admin-member-table a {
+    color: var(--blue);
+}
+
+.admin-member-status {
+    padding: 2px 10px;
+    border-radius: 10px;
+    background-color: var(--light-blue);
+    color: var(--blue);
+    font-weight: 700;
+}
+
+.admin-member-status.suspended {
+    background-color: var(--error-bg);
+    color: var(--error);
+}
+
+.admin-member-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.admin-member-suspend-button,
+.admin-member-unsuspend-button,
+.admin-member-grant-admin-button,
+.admin-member-revoke-admin-button {
+    padding: 6px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    background-color: var(--white);
+    font-size: 12px;
+}
+
+.admin-member-suspend-button {
+    color: var(--error);
+    border-color: var(--error-bg);
+}
+
+.admin-member-unsuspend-button {
+    color: var(--blue);
+    border-color: var(--blue);
+}
+
+.admin-member-grant-admin-button {
+    color: var(--navy);
+    border-color: var(--navy);
+}
+
+.admin-member-revoke-admin-button {
+    color: var(--error);
+    border-color: var(--error-bg);
+}
+
+.admin-member-no-action {
+    color: var(--gray-color);
+}
+
+.admin-member-level-select {
+    padding: 6px 10px;
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    background-color: var(--white);
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.suspended-banner {
+    padding: 10px 24px;
+    background-color: var(--error-bg);
+    color: var(--error);
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
 }

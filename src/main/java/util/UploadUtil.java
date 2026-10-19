@@ -15,7 +15,7 @@ import jakarta.servlet.http.Part;
 public class UploadUtil {
 
 	private static final String UPLOAD_DIR = "upload";
-	private static final long MAX_SIZE = 5 * 1024 * 1024;   // 5MB
+	private static final long MAX_SIZE = 10 * 1024 * 1024;   // 10MB
 
 	//업로드된 파일(Part)을 저장하고 DB에 넣을 경로를 돌려준다. 파일이 없거나 이미지가 아니면 null.
 	public static String save(Part part, ServletContext context, String subDir) throws IOException {
@@ -25,7 +25,7 @@ public class UploadUtil {
 		}
 
 		if (part.getSize() > MAX_SIZE) {
-			return null;   // 5MB 초과는 저장하지 않음 (Command에서 이 경우 안내 메시지를 띄운다)
+			return null;   // 10MB 초과는 저장하지 않음 (Command에서 이 경우 안내 메시지를 띄운다)
 		}
 
 		String contentType = part.getContentType();

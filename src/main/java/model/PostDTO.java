@@ -141,4 +141,14 @@ public class PostDTO {
 		return region;
 	}
 
+	//국가별 세부 지역 코드 전체 목록 - 랭킹 화면에서 게시글이 0개인 지역도 빠짐없이 보여주기 위해 사용.
+	public static String[] regionsForCountry(String country) {
+		if ("JP".equals(country)) {
+			return new String[] { "JP_HOKKAIDO", "JP_TOHOKU", "JP_KANTO", "JP_CHUBU",
+					"JP_KANSAI", "JP_CHUGOKU", "JP_SHIKOKU", "JP_KYUSHU_OKINAWA" };
+		}
+		return new String[] { "KR_CAPITAL", "KR_GANGWON", "KR_CHUNGCHEONG",
+				"KR_JEOLLA", "KR_GYEONGSANG", "KR_JEJU" };
+	}
+
 }

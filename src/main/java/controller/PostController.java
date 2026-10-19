@@ -8,6 +8,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import model.MemberDAO;
 import model.MemberDTO;
 import service.Command;
 import service.CommentDeleteCommand;
@@ -33,9 +34,9 @@ import service.ScrapCommand;
 			 "/post/list", "/post/view", "/post/write", "/post/modify", "/post/delete",
 			 "/post/like", "/post/scrap", "/post/ranking", "/post/uploadImage",
 			 "/comment/write", "/comment/delete"})
-@MultipartConfig(maxFileSize = 5 * 1024 * 1024, maxRequestSize = 10 * 1024 * 1024)
-//글쓰기/수정 폼이 파일을 보내는 multipart/form-data 형식이라 이 설정이 있어야 getPart()/getParameter()를 쓸 수 있다.
-//파일 하나 최대 5MB, 요청 전체 최대 10MB.
+@MultipartConfig(maxFileSize = 10 * 1024 * 1024, maxRequestSize = 15 * 1024 * 1024)
+//본문 이미지 업로드(/post/uploadImage)가 파일을 보내는 multipart/form-data 형식이라 이 설정이 있어야 한다.
+//파일 하나 최대 10MB, 요청 전체 최대 15MB.
 public class PostController extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
@@ -68,6 +69,14 @@ public class PostController extends HttpServlet {
 
 		if (needsLogin && loginMember == null) {
 			response.sendRedirect(request.getContextPath() + "/member/login");
+			return;
+		}
+
+		//활동 정지된 회원은 새 글을 쓸 수 없다(댓글/좋아요는 각 Command에서 같은 방식으로 막음).
+		//수정/삭제는 막지 않는다 - 이미 쓴 글을 정리하는 것까지 막을 이유는 없다.
+		if ("/post/write".equals(path) && loginMember != null && new MemberDAO().isSuspendedNow(loginMember.getId())) {
+			request.getSession().setAttribute("flashMsg", "활동이 정지된 계정은 글을 쓸 수 없습니다.");
+			response.sendRedirect(request.getContextPath() + "/post/list");
 			return;
 		}
 

@@ -70,7 +70,7 @@ public class PostDAO {
 	}
 
 	//목록 화면 검색/필터 조건. 값이 "ALL"이거나 비어있으면 그 조건은 걸지 않는다.
-	private String makeWhere(String country, String style, String keyword) {
+	private String makeWhere(String country, String style, String region, String keyword) {
 
 		List<String> conditions = new ArrayList<String>();
 
@@ -79,6 +79,9 @@ public class PostDAO {
 		}
 		if (style != null && !style.isEmpty() && !"ALL".equals(style)) {
 			conditions.add("p.style = ?");
+		}
+		if (region != null && !region.isEmpty() && !"ALL".equals(region)) {
+			conditions.add("p.region = ?");
 		}
 		if (keyword != null && !keyword.trim().isEmpty()) {
 			conditions.add("(p.title like ? or p.country = ? or p.style = ?)"); //수정-경민
@@ -91,13 +94,16 @@ public class PostDAO {
 		return "where " + String.join(" and ", conditions) + " ";
 	}
 
-	private int bindWhere(PreparedStatement pstmt, int idx, String country, String style, String keyword) throws Exception {
+	private int bindWhere(PreparedStatement pstmt, int idx, String country, String style, String region, String keyword) throws Exception {
 
 		if (country != null && !country.isEmpty() && !"ALL".equals(country)) {
 			pstmt.setString(idx++, country);
 		}
 		if (style != null && !style.isEmpty() && !"ALL".equals(style)) {
 			pstmt.setString(idx++, style);
+		}
+		if (region != null && !region.isEmpty() && !"ALL".equals(region)) {
+			pstmt.setString(idx++, region);
 		}
 		if (keyword != null && !keyword.trim().isEmpty()) {
 			pstmt.setString(idx++, "%" + keyword.trim() + "%");
@@ -108,10 +114,10 @@ public class PostDAO {
 		return idx;
 	}
 
-	//게시글 목록 (국가/성향 필터 + 제목 검색, 정렬은 호출하는 쪽에서 orderBy로 지정)
-	private List<PostDTO> getListOrderBy(String country, String style, String keyword, String orderBy) {
+	//게시글 목록 (국가/성향/지역 필터 + 제목 검색, 정렬은 호출하는 쪽에서 orderBy로 지정)
+	private List<PostDTO> getListOrderBy(String country, String style, String region, String keyword, String orderBy) {
 
-		String where = makeWhere(country, style, keyword);
+		String where = makeWhere(country, style, region, keyword);
 
 		String sql = "select " + COLUMNS
 				   + "from posts p join members m on p.writer = m.id "
@@ -123,7 +129,7 @@ public class PostDAO {
 		try (Connection conn = DBUtil.getInstance();
 			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-			bindWhere(pstmt, 1, country, style, keyword);
+			bindWhere(pstmt, 1, country, style, region, keyword);
 
 			try (ResultSet rs = pstmt.executeQuery()) {
 				while (rs.next()) {
@@ -139,13 +145,92 @@ public class PostDAO {
 	}
 
 	//최신순 목록
-	public List<PostDTO> getList(String country, String style, String keyword) {
-		return getListOrderBy(country, style, keyword, "p.bno desc");
+	public List<PostDTO> getList(String country, String style, String region, String keyword) {
+		return getListOrderBy(country, style, region, keyword, "p.bno desc");
 	}
 
 	//인기순 목록 - 좋아요 많은 순, 같으면 조회수 많은 순, 같으면 최신순
-	public List<PostDTO> getPopularList(String country, String style, String keyword) {
-		return getListOrderBy(country, style, keyword, "p.like_cnt desc, p.view_cnt desc, p.bno desc");
+	public List<PostDTO> getPopularList(String country, String style, String region, String keyword) {
+		return getListOrderBy(country, style, region, keyword, "p.like_cnt desc, p.view_cnt desc, p.bno desc");
+	}
+
+	public static final int PAGE_SIZE = 20;
+
+	//페이지네이션 적용 버전 (커뮤니티 목록, /post/list). page는 1부터 시작.
+	public List<PostDTO> getList(String country, String style, String region, String keyword, int page) {
+		return getListOrderByPaged(country, style, region, keyword, "p.bno desc", page);
+	}
+
+	public List<PostDTO> getPopularList(String country, String style, String region, String keyword, int page) {
+		return getListOrderByPaged(country, style, region, keyword, "p.like_cnt desc, p.view_cnt desc, p.bno desc", page);
+	}
+
+	//Oracle 11g라 OFFSET/FETCH 문법이 없어서, ROWNUM 2중 감싸기로 페이지를 자른다
+	//(getLatestByCountry에서 쓰는 것과 같은 방식인데, 여긴 시작/끝 둘 다 필요해서 한 번 더 감쌈).
+	private List<PostDTO> getListOrderByPaged(String country, String style, String region, String keyword, String orderBy, int page) {
+
+		if (page < 1) page = 1;
+
+		int startRow = (page - 1) * PAGE_SIZE;
+		int endRow = startRow + PAGE_SIZE;
+
+		String where = makeWhere(country, style, region, keyword);
+
+		String sql = "select * from ( "
+				   + "  select a.*, rownum rnum from ( "
+				   + "    select " + COLUMNS
+				   + "    from posts p join members m on p.writer = m.id "
+				   + where
+				   + "    order by " + orderBy
+				   + "  ) a where rownum <= ? "
+				   + ") where rnum > ?";
+
+		List<PostDTO> list = new ArrayList<PostDTO>();
+
+		try (Connection conn = DBUtil.getInstance();
+			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			int idx = bindWhere(pstmt, 1, country, style, region, keyword);
+			pstmt.setInt(idx++, endRow);
+			pstmt.setInt(idx++, startRow);
+
+			try (ResultSet rs = pstmt.executeQuery()) {
+				while (rs.next()) {
+					list.add(toDto(rs));
+				}
+			}
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
+		return list;
+	}
+
+	//위 필터 조건에 맞는 전체 게시글 수 (페이지네이션 계산용)
+	public int getCount(String country, String style, String region, String keyword) {
+
+		String where = makeWhere(country, style, region, keyword);
+		String sql = "select count(*) from posts p join members m on p.writer = m.id " + where;
+
+		int count = 0;
+
+		try (Connection conn = DBUtil.getInstance();
+			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			bindWhere(pstmt, 1, country, style, region, keyword);
+
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					count = rs.getInt(1);
+				}
+			}
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
+		return count;
 	}
 
 	//국가별 최신 n개 (메인 화면)
@@ -232,6 +317,163 @@ public class PostDAO {
 		}
 
 		return list;
+	}
+
+	public static final int MYPAGE_PAGE_SIZE = 10;
+
+	//마이페이지 "내가 쓴 글" - 제목 검색 + 페이지네이션. page는 1부터 시작.
+	public List<PostDTO> getListByWriter(String writer, String keyword, int page) {
+
+		if (page < 1) page = 1;
+
+		int startRow = (page - 1) * MYPAGE_PAGE_SIZE;
+		int endRow = startRow + MYPAGE_PAGE_SIZE;
+
+		boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
+
+		String sql = "select * from ( "
+				   + "  select a.*, rownum rnum from ( "
+				   + "    select " + COLUMNS
+				   + "    from posts p join members m on p.writer = m.id "
+				   + "    where p.writer = ? "
+				   + (hasKeyword ? "and p.title like ? " : "")
+				   + "    order by p.bno desc "
+				   + "  ) a where rownum <= ? "
+				   + ") where rnum > ?";
+
+		List<PostDTO> list = new ArrayList<PostDTO>();
+
+		try (Connection conn = DBUtil.getInstance();
+			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			int idx = 1;
+			pstmt.setString(idx++, writer);
+			if (hasKeyword) {
+				pstmt.setString(idx++, "%" + keyword.trim() + "%");
+			}
+			pstmt.setInt(idx++, endRow);
+			pstmt.setInt(idx++, startRow);
+
+			try (ResultSet rs = pstmt.executeQuery()) {
+				while (rs.next()) {
+					list.add(toDto(rs));
+				}
+			}
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
+		return list;
+	}
+
+	public int getCountByWriter(String writer, String keyword) {
+
+		boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
+
+		String sql = "select count(*) from posts p where p.writer = ? "
+				   + (hasKeyword ? "and p.title like ?" : "");
+
+		int count = 0;
+
+		try (Connection conn = DBUtil.getInstance();
+			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			int idx = 1;
+			pstmt.setString(idx++, writer);
+			if (hasKeyword) {
+				pstmt.setString(idx++, "%" + keyword.trim() + "%");
+			}
+
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					count = rs.getInt(1);
+				}
+			}
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
+		return count;
+	}
+
+	//마이페이지 "스크랩한 글" - 제목 검색 + 페이지네이션. page는 1부터 시작.
+	public List<PostDTO> getScrappedList(String memberId, String keyword, int page) {
+
+		if (page < 1) page = 1;
+
+		int startRow = (page - 1) * MYPAGE_PAGE_SIZE;
+		int endRow = startRow + MYPAGE_PAGE_SIZE;
+
+		boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
+
+		String sql = "select * from ( "
+				   + "  select a.*, rownum rnum from ( "
+				   + "    select " + COLUMNS
+				   + "    from posts p join members m on p.writer = m.id "
+				   + "    join scraps s on p.bno = s.bno "
+				   + "    where s.member_id = ? "
+				   + (hasKeyword ? "and p.title like ? " : "")
+				   + "    order by s.scrap_date desc "
+				   + "  ) a where rownum <= ? "
+				   + ") where rnum > ?";
+
+		List<PostDTO> list = new ArrayList<PostDTO>();
+
+		try (Connection conn = DBUtil.getInstance();
+			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			int idx = 1;
+			pstmt.setString(idx++, memberId);
+			if (hasKeyword) {
+				pstmt.setString(idx++, "%" + keyword.trim() + "%");
+			}
+			pstmt.setInt(idx++, endRow);
+			pstmt.setInt(idx++, startRow);
+
+			try (ResultSet rs = pstmt.executeQuery()) {
+				while (rs.next()) {
+					list.add(toDto(rs));
+				}
+			}
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
+		return list;
+	}
+
+	public int getScrappedCount(String memberId, String keyword) {
+
+		boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
+
+		String sql = "select count(*) from posts p join scraps s on p.bno = s.bno where s.member_id = ? "
+				   + (hasKeyword ? "and p.title like ?" : "");
+
+		int count = 0;
+
+		try (Connection conn = DBUtil.getInstance();
+			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			int idx = 1;
+			pstmt.setString(idx++, memberId);
+			if (hasKeyword) {
+				pstmt.setString(idx++, "%" + keyword.trim() + "%");
+			}
+
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					count = rs.getInt(1);
+				}
+			}
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
+		return count;
 	}
 
 	//게시글 하나 (상세보기, 수정 화면) - 없는 번호면 null
@@ -539,6 +781,39 @@ public class PostDAO {
 		}
 
 		return cnt;
+	}
+
+	//랭킹 지도 hover 미리보기용 - 국가 하나의 지역마다 좋아요 많은 순 n개씩, 한 번의 쿼리로 가져온다.
+	//Oracle 11g라 OFFSET/FETCH가 없는 대신, row_number() over (partition by ...)로 지역마다 순위를 매겨 자른다.
+	public Map<String, List<PostDTO>> getTopPostsByRegion(String country, int topN) {
+
+		String sql = "select * from ( "
+				   + "  select " + COLUMNS + ", "
+				   + "    row_number() over (partition by p.region order by p.like_cnt desc, p.view_cnt desc, p.bno desc) rn "
+				   + "  from posts p join members m on p.writer = m.id "
+				   + "  where p.country = ? and p.region is not null "
+				   + ") where rn <= ?";
+
+		Map<String, List<PostDTO>> result = new LinkedHashMap<String, List<PostDTO>>();
+
+		try (Connection conn = DBUtil.getInstance();
+			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			pstmt.setString(1, country);
+			pstmt.setInt(2, topN);
+
+			try (ResultSet rs = pstmt.executeQuery()) {
+				while (rs.next()) {
+					PostDTO dto = toDto(rs);
+					result.computeIfAbsent(dto.getRegion(), k -> new ArrayList<PostDTO>()).add(dto);
+				}
+			}
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
+		return result;
 	}
 
 

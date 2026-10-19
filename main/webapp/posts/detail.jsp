@@ -27,7 +27,7 @@
     String loginId = (loginMember == null) ? null : loginMember.getId();
 
     boolean canManage = loginMember != null
-        && (loginMember.getId().equals(post.getWriter()) || loginMember.isAdmin());
+        && (loginMember.getId().equals(post.getWriter()) || loginMember.isModerator());
 
     //PostModifyFormCommand/PostDeleteCommand가 "권한 없음" 등을 알리려고 세션에 남겨둔 1회성 메시지
     String flashMsg = (String) session.getAttribute("flashMsg");
@@ -35,7 +35,7 @@
 %>
 
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" <%= (loginMember != null && loginMember.isDarkMode()) ? "data-theme=\"dark\"" : "" %>>
 
 <head>
     <meta charset="UTF-8">
@@ -58,9 +58,9 @@
     <section class="page-heading">
 
         <p class="breadcrumb">
-            <a href="<%= contextPath %>/main">홈</a>
-            〉 <a href="<%= contextPath %>/post/list">게시글 목록</a>
-            〉 상세
+            <a href="<%= contextPath %>/main" data-i18n="nav.home">홈</a>
+            〉 <a href="<%= contextPath %>/post/list" data-i18n="posts.title">게시글 목록</a>
+            〉 <span data-i18n="detail.breadcrumb">상세</span>
         </p>
 
     </section>
@@ -74,20 +74,20 @@
         <div class="detail-header">
 
             <div class="detail-tags">
-                <span class="story-category"><%= EscapeUtil.html(post.getCountryLabel()) %></span>
+                <span class="story-category" data-i18n="country.<%= post.getCountry() %>"><%= EscapeUtil.html(post.getCountryLabel()) %></span>
                 <% if (post.getRegion() != null && !post.getRegion().isEmpty()) { %>
-                <span class="story-region-tag"><%= EscapeUtil.html(post.getRegionLabel()) %></span>
+                <span class="story-region-tag" data-i18n="region.<%= post.getRegion() %>"><%= EscapeUtil.html(post.getRegionLabel()) %></span>
                 <% } %>
-                <span class="detail-style-tag"><%= EscapeUtil.html(post.getStyleLabel()) %></span>
+                <span class="detail-style-tag" data-i18n="style.<%= post.getStyle() %>"><%= EscapeUtil.html(post.getStyleLabel()) %></span>
             </div>
 
             <h1><%= EscapeUtil.html(post.getTitle()) %></h1>
 
             <div class="story-information">
-                <span><%= EscapeUtil.html(post.getWriterNick()) %></span>
-                <span><%= post.getRegDate() %><% if (post.getModDate() != null) { %> (수정 <%= post.getModDate() %>)<% } %></span>
-                <span>조회 <%= post.getViewCnt() %></span>
-                <span>댓글 <span id="commentCountInline"><%= commentList.size() %></span></span>
+                <span><a href="<%= contextPath %>/member/profile?id=<%= post.getWriter() %>" class="story-writer-link"><%= EscapeUtil.html(post.getWriterNick()) %></a></span>
+                <span><%= post.getRegDate() %><% if (post.getModDate() != null) { %> (<span data-i18n="detail.edited">수정</span> <%= post.getModDate() %>)<% } %></span>
+                <span><span data-i18n="common.viewCount">조회</span> <%= post.getViewCnt() %></span>
+                <span><span data-i18n="detail.comments">댓글</span> <span id="commentCountInline"><%= commentList.size() %></span></span>
             </div>
 
         </div>
@@ -104,7 +104,7 @@
                     class="reaction-button <%= liked ? "active" : "" %>"
                     data-bno="<%= post.getBno() %>">
                 <span class="reaction-icon" id="likeIcon"><%= liked ? "♥" : "♡" %></span>
-                좋아요 <span id="likeCount"><%= post.getLikeCnt() %></span>
+                <span data-i18n="common.likeCount">좋아요</span> <span id="likeCount"><%= post.getLikeCnt() %></span>
             </button>
 
             <button type="button"
@@ -112,7 +112,7 @@
                     class="reaction-button <%= scrapped ? "active" : "" %>"
                     data-bno="<%= post.getBno() %>">
                 <span class="reaction-icon" id="scrapIcon"><%= scrapped ? "★" : "☆" %></span>
-                <span id="scrapLabel"><%= scrapped ? "스크랩됨" : "스크랩" %></span>
+                <span id="scrapLabel" data-i18n="<%= scrapped ? "detail.scraped" : "detail.scrap" %>"><%= scrapped ? "스크랩됨" : "스크랩" %></span>
             </button>
 
         </div>
@@ -121,17 +121,18 @@
         <div class="detail-actions">
 
             <a href="<%= contextPath %>/post/modify?bno=<%= post.getBno() %>"
-               class="detail-edit-button">
+               class="detail-edit-button"
+               data-i18n="common.edit">
                 수정
             </a>
 
             <form method="post"
                   action="<%= contextPath %>/post/delete"
-                  onsubmit="return confirm('이 게시글을 삭제하시겠습니까?');">
+                  onsubmit="return confirm(window.t('detail.confirmDeletePost', '이 게시글을 삭제하시겠습니까?'));">
 
                 <input type="hidden" name="bno" value="<%= post.getBno() %>">
 
-                <button type="submit" class="detail-delete-button">
+                <button type="submit" class="detail-delete-button" data-i18n="common.delete">
                     삭제
                 </button>
 
@@ -142,7 +143,7 @@
 
         <section class="comment-section">
 
-            <h2>댓글 <span id="commentCount"><%= commentList.size() %></span></h2>
+            <h2><span data-i18n="detail.comments">댓글</span> <span id="commentCount"><%= commentList.size() %></span></h2>
 
             <% if (loginMember != null) { %>
             <form id="commentForm" class="comment-form">
@@ -150,16 +151,18 @@
                 <textarea id="commentInput"
                           rows="3"
                           maxlength="500"
+                          data-i18n="detail.commentPlaceholder"
+                          data-i18n-attr="placeholder"
                           placeholder="댓글을 남겨보세요 (최대 500자)"></textarea>
 
-                <button type="submit" class="comment-submit">
+                <button type="submit" class="comment-submit" data-i18n="detail.commentSubmit">
                     댓글 등록
                 </button>
 
             </form>
             <% } else { %>
             <p class="comment-empty">
-                <a href="<%= contextPath %>/member/login">로그인</a> 후 댓글을 작성할 수 있습니다.
+                <a href="<%= contextPath %>/member/login" data-i18n="nav.login">로그인</a> <span data-i18n="detail.loginToComment">후 댓글을 작성할 수 있습니다.</span>
             </p>
             <% } %>
 
@@ -170,18 +173,18 @@
                     boolean canDeleteComment = loginId != null
                         && (loginId.equals(comment.getWriter())
                             || loginId.equals(post.getWriter())
-                            || loginMember.isAdmin());
+                            || loginMember.isModerator());
                 %>
                 <li class="comment-item" data-cno="<%= comment.getCno() %>">
 
                     <div class="comment-head">
-                        <strong><%= EscapeUtil.html(comment.getWriterNick()) %></strong>
+                        <strong><a href="<%= contextPath %>/member/profile?id=<%= comment.getWriter() %>" class="story-writer-link"><%= EscapeUtil.html(comment.getWriterNick()) %></a></strong>
                         <% if (comment.getWriter().equals(post.getWriter())) { %>
-                        <span class="my-post-badge">작성자</span>
+                        <span class="my-post-badge" data-i18n="detail.postAuthor">작성자</span>
                         <% } %>
                         <span class="comment-time"><%= comment.getRegDate() %></span>
                         <% if (canDeleteComment) { %>
-                        <button type="button" class="comment-delete" data-cno="<%= comment.getCno() %>">삭제</button>
+                        <button type="button" class="comment-delete" data-cno="<%= comment.getCno() %>" data-i18n="common.delete">삭제</button>
                         <% } %>
                     </div>
 
@@ -192,7 +195,7 @@
 
             </ul>
 
-            <p class="comment-empty" id="commentEmpty" <%= commentList.isEmpty() ? "" : "hidden" %>>
+            <p class="comment-empty" id="commentEmpty" data-i18n="detail.noComments" <%= commentList.isEmpty() ? "" : "hidden" %>>
                 아직 댓글이 없습니다. 첫 댓글을 남겨보세요.
             </p>
 
@@ -200,7 +203,7 @@
 
         <div class="detail-back">
             <a href="<%= contextPath %>/post/list">
-                〈 목록으로
+                〈 <span data-i18n="detail.backToList">목록으로</span>
             </a>
         </div>
 
@@ -225,7 +228,7 @@
             return true;
         }
 
-        if (confirm("로그인 후 이용할 수 있습니다. 로그인 페이지로 이동하시겠습니까?")) {
+        if (confirm(window.t("detail.confirmLoginRedirect", "로그인 후 이용할 수 있습니다. 로그인 페이지로 이동하시겠습니까?"))) {
             location.href = contextPath + "/member/login";
         }
 
@@ -263,8 +266,13 @@
                     return;
                 }
 
+                if (data.result === "suspended") {
+                    alert(window.t("detail.suspendedLike", "활동이 정지된 계정은 좋아요를 누를 수 없습니다."));
+                    return;
+                }
+
                 if (data.result !== "ok") {
-                    alert("좋아요 처리에 실패했습니다.");
+                    alert(window.t("detail.likeFailed", "좋아요 처리에 실패했습니다."));
                     return;
                 }
 
@@ -298,13 +306,15 @@
                 }
 
                 if (data.result !== "ok") {
-                    alert("스크랩 처리에 실패했습니다.");
+                    alert(window.t("detail.scrapFailed", "스크랩 처리에 실패했습니다."));
                     return;
                 }
 
                 scrapButton.classList.toggle("active", data.scrapped);
                 document.getElementById("scrapIcon").textContent = data.scrapped ? "★" : "☆";
-                document.getElementById("scrapLabel").textContent = data.scrapped ? "스크랩됨" : "스크랩";
+                document.getElementById("scrapLabel").textContent = data.scrapped
+                    ? window.t("detail.scraped", "스크랩됨")
+                    : window.t("detail.scrap", "스크랩");
 
             })
             .finally(function () {
@@ -346,7 +356,7 @@
             const content = input.value.trim();
 
             if (content === "") {
-                alert("댓글 내용을 입력해 주세요.");
+                alert(window.t("detail.commentEmptyAlert", "댓글 내용을 입력해 주세요."));
                 return;
             }
 
@@ -361,8 +371,13 @@
                         return;
                     }
 
+                    if (data.result === "suspended") {
+                        alert(window.t("detail.suspendedComment", "활동이 정지된 계정은 댓글을 남길 수 없습니다."));
+                        return;
+                    }
+
                     if (data.result !== "ok") {
-                        alert("댓글 등록에 실패했습니다.");
+                        alert(window.t("detail.commentFailed", "댓글 등록에 실패했습니다."));
                         return;
                     }
 
@@ -375,9 +390,9 @@
                     li.innerHTML =
                         '<div class="comment-head">'
                         + '<strong>' + escapeHtml(data.writerNick) + '</strong>'
-                        + (data.writer === postWriter ? '<span class="my-post-badge">작성자</span>' : '')
-                        + '<span class="comment-time">방금 전</span>'
-                        + (canDelete ? '<button type="button" class="comment-delete" data-cno="' + data.cno + '">삭제</button>' : '')
+                        + (data.writer === postWriter ? '<span class="my-post-badge">' + window.t("detail.postAuthor", "작성자") + '</span>' : '')
+                        + '<span class="comment-time">' + window.t("detail.justNow", "방금 전") + '</span>'
+                        + (canDelete ? '<button type="button" class="comment-delete" data-cno="' + data.cno + '">' + window.t("common.delete", "삭제") + '</button>' : '')
                         + '</div>'
                         + '<p class="comment-body">' + escapeHtml(data.content) + '</p>';
 
@@ -403,7 +418,7 @@
             return;
         }
 
-        if (!confirm("이 댓글을 삭제하시겠습니까?")) {
+        if (!confirm(window.t("detail.confirmDeleteComment", "이 댓글을 삭제하시겠습니까?"))) {
             return;
         }
 
@@ -418,13 +433,13 @@
                 }
 
                 if (data.result === "forbidden") {
-                    alert("삭제 권한이 없습니다.");
+                    alert(window.t("detail.deleteForbidden", "삭제 권한이 없습니다."));
                     deleteButton.disabled = false;
                     return;
                 }
 
                 if (data.result !== "ok") {
-                    alert("댓글 삭제에 실패했습니다.");
+                    alert(window.t("detail.commentDeleteFailed", "댓글 삭제에 실패했습니다."));
                     deleteButton.disabled = false;
                     return;
                 }

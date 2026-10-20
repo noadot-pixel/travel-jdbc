@@ -11,26 +11,32 @@ import service.Command;
 import service.NoOpCommand;
 
 /**
- * 완전히 정적인 공개 페이지(소개, 개인정보처리방침). 로그인 불필요.
- * 예전에는 about.jsp / auth/privacy.jsp를 직접 가리켰는데, 이 프로젝트의 다른 페이지들처럼
- * 깔끔한 주소(/about, /privacy)로 들어오도록 정리했다.
+ * 완전히 정적인 공개 페이지(개인정보처리방침). 로그인 불필요.
+ * /about은 더 이상 이 사이트 안에 소개 페이지를 따로 두지 않고, 발표자료/데모/라이브 사이트를
+ * 한데 모아둔 포트폴리오 GitHub Pages로 바로 리다이렉트한다(about.jsp는 삭제함).
  */
 @WebServlet({"/about", "/privacy"})
 public class PageController extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 
+	private static final String PORTFOLIO_URL = "https://noadot-pixel.github.io/travel-portfolio/";
+
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
 		String path = request.getServletPath();
-		String page = "/privacy".equals(path) ? "/auth/privacy.jsp" : "/about.jsp";
+
+		if ("/about".equals(path)) {
+			response.sendRedirect(PORTFOLIO_URL);
+			return;
+		}
 
 		Command cmd = new NoOpCommand();
 		boolean isForward = cmd.doCommand(request, response);
 
 		if (isForward) {
-			request.getRequestDispatcher(page).forward(request, response);
+			request.getRequestDispatcher("/auth/privacy.jsp").forward(request, response);
 		}
 	}
 

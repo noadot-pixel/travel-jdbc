@@ -26,7 +26,6 @@
     "theme.dark": "ダーク",
     "banner.suspended": "活動が停止されたアカウントです。コメント・いいね・投稿ができません。",
     "notif.loading": "読み込み中...",
-
     "common.search": "検索",
     "common.honorific": "さん",
     "common.viewAll": "すべて見る 〉",
@@ -35,7 +34,6 @@
     "common.myPost": "自分の投稿",
     "common.viewCount": "閲覧",
     "common.likeCount": "いいね",
-
     "home.heroTitle": "旅をつくれば、",
     "home.heroTitleHighlight": "新しい物語が始まる",
     "home.heroDesc": "韓国と日本、私たちだけの特別な旅を一緒につくる旅行コミュニティです。",
@@ -69,11 +67,9 @@
     "home.footerVisual.desc": "新しい旅行記をTravelで一緒にシェアしましょう。",
     "home.footerVisual.cta": "旅行記を書く",
     "home.footerVisual.webTitle": "旅行作り",
-
     "country.KR": "韓国旅行",
     "country.JP": "日本旅行",
     "country.ETC": "世界旅行",
-
     "region.KR_CAPITAL": "ソウル・京畿・仁川",
     "region.KR_GANGWON": "江原道",
     "region.KR_CHUNGCHEONG": "忠清道",
@@ -88,12 +84,10 @@
     "region.JP_CHUGOKU": "中国地方",
     "region.JP_SHIKOKU": "四国地方",
     "region.JP_KYUSHU_OKINAWA": "九州・沖縄地方",
-
     "style.healing": "癒し",
     "style.food": "グルメ",
     "style.activity": "アクティビティ",
     "style.shopping": "ショッピング",
-
     "footer.tagline": "共につくる、もっと広い旅の世界",
     "footer.about": "紹介",
     "footer.terms": "利用規約",
@@ -103,19 +97,16 @@
     "footer.faq": "よくある質問",
     "footer.contact": "お問い合わせ",
     "footer.copyright": "© 2026 Travel. All rights reserved.",
-
     "common.countSuffix": "件",
     "common.popularSort": "人気順",
     "common.edit": "編集",
     "common.delete": "削除",
-
     "posts.title": "投稿一覧",
     "posts.pageDesc": "国と旅行スタイルで、お好みの旅行記を探してみましょう。",
     "posts.searchLabel": "投稿を検索",
     "posts.searchPlaceholder": "タイトルで検索してみましょう",
     "posts.resultCount": "全投稿",
     "posts.emptyResult": "条件に合う投稿がありません。",
-
     "filter.country": "国",
     "filter.all": "すべて",
     "filter.korea": "韓国",
@@ -124,7 +115,6 @@
     "filter.style": "旅行スタイル",
     "filter.regionDomestic": "韓国国内地域",
     "filter.regionJapan": "日本地域",
-
     "detail.breadcrumb": "詳細",
     "detail.edited": "編集",
     "detail.comments": "コメント",
@@ -148,7 +138,6 @@
     "detail.deleteForbidden": "削除する権限がありません。",
     "detail.commentDeleteFailed": "コメントの削除に失敗しました。",
     "detail.confirmDeletePost": "この投稿を削除しますか?",
-
     "write.heading": "旅行記を書く",
     "write.pageDesc": "旅行先の区分と旅行スタイルをそれぞれ1つずつ選んで、物語を残してみましょう。",
     "write.titleLabel": "タイトル",
@@ -162,12 +151,10 @@
     "write.submit": "投稿する",
     "write.editorPlaceholder": "旅行記を自由に書いてみましょう",
     "write.submitValidationAlert": "タイトル、本文、旅行先区分、地域、旅行スタイルをすべて入力・選択してください。",
-
     "edit.breadcrumb": "投稿編集",
     "edit.heading": "投稿編集",
     "edit.pageDesc": "旅行先の区分と旅行スタイルをそれぞれ1つずつ選んで、内容を編集してください。",
     "edit.submit": "編集する",
-
     "ranking.title": "投稿ランキング",
     "ranking.pageDesc": "投稿数を基準に、性別・旅行先別の人気地域を表示します。",
     "ranking.korea": "韓国旅行",
@@ -176,10 +163,8 @@
     "ranking.female": "女性に人気の地域",
     "ranking.empty": "まだ集計された投稿がありません。",
     "ranking.note": "※ 性別情報を入力した会員の投稿のみ集計されます(この機能の実装以前の会員は対象外)。",
-
     "gender.male": "男性",
     "gender.female": "女性",
-
     "mypage.title": "マイページ",
     "mypage.pageDesc": "自分のプロフィールと投稿した記事を確認しましょう。",
     "mypage.noBio": "まだ自己紹介がありません。",
@@ -199,7 +184,6 @@
     "mypage.scrapRemove": "スクラップ解除",
     "mypage.emptyResult": "条件に合う内訳がありません。",
     "mypage.photoAlt": "プロフィール画像",
-
     "editProfile.breadcrumb": "会員情報編集",
     "editProfile.heading": "会員情報編集",
     "editProfile.pageDesc": "自分のプロフィール情報を編集してください。",
@@ -221,7 +205,6 @@
     "editProfile.save": "保存する",
     "editProfile.genderRequiredAlert": "性別を選択してください。",
     "editProfile.privacyRequiredAlert": "個人情報の収集・利用に同意しないと保存できません。",
-
     "auth.loginHeroTitle": "また旅を続けてみませんか?",
     "auth.loginHeroDesc": "旅の記録を残して、新しい旅行記に出会いましょう。",
     "auth.tagJeju": "#済州",
@@ -232,7 +215,6 @@
     "auth.passwordLabel": "パスワード",
     "auth.passwordPlaceholder": "パスワードを入力してください",
     "auth.backToMain": "メインに戻る",
-
     "auth.signupHeroTitle": "Travelと一緒に最初の物語を始めましょう",
     "auth.signupHeroDesc": "登録すると旅行記を書いて、自分だけの記録を残せます。",
     "auth.signupDesc": "基本情報を入力してTravelを始めましょう。",
@@ -259,7 +241,6 @@
     "auth.passwordMismatchAlert": "パスワードが一致しません。",
     "auth.passwordTooShortAlert": "パスワードは6文字以上である必要があります。",
     "auth.privacyRequiredJoinAlert": "個人情報の収集・利用に同意しないと登録できません。",
-
     "privacy.pageDesc": "Travelがどのような個人情報を、なぜ収集するのかご案内します。",
     "privacy.intro": "「Travel(旅つくり)」は学習目的で作られた個人/チームプロジェクトであり、収集した個人情報を営利目的で販売したり外部業者に提供したりしません。",
     "privacy.section1Title": "1. 収集する個人情報の項目",
@@ -275,20 +256,6 @@
     "privacy.section4Body": "収集した個人情報を外部業者や第三者に提供しません。",
     "privacy.section5Title": "5. お問い合わせ",
     "privacy.section5Body": "個人情報に関するご質問や削除のご要請は、運営者に直接ご連絡ください。",
-
-    "about.heading": "Travel紹介",
-    "about.pageDesc": "旅行記を自由に記録し、共有するコミュニティです。",
-    "about.intro": "「Travel(旅つくり)」は、韓国国内・日本・海外の旅行経験をスタイル別(癒し/グルメ/アクティビティ/ショッピング)に記録して共有できるコミュニティです。",
-    "about.featuresTitle": "できること",
-    "about.feature1": "旅行先(国内/日本/海外)と詳細地域、旅行スタイルをタグで残す投稿",
-    "about.feature2": "コメント・いいね・スクラップで他の人の旅行記にリアクションする",
-    "about.feature3Prefix": "性別・旅行先別の人気地域を表示する",
-    "about.feature4Prefix": "新着情報はヘッダーの通知ベルと",
-    "about.feature4Suffix": "で確認",
-    "about.questionsTitle": "気になることがあれば",
-    "about.questionsBody1": "をまず確認してみてください。求める答えが見つからなければ、同じページの",
-    "about.questionsBody2": "に残してください。",
-
     "support.breadcrumb": "よくある質問・お問い合わせ",
     "support.faqPageDesc": "よくある質問を先に確認してみてください。お探しの答えがなければ、下から直接お問い合わせいただけます。",
     "support.noFaq": "登録されたFAQがありません。",
@@ -309,17 +276,13 @@
     "support.noComments": "まだコメントがありません。",
     "support.commentForbidden": "お問い合わせの作成者と運営者のみコメントできます。",
     "support.loginToCommentSuffix": "後、お問い合わせの作成者または運営者であればコメントできます。",
-
     "notice.pageDesc": "Travelの新着情報を確認しましょう。",
     "notice.empty": "登録されたお知らせがありません。",
-
     "write.imageTooLargeAlert": "10MB未満の画像のみアップロードできます。",
     "write.imageUploadFailedAlert": "画像のアップロードに失敗しました。",
-
     "profile.nicknameSuffix": "さんのプロフィール",
     "profile.postsSuffix": "さんが書いた投稿",
     "profile.noPostsYet": "まだ作成した投稿がありません。",
-
     "admin.pageDesc": "投稿ログを確認したり、サンプル投稿を追加したりできます。",
     "admin.menuLogsTitle": "投稿ログ",
     "admin.menuLogsDesc": "投稿の作成・修正・削除履歴を照会します。",
@@ -333,7 +296,6 @@
     "admin.seedButton": "サンプル投稿を追加",
     "admin.seedAlreadyExists": "すでに投稿があるためシードは追加されませんでした。",
     "admin.seedAddedSuffix": "件のサンプル投稿を追加しました。",
-
     "adminMembers.pageDesc": "活動停止されたアカウントはコメント・いいね・投稿ができません(スクラップは可能)。モデレーター以上のアカウントと本人のアカウントは停止できません。権限レベルの変更は管理者のみ可能です。",
     "adminMembers.colNickname": "ニックネーム",
     "adminMembers.colEmail": "メールアドレス",
@@ -356,7 +318,6 @@
     "adminMembers.confirmLevelChangeSuffix": "」に変更しますか?",
     "adminMembers.cannotChangeSelfLevel": "本人のアカウントはここでは変更できません。",
     "adminMembers.levelChangeForbidden": "権限レベルの変更は管理者のみ可能です。",
-
     "adminNotices.pageDesc": "登録したお知らせは全会員の通知ベルに表示されます。",
     "adminNotices.titlePlaceholder": "お知らせのタイトルを入力してください",
     "adminNotices.contentPlaceholder": "お知らせの内容を入力してください",
@@ -364,7 +325,6 @@
     "adminNotices.createFailedAlert": "お知らせの登録に失敗しました。",
     "adminNotices.confirmDelete": "このお知らせを削除しますか?",
     "adminNotices.deleteFailedAlert": "削除に失敗しました。",
-
     "adminFaqs.heading": "よくある質問の管理",
     "adminFaqs.pageDescPrefix": "登録した質問/回答は",
     "adminFaqs.supportPageLink": "お問い合わせページ",
@@ -379,7 +339,6 @@
     "adminFaqs.createFailedAlert": "登録に失敗しました。",
     "adminFaqs.updateFailedAlert": "修正に失敗しました。",
     "adminFaqs.confirmDelete": "このFAQを削除しますか?",
-
     "adminLogs.totalPrefix": "全体ログ",
     "adminLogs.totalSuffix": "件",
     "adminLogs.colType": "作業種類",
@@ -387,11 +346,9 @@
     "adminLogs.colPost": "対象投稿",
     "adminLogs.colActor": "作業者",
     "adminLogs.empty": "まだ記録されたログがありません。",
-
     "logType.CREATE": "作成",
     "logType.UPDATE": "編集",
     "logType.DELETE": "削除",
-
     "ranking.mapAttributionKR": "境界: 国家空間情報ポータル · 加工: KnellBalm (2023)",
     "ranking.mapAttributionJP": "出典: 地球地図日本 · dataofjapan/land · 地域選択用",
     "ranking.mapFilterAll": "全体",

@@ -36,7 +36,7 @@
 
             <strong data-i18n="home.footerVisual.webTitle">여행만들기</strong>
 
-            <a href="<%= contextPath %>/about" data-i18n="footer.about">소개</a>
+            <a href="https://noadot-pixel.github.io/travel-portfolio/" target="_blank" rel="noopener" data-i18n="footer.about">소개</a>
             <a href="#" class="footer-placeholder-link" data-i18n="footer.terms" data-message="이용약관 페이지는 준비 중입니다.">이용약관</a>
             <a href="<%= contextPath %>/privacy" data-i18n="footer.privacy">개인정보처리방침</a>
 

@@ -26,7 +26,6 @@
     "theme.dark": "다크",
     "banner.suspended": "활동이 정지된 계정입니다. 댓글·좋아요·글쓰기를 할 수 없습니다.",
     "notif.loading": "불러오는 중...",
-
     "common.search": "검색",
     "common.honorific": "님",
     "common.viewAll": "전체보기 〉",
@@ -35,7 +34,6 @@
     "common.myPost": "내 글",
     "common.viewCount": "조회",
     "common.likeCount": "좋아요",
-
     "home.heroTitle": "여행을 만들면",
     "home.heroTitleHighlight": "새로운 이야기가 시작된다",
     "home.heroDesc": "한국과 일본, 우리들의 특별한 여행을 함께 만들어가는 여행 커뮤니티입니다.",
@@ -69,11 +67,9 @@
     "home.footerVisual.desc": "새로운 여행 이야기를 여행만들기에서 함께 공유해 보세요.",
     "home.footerVisual.cta": "여행 이야기 작성하기",
     "home.footerVisual.webTitle": "여행만들기",
-
     "country.KR": "한국 여행지",
     "country.JP": "일본 여행지",
     "country.ETC": "세계 여행지",
-
     "region.KR_CAPITAL": "서울·경기·인천",
     "region.KR_GANGWON": "강원도",
     "region.KR_CHUNGCHEONG": "충청도",
@@ -88,12 +84,10 @@
     "region.JP_CHUGOKU": "주고쿠 지방",
     "region.JP_SHIKOKU": "시코쿠 지방",
     "region.JP_KYUSHU_OKINAWA": "규슈·오키나와 지방",
-
     "style.healing": "힐링",
     "style.food": "맛집",
     "style.activity": "액티비티",
     "style.shopping": "쇼핑",
-
     "footer.tagline": "함께 만드는, 더 넓은 여행의 세상",
     "footer.about": "소개",
     "footer.terms": "이용약관",
@@ -103,19 +97,16 @@
     "footer.faq": "자주 묻는 질문",
     "footer.contact": "문의하기",
     "footer.copyright": "© 2026 여행만들기. All rights reserved.",
-
     "common.countSuffix": "개",
     "common.popularSort": "인기순",
     "common.edit": "수정",
     "common.delete": "삭제",
-
     "posts.title": "게시글 목록",
     "posts.pageDesc": "국가와 여행 성향으로 원하는 여행 이야기를 찾아보세요.",
     "posts.searchLabel": "게시글 검색",
     "posts.searchPlaceholder": "제목으로 검색해 보세요",
     "posts.resultCount": "전체 게시글",
     "posts.emptyResult": "조건에 맞는 게시글이 없습니다.",
-
     "filter.country": "국가",
     "filter.all": "전체",
     "filter.korea": "한국",
@@ -124,7 +115,6 @@
     "filter.style": "여행 성향",
     "filter.regionDomestic": "국내 지역",
     "filter.regionJapan": "일본 지역",
-
     "detail.breadcrumb": "상세",
     "detail.edited": "수정",
     "detail.comments": "댓글",
@@ -148,7 +138,6 @@
     "detail.deleteForbidden": "삭제 권한이 없습니다.",
     "detail.commentDeleteFailed": "댓글 삭제에 실패했습니다.",
     "detail.confirmDeletePost": "이 게시글을 삭제하시겠습니까?",
-
     "write.heading": "여행 이야기 작성",
     "write.pageDesc": "여행지 구분과 여행 성향을 각각 하나씩 선택하고 이야기를 남겨보세요.",
     "write.titleLabel": "제목",
@@ -162,12 +151,10 @@
     "write.submit": "등록하기",
     "write.editorPlaceholder": "여행 이야기를 자유롭게 남겨주세요",
     "write.submitValidationAlert": "제목, 본문, 여행지 구분, 지역, 여행 성향을 모두 입력/선택해 주세요.",
-
     "edit.breadcrumb": "게시글 수정",
     "edit.heading": "게시글 수정",
     "edit.pageDesc": "여행지 구분과 여행 성향을 각각 하나씩 선택하고 내용을 수정하세요.",
     "edit.submit": "수정하기",
-
     "ranking.title": "게시글 랭킹",
     "ranking.pageDesc": "게시글 개수를 기준으로 성별 · 여행지별 인기 지역을 보여줍니다.",
     "ranking.korea": "한국여행지",
@@ -176,10 +163,8 @@
     "ranking.female": "여성 인기 지역",
     "ranking.empty": "아직 집계된 게시글이 없습니다.",
     "ranking.note": "※ 성별 정보를 입력한 회원이 쓴 글만 집계됩니다. (이 기능 이전 가입자는 제외)",
-
     "gender.male": "남성",
     "gender.female": "여성",
-
     "mypage.title": "마이페이지",
     "mypage.pageDesc": "내 프로필과 내가 작성한 글을 확인하세요.",
     "mypage.noBio": "아직 소개가 없습니다.",
@@ -199,7 +184,6 @@
     "mypage.scrapRemove": "스크랩 해제",
     "mypage.emptyResult": "조건에 맞는 내역이 없습니다.",
     "mypage.photoAlt": "프로필 이미지",
-
     "editProfile.breadcrumb": "회원정보 수정",
     "editProfile.heading": "회원정보 수정",
     "editProfile.pageDesc": "내 프로필 정보를 수정하세요.",
@@ -221,7 +205,6 @@
     "editProfile.save": "저장하기",
     "editProfile.genderRequiredAlert": "성별을 선택해 주세요.",
     "editProfile.privacyRequiredAlert": "개인정보 수집·이용에 동의해야 저장할 수 있습니다.",
-
     "auth.loginHeroTitle": "다시 여행을 이어가 볼까요?",
     "auth.loginHeroDesc": "여행 기록을 남기고, 새로운 여행 이야기를 만나보세요.",
     "auth.tagJeju": "#제주",
@@ -232,7 +215,6 @@
     "auth.passwordLabel": "비밀번호",
     "auth.passwordPlaceholder": "비밀번호를 입력해 주세요",
     "auth.backToMain": "메인으로 돌아가기",
-
     "auth.signupHeroTitle": "여행만들기와 함께 첫 이야기를 시작해요",
     "auth.signupHeroDesc": "가입하면 여행 이야기를 작성하고 나만의 기록을 남길 수 있어요.",
     "auth.signupDesc": "기본 정보를 입력하고 여행만들기를 시작하세요.",
@@ -259,7 +241,6 @@
     "auth.passwordMismatchAlert": "비밀번호가 서로 일치하지 않습니다.",
     "auth.passwordTooShortAlert": "비밀번호는 6자 이상이어야 합니다.",
     "auth.privacyRequiredJoinAlert": "개인정보 수집·이용에 동의해야 가입할 수 있습니다.",
-
     "privacy.pageDesc": "여행만들기가 어떤 개인정보를 왜 모으는지 안내합니다.",
     "privacy.intro": "'여행만들기'는 학습 목적으로 만들어진 개인/팀 프로젝트이며, 수집한 개인정보를 영리 목적으로 판매하거나 외부 업체에 제공하지 않습니다.",
     "privacy.section1Title": "1. 수집하는 개인정보 항목",
@@ -275,20 +256,6 @@
     "privacy.section4Body": "수집한 개인정보를 외부 업체나 제3자에게 제공하지 않습니다.",
     "privacy.section5Title": "5. 문의",
     "privacy.section5Body": "개인정보와 관련해 궁금한 점이나 삭제 요청은 운영자에게 직접 연락해 주세요.",
-
-    "about.heading": "여행만들기 소개",
-    "about.pageDesc": "여행 이야기를 자유롭게 기록하고 나누는 커뮤니티입니다.",
-    "about.intro": "'여행만들기'는 국내·일본·해외 여행 경험을 성향별(힐링/맛집/액티비티/쇼핑)로 기록하고 나눌 수 있는 커뮤니티입니다.",
-    "about.featuresTitle": "이런 걸 할 수 있어요",
-    "about.feature1": "여행지(국내/일본/해외)와 세부 지역, 여행 성향을 태그로 남긴 글쓰기",
-    "about.feature2": "댓글, 좋아요, 스크랩으로 다른 사람의 여행 이야기에 반응하기",
-    "about.feature3Prefix": "성별 · 여행지별 인기 지역을 보여주는",
-    "about.feature4Prefix": "새 소식은 헤더 알림 벨과",
-    "about.feature4Suffix": "에서 확인",
-    "about.questionsTitle": "궁금한 점이 있다면",
-    "about.questionsBody1": "을 먼저 확인해 보시고, 원하는 답을 못 찾았다면 같은 페이지의",
-    "about.questionsBody2": "에 남겨주세요.",
-
     "support.breadcrumb": "자주 묻는 질문 · 문의하기",
     "support.faqPageDesc": "자주 나오는 질문을 먼저 확인해 보세요. 찾는 답이 없다면 아래에서 바로 문의할 수 있습니다.",
     "support.noFaq": "등록된 FAQ가 없습니다.",
@@ -309,17 +276,13 @@
     "support.noComments": "아직 댓글이 없습니다.",
     "support.commentForbidden": "문의 작성자와 운영진만 댓글을 남길 수 있습니다.",
     "support.loginToCommentSuffix": "후 문의 당사자나 운영진이면 댓글을 남길 수 있습니다.",
-
     "notice.pageDesc": "여행만들기의 새 소식을 확인하세요.",
     "notice.empty": "등록된 공지가 없습니다.",
-
     "write.imageTooLargeAlert": "10MB 미만의 이미지만 올릴 수 있습니다.",
     "write.imageUploadFailedAlert": "이미지 업로드에 실패했습니다.",
-
     "profile.nicknameSuffix": "님의 프로필",
     "profile.postsSuffix": "님이 작성한 글",
     "profile.noPostsYet": "아직 작성한 게시글이 없습니다.",
-
     "admin.pageDesc": "게시글 로그를 확인하고, 예시 게시글을 추가할 수 있습니다.",
     "admin.menuLogsTitle": "게시글 로그",
     "admin.menuLogsDesc": "게시글 작성·수정·삭제 이력을 조회합니다.",
@@ -333,7 +296,6 @@
     "admin.seedButton": "예시 게시글 시드 추가",
     "admin.seedAlreadyExists": "이미 게시글이 있어서 시드를 추가하지 않았습니다.",
     "admin.seedAddedSuffix": "개의 예시 게시글을 추가했습니다.",
-
     "adminMembers.pageDesc": "활동 정지된 계정은 댓글·좋아요·글쓰기를 할 수 없습니다 (스크랩은 가능). 모더레이터 이상 계정과 본인 계정은 정지할 수 없습니다. 권한 레벨 변경은 관리자만 할 수 있습니다.",
     "adminMembers.colNickname": "닉네임",
     "adminMembers.colEmail": "이메일",
@@ -356,7 +318,6 @@
     "adminMembers.confirmLevelChangeSuffix": "\"(으)로 바꿀까요?",
     "adminMembers.cannotChangeSelfLevel": "본인 계정은 여기서 바꿀 수 없습니다.",
     "adminMembers.levelChangeForbidden": "권한 레벨 변경은 관리자만 할 수 있습니다.",
-
     "adminNotices.pageDesc": "등록한 공지는 모든 회원의 알림 벨에 표시됩니다.",
     "adminNotices.titlePlaceholder": "공지 제목을 입력해 주세요",
     "adminNotices.contentPlaceholder": "공지 내용을 입력해 주세요",
@@ -364,7 +325,6 @@
     "adminNotices.createFailedAlert": "공지 등록에 실패했습니다.",
     "adminNotices.confirmDelete": "이 공지를 삭제할까요?",
     "adminNotices.deleteFailedAlert": "삭제에 실패했습니다.",
-
     "adminFaqs.heading": "자주 묻는 질문 관리",
     "adminFaqs.pageDescPrefix": "등록한 질문/답변은",
     "adminFaqs.supportPageLink": "문의하기 페이지",
@@ -379,7 +339,6 @@
     "adminFaqs.createFailedAlert": "등록에 실패했습니다.",
     "adminFaqs.updateFailedAlert": "수정에 실패했습니다.",
     "adminFaqs.confirmDelete": "이 FAQ를 삭제할까요?",
-
     "adminLogs.totalPrefix": "전체 로그",
     "adminLogs.totalSuffix": "건",
     "adminLogs.colType": "작업 종류",
@@ -387,11 +346,9 @@
     "adminLogs.colPost": "대상 게시글",
     "adminLogs.colActor": "작업자",
     "adminLogs.empty": "아직 기록된 로그가 없습니다.",
-
     "logType.CREATE": "작성",
     "logType.UPDATE": "수정",
     "logType.DELETE": "삭제",
-
     "ranking.mapAttributionKR": "경계: 국가공간정보포털 · 가공: KnellBalm (2023)",
     "ranking.mapAttributionJP": "출처: 地球地図日本 · dataofjapan/land · 지역 선택용",
     "ranking.mapFilterAll": "전체",

@@ -26,7 +26,6 @@
     "theme.dark": "Dark",
     "banner.suspended": "This account is suspended. You can't comment, like, or write posts.",
     "notif.loading": "Loading...",
-
     "common.search": "Search",
     "common.honorific": "",
     "common.viewAll": "View All 〉",
@@ -35,7 +34,6 @@
     "common.myPost": "My Post",
     "common.viewCount": "Views",
     "common.likeCount": "Likes",
-
     "home.heroTitle": "Make your journey,",
     "home.heroTitleHighlight": "and a new story begins",
     "home.heroDesc": "A travel community for sharing special trips across Korea, Japan, and beyond.",
@@ -69,11 +67,9 @@
     "home.footerVisual.desc": "Share your new travel story with the Travel community.",
     "home.footerVisual.cta": "Write a Travel Story",
     "home.footerVisual.webTitle": "Travel Maker",
-
     "country.KR": "Korea",
     "country.JP": "Japan",
     "country.ETC": "World",
-
     "region.KR_CAPITAL": "Seoul/Gyeonggi/Incheon",
     "region.KR_GANGWON": "Gangwon",
     "region.KR_CHUNGCHEONG": "Chungcheong",
@@ -88,12 +84,10 @@
     "region.JP_CHUGOKU": "Chugoku",
     "region.JP_SHIKOKU": "Shikoku",
     "region.JP_KYUSHU_OKINAWA": "Kyushu/Okinawa",
-
     "style.healing": "Healing",
     "style.food": "Food",
     "style.activity": "Activity",
     "style.shopping": "Shopping",
-
     "footer.tagline": "Building a wider world of travel, together",
     "footer.about": "About",
     "footer.terms": "Terms of Service",
@@ -103,19 +97,16 @@
     "footer.faq": "FAQ",
     "footer.contact": "Contact Us",
     "footer.copyright": "© 2026 Travel. All rights reserved.",
-
     "common.countSuffix": "",
     "common.popularSort": "Popular",
     "common.edit": "Edit",
     "common.delete": "Delete",
-
     "posts.title": "Post List",
     "posts.pageDesc": "Find travel stories by country and travel style.",
     "posts.searchLabel": "Search posts",
     "posts.searchPlaceholder": "Search by title",
     "posts.resultCount": "Total posts:",
     "posts.emptyResult": "No posts match your filters.",
-
     "filter.country": "Country",
     "filter.all": "All",
     "filter.korea": "Korea",
@@ -124,7 +115,6 @@
     "filter.style": "Travel Style",
     "filter.regionDomestic": "Region (Korea)",
     "filter.regionJapan": "Region (Japan)",
-
     "detail.breadcrumb": "Detail",
     "detail.edited": "Edited",
     "detail.comments": "Comments",
@@ -148,7 +138,6 @@
     "detail.deleteForbidden": "You don't have permission to delete this.",
     "detail.commentDeleteFailed": "Failed to delete the comment.",
     "detail.confirmDeletePost": "Delete this post?",
-
     "write.heading": "Write a Travel Story",
     "write.pageDesc": "Pick one destination type and one travel style, then share your story.",
     "write.titleLabel": "Title",
@@ -162,12 +151,10 @@
     "write.submit": "Publish",
     "write.editorPlaceholder": "Share your travel story freely",
     "write.submitValidationAlert": "Please fill in the title, body, destination type, region, and travel style.",
-
     "edit.breadcrumb": "Edit Post",
     "edit.heading": "Edit Post",
     "edit.pageDesc": "Pick one destination type and one travel style, then update your story.",
     "edit.submit": "Save Changes",
-
     "ranking.title": "Post Ranking",
     "ranking.pageDesc": "Popular regions by gender and destination, based on post counts.",
     "ranking.korea": "Korea",
@@ -176,10 +163,8 @@
     "ranking.female": "Popular with Women",
     "ranking.empty": "No posts have been counted yet.",
     "ranking.note": "※ Only counts posts from members who entered their gender (not available for accounts created before this feature).",
-
     "gender.male": "Male",
     "gender.female": "Female",
-
     "mypage.title": "My Page",
     "mypage.pageDesc": "View your profile and the posts you've written.",
     "mypage.noBio": "No bio yet.",
@@ -199,7 +184,6 @@
     "mypage.scrapRemove": "Unsave",
     "mypage.emptyResult": "No activity matches your filters.",
     "mypage.photoAlt": "Profile photo",
-
     "editProfile.breadcrumb": "Edit Profile",
     "editProfile.heading": "Edit Profile",
     "editProfile.pageDesc": "Update your profile information.",
@@ -221,7 +205,6 @@
     "editProfile.save": "Save Changes",
     "editProfile.genderRequiredAlert": "Please select a gender.",
     "editProfile.privacyRequiredAlert": "You must agree to the collection and use of personal information to save.",
-
     "auth.loginHeroTitle": "Ready to continue your journey?",
     "auth.loginHeroDesc": "Keep a record of your trips, and discover new travel stories.",
     "auth.tagJeju": "#Jeju",
@@ -232,7 +215,6 @@
     "auth.passwordLabel": "Password",
     "auth.passwordPlaceholder": "Enter your password",
     "auth.backToMain": "Back to Home",
-
     "auth.signupHeroTitle": "Start your first story with Travel",
     "auth.signupHeroDesc": "Sign up to write travel stories and keep your own record.",
     "auth.signupDesc": "Enter your basic information to get started with Travel.",
@@ -259,7 +241,6 @@
     "auth.passwordMismatchAlert": "Passwords don't match.",
     "auth.passwordTooShortAlert": "Password must be at least 6 characters.",
     "auth.privacyRequiredJoinAlert": "You must agree to the collection and use of personal information to sign up.",
-
     "privacy.pageDesc": "An explanation of what personal information Travel collects and why.",
     "privacy.intro": "Travel is a personal/team project built for learning purposes. We don't sell the personal information we collect for profit or share it with outside companies.",
     "privacy.section1Title": "1. Personal Information Collected",
@@ -275,20 +256,6 @@
     "privacy.section4Body": "We do not share collected personal information with outside companies or third parties.",
     "privacy.section5Title": "5. Contact",
     "privacy.section5Body": "For questions about personal information or deletion requests, please contact the site operator directly.",
-
-    "about.heading": "About Travel",
-    "about.pageDesc": "A community for freely recording and sharing travel stories.",
-    "about.intro": "Travel is a community for recording and sharing travel experiences across Korea, Japan, and abroad, organized by style (healing/food/activity/shopping).",
-    "about.featuresTitle": "What You Can Do",
-    "about.feature1": "Write posts tagged with destination (Korea/Japan/overseas), region, and travel style",
-    "about.feature2": "React to other people's travel stories with comments, likes, and saves",
-    "about.feature3Prefix": "See popular regions by gender and destination on the",
-    "about.feature4Prefix": "Check the latest news via the header notification bell and",
-    "about.feature4Suffix": "",
-    "about.questionsTitle": "Have a Question?",
-    "about.questionsBody1": "first, and if you can't find what you're looking for, leave it in",
-    "about.questionsBody2": "on the same page.",
-
     "support.breadcrumb": "FAQ · Contact Us",
     "support.faqPageDesc": "Check our frequently asked questions first. If you can't find an answer, you can contact us directly below.",
     "support.noFaq": "No FAQs have been posted yet.",
@@ -309,17 +276,13 @@
     "support.noComments": "No comments yet.",
     "support.commentForbidden": "Only the inquiry's author and staff can comment.",
     "support.loginToCommentSuffix": "to comment, if you're the inquiry's author or staff.",
-
     "notice.pageDesc": "Check the latest news from Travel.",
     "notice.empty": "No notices have been posted yet.",
-
     "write.imageTooLargeAlert": "Only images under 10MB can be uploaded.",
     "write.imageUploadFailedAlert": "Failed to upload the image.",
-
     "profile.nicknameSuffix": "'s Profile",
     "profile.postsSuffix": "'s Posts",
     "profile.noPostsYet": "No posts written yet.",
-
     "admin.pageDesc": "Check post logs and add example posts.",
     "admin.menuLogsTitle": "Post Logs",
     "admin.menuLogsDesc": "View the history of post creation, edits, and deletions.",
@@ -333,7 +296,6 @@
     "admin.seedButton": "Add Example Post Seed",
     "admin.seedAlreadyExists": "Posts already exist, so no seed data was added.",
     "admin.seedAddedSuffix": " example posts added.",
-
     "adminMembers.pageDesc": "Suspended accounts can't comment, like, or write posts (saving is still allowed). Moderator-and-above accounts and your own account can't be suspended. Only admins can change permission levels.",
     "adminMembers.colNickname": "Nickname",
     "adminMembers.colEmail": "Email",
@@ -356,7 +318,6 @@
     "adminMembers.confirmLevelChangeSuffix": "\"?",
     "adminMembers.cannotChangeSelfLevel": "You can't change your own level here.",
     "adminMembers.levelChangeForbidden": "Only admins can change permission levels.",
-
     "adminNotices.pageDesc": "Published notices appear in every member's notification bell.",
     "adminNotices.titlePlaceholder": "Enter a notice title",
     "adminNotices.contentPlaceholder": "Enter the notice content",
@@ -364,7 +325,6 @@
     "adminNotices.createFailedAlert": "Failed to create the notice.",
     "adminNotices.confirmDelete": "Delete this notice?",
     "adminNotices.deleteFailedAlert": "Failed to delete.",
-
     "adminFaqs.heading": "Manage FAQs",
     "adminFaqs.pageDescPrefix": "Questions/answers you add here appear directly under \"FAQ\" on the",
     "adminFaqs.supportPageLink": "Contact Us page",
@@ -379,7 +339,6 @@
     "adminFaqs.createFailedAlert": "Failed to create.",
     "adminFaqs.updateFailedAlert": "Failed to update.",
     "adminFaqs.confirmDelete": "Delete this FAQ?",
-
     "adminLogs.totalPrefix": "Total logs:",
     "adminLogs.totalSuffix": "",
     "adminLogs.colType": "Action",
@@ -387,11 +346,9 @@
     "adminLogs.colPost": "Post",
     "adminLogs.colActor": "Actor",
     "adminLogs.empty": "No logs recorded yet.",
-
     "logType.CREATE": "Created",
     "logType.UPDATE": "Edited",
     "logType.DELETE": "Deleted",
-
     "ranking.mapAttributionKR": "Boundaries: National Spatial Data Infrastructure Portal · Processed by: KnellBalm (2023)",
     "ranking.mapAttributionJP": "Source: Global Map Japan (GSI) · dataofjapan/land · for region selection",
     "ranking.mapFilterAll": "All",

@@ -125,7 +125,8 @@
         hiddenInputId: "noticeContent",
         uploadUrl: "<%= contextPath %>/post/uploadImage",
         loginUrl: "<%= contextPath %>/member/login",
-        placeholder: window.t("adminNotices.contentPlaceholder", "공지 내용을 입력해 주세요")
+        placeholderKey: "adminNotices.contentPlaceholder",
+        placeholderFallback: "공지 내용을 입력해 주세요"
     });
 
     document.getElementById("noticeForm").addEventListener("submit", function (event) {

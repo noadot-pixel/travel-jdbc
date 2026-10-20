@@ -27,7 +27,8 @@ public class InquiryWriteCommand implements Command {
 		if (title == null || title.trim().isEmpty() || content == null || content.trim().isEmpty()) {
 			request.setAttribute("msg", "제목과 내용을 모두 입력해 주세요.");
 			request.setAttribute("faqList", new model.FaqDAO().getList());
-			request.setAttribute("inquiryList", new InquiryDAO().getList(loginMember.getId(), loginMember.isModerator()));
+			request.setAttribute("inquiryList", new InquiryDAO().getList(loginMember.getId(), loginMember.isModerator(), null));
+			request.setAttribute("keyword", "");
 			return true;   // support.jsp로 다시 forward
 		}
 

@@ -10,11 +10,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.MemberDTO;
 import service.Command;
+import service.IdCheckCommand;
 import service.JoinCommand;
 import service.LoginCommand;
 import service.LogoutCommand;
 import service.MemberProfileCommand;
 import service.MypageCommand;
+import service.NicknameCheckCommand;
 import service.ProfileEditCommand;
 import service.ToggleDarkModeCommand;
 
@@ -22,7 +24,7 @@ import service.ToggleDarkModeCommand;
  * 회원 관련 요청을 한 서블릿이 받아서 getServletPath()로 구분해 처리한다.
  */
 @WebServlet({"/member/join", "/member/login", "/member/logout", "/member/mypage", "/member/mypageEdit",
-			 "/member/profile", "/member/toggleDarkMode"})
+			 "/member/profile", "/member/toggleDarkMode", "/member/idCheck", "/member/nicknameCheck"})
 @MultipartConfig(maxFileSize = 10 * 1024 * 1024, maxRequestSize = 15 * 1024 * 1024)
 //프로필 수정 폼이 사진을 같이 보내는 multipart/form-data라서 이 설정이 필요하다.
 public class MemberController extends HttpServlet {
@@ -100,6 +102,14 @@ public class MemberController extends HttpServlet {
 			}
 			case "/member/toggleDarkMode": {               // Ajax - JSON 응답
 				cmd = new ToggleDarkModeCommand();
+				break;
+			}
+			case "/member/idCheck": {                      // Ajax - JSON 응답
+				cmd = new IdCheckCommand();
+				break;
+			}
+			case "/member/nicknameCheck": {                // Ajax - JSON 응답
+				cmd = new NicknameCheckCommand();
 				break;
 			}
 		}

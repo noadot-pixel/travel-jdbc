@@ -230,13 +230,9 @@
     box-shadow: var(--shadow);
 }
 
-.search-icon {
-    color: var(--navy);
-    font-size: 25px;
-}
-
 .search-form input {
     flex: 1;
+    margin-right: 12px;
     padding: 0 12px;
     border: 0;
     outline: none;
@@ -254,27 +250,6 @@
 
 .search-form button:hover {
     background-color: #245fbf;
-}
-
-.recommend-keywords {
-    display: flex;
-    gap: 8px;
-    margin-top: 13px;
-}
-
-.recommend-keywords button {
-    padding: 6px 12px;
-    color: #37465b;
-    border: 0;
-    border-radius: 16px;
-
-    background-color:
-        rgba(255, 255, 255, 0.92);
-}
-
-.recommend-keywords button:hover {
-    color: white;
-    background-color: var(--blue);
 }
 
 /* =========================
@@ -836,7 +811,7 @@
 
 .post-list {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 24px;
     width: 90%;
     margin: 0 auto 60px;
@@ -1052,6 +1027,38 @@
     font-weight: 700;
 }
 
+.auth-field-with-button {
+    display: flex;
+    gap: 8px;
+}
+
+.auth-field-with-button input {
+    flex: 1;
+    min-width: 0;
+}
+
+.auth-field-with-button .filter-button {
+    flex: 0 0 auto;
+    height: 50px;
+    white-space: nowrap;
+}
+
+.field-hint {
+    min-height: 16px;
+    color: var(--gray-color);
+    font-size: 12px;
+}
+
+.field-hint-ok {
+    color: var(--blue);
+    font-weight: 700;
+}
+
+.field-hint-error {
+    color: var(--error);
+    font-weight: 700;
+}
+
 .auth-box input {
     width: 100%;
     height: 50px;
@@ -1081,6 +1088,37 @@
     border-color: var(--blue);
     background-color: var(--white);
     box-shadow: 0 0 0 4px rgba(50, 114, 220, 0.1);
+}
+
+/* 비밀번호 보기 - 아이콘에 마우스를 올리고 있는(또는 누르고 있는) 동안만 평문으로 보여준다 */
+.password-field-wrap {
+    position: relative;
+}
+
+.password-field-wrap input {
+    padding-right: 46px;
+}
+
+.password-toggle-button {
+    position: absolute;
+    top: 50%;
+    right: 2px;
+    display: flex;
+    width: 36px;
+    height: 36px;
+    align-items: center;
+    justify-content: center;
+    transform: translateY(-50%);
+    border: 0;
+    background: transparent;
+    color: var(--gray-color);
+    font-size: 17px;
+    cursor: pointer;
+}
+
+.password-toggle-button:hover,
+.password-toggle-button:focus-visible {
+    color: var(--blue);
 }
 
 .auth-submit {
@@ -2307,6 +2345,58 @@ label.auth-agree-label {
     font-weight: 700;
 }
 
+/* 1~3위는 숫자 대신 메달 이모지라, 글자보다 조금 더 크게 보여준다 */
+.ranking-item.rank-1 .ranking-rank,
+.ranking-item.rank-2 .ranking-rank,
+.ranking-item.rank-3 .ranking-rank {
+    font-size: 20px;
+    text-align: center;
+}
+
+.ranking-item.rank-1 {
+    border-radius: 8px;
+    background-color: rgba(230, 180, 60, 0.1);
+}
+
+.ranking-item.rank-2 {
+    border-radius: 8px;
+    background-color: rgba(150, 160, 175, 0.12);
+}
+
+.ranking-item.rank-3 {
+    border-radius: 8px;
+    background-color: rgba(200, 120, 70, 0.1);
+}
+
+/* 성별 구분 - 남성 목록은 기존 블루 톤 그대로, 여성 목록은 핑크 톤으로 구분한다 */
+.ranking-column-male {
+    border-color: rgba(50, 114, 220, 0.35);
+}
+
+.ranking-column-male .ranking-column-title {
+    color: var(--blue);
+}
+
+.ranking-column-male .ranking-item a:hover {
+    background-color: var(--light-blue);
+}
+
+.ranking-column-female {
+    border-color: rgba(214, 69, 143, 0.35);
+}
+
+.ranking-column-female .ranking-column-title {
+    color: #d6458f;
+}
+
+.ranking-column-female .ranking-rank {
+    color: #d6458f;
+}
+
+.ranking-column-female .ranking-item a:hover {
+    background-color: #fdeef6;
+}
+
 .ranking-region {
     flex: 1;
     color: var(--text-color);
@@ -2391,6 +2481,26 @@ label.auth-agree-label {
 
 .region-map-wrap {
     position: relative;
+}
+
+/* 지도 우측 상단 전체/남성/여성 필터 - 헤더의 화이트/다크 모드 토글(.theme-select-wrap)과
+   같은 "알약형 라디오 + 외곽선" 모양을 그대로 재사용한다. */
+.region-map-gender-filter {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 14;
+    display: flex;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    overflow: hidden;
+    background-color: #fff;
+    box-shadow: 0 4px 10px rgba(25, 50, 80, 0.12);
+}
+
+.region-map-gender-filter .theme-option {
+    padding: 6px 12px;
+    font-size: 12px;
 }
 
 /* 지도 자체는 라이트 배경 위에서 색을 계산해뒀으므로(main-visual/auth-visual과 같은 이유),
@@ -2981,6 +3091,27 @@ a.notif-item:hover {
     font-weight: 700;
 }
 
+.inquiry-item-link {
+    display: block;
+    color: inherit;
+}
+
+.inquiry-item-link:hover .inquiry-item-head strong {
+    color: var(--blue);
+    text-decoration: underline;
+}
+
+.inquiry-search-form {
+    margin-top: 20px;
+}
+
+.inquiry-content-body {
+    color: var(--text-color);
+    font-size: 14px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
 /* =========================
    언어 선택 (헤더)
 ========================= */
@@ -3016,7 +3147,6 @@ a.notif-item:hover {
 
 .theme-select-wrap {
     display: flex;
-    margin-left: 10px;
     border: 1px solid var(--border-color);
     border-radius: 16px;
     overflow: hidden;
@@ -3024,9 +3154,13 @@ a.notif-item:hover {
 
 .theme-option {
     position: relative;
-    padding: 6px 14px;
+    flex: 1;
+    min-width: max-content;
+    padding: 6px 18px;
     color: var(--gray-color);
     font-size: 13px;
+    text-align: center;
+    white-space: nowrap;
     cursor: pointer;
     transition: background-color 0.15s, color 0.15s;
 }

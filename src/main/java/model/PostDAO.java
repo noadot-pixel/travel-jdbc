@@ -24,25 +24,48 @@ public class PostDAO {
 	//추가시작-경민
 	private static final Map<String, String[]> COUNTRY_WORDS = new LinkedHashMap<String, String[]>();
 	private static final Map<String, String[]> STYLE_WORDS = new LinkedHashMap<String, String[]>();
+	//지역(세부 태그) 검색어 - region 코드/라벨은 PostDTO.labelForRegion() 참고
+	private static final Map<String, String[]> REGION_WORDS = new LinkedHashMap<String, String[]>();
 
+	//한국어 사용자만 쓰는 게 아니라서(언어 선택 기능 있음), 검색어 매칭은 한국어/영어/일본어
+	//세 언어의 흔한 표현을 전부 등록해둔다. 완벽한 번역이 목적이 아니라 "이 단어로 치면
+	//이 태그일 확률이 높다"는 느슨한 매칭이라, 다의어(예: 일본의 "주고쿠" 지방과 "중국"이
+	//둘 다 中国)여도 크게 문제되지 않는다.
 	static {
-		COUNTRY_WORDS.put("KR", new String[] {"한국", "국내"});
-		COUNTRY_WORDS.put("JP", new String[] {"일본"});
-		COUNTRY_WORDS.put("ETC", new String[] {"세계", "해외"});
+		COUNTRY_WORDS.put("KR", new String[] {"한국", "국내", "korea", "韓国"});
+		COUNTRY_WORDS.put("JP", new String[] {"일본", "japan", "日本"});
+		COUNTRY_WORDS.put("ETC", new String[] {"세계", "해외", "world", "overseas", "世界", "海外"});
 
-		STYLE_WORDS.put("healing", new String[] {"힐링"});
-		STYLE_WORDS.put("food", new String[] {"맛집", "음식"});
-		STYLE_WORDS.put("activity", new String[] {"액티비티"});
-		STYLE_WORDS.put("shopping", new String[] {"쇼핑"});
+		STYLE_WORDS.put("healing", new String[] {"힐링", "healing", "ヒーリング", "癒し"});
+		STYLE_WORDS.put("food", new String[] {"맛집", "음식", "food", "restaurant", "食べ物", "グルメ"});
+		STYLE_WORDS.put("activity", new String[] {"액티비티", "activity", "アクティビティ"});
+		STYLE_WORDS.put("shopping", new String[] {"쇼핑", "shopping", "ショッピング"});
+
+		REGION_WORDS.put("KR_CAPITAL", new String[] {"서울", "경기", "인천", "seoul", "gyeonggi", "incheon", "ソウル", "京畿", "仁川"});
+		REGION_WORDS.put("KR_GANGWON", new String[] {"강원도", "강원", "gangwon", "カンウォン"});
+		REGION_WORDS.put("KR_CHUNGCHEONG", new String[] {"충청도", "충청", "chungcheong", "チュンチョン"});
+		REGION_WORDS.put("KR_JEOLLA", new String[] {"전라도", "전라", "jeolla", "チョルラ"});
+		REGION_WORDS.put("KR_GYEONGSANG", new String[] {"경상도", "경상", "gyeongsang", "キョンサン"});
+		REGION_WORDS.put("KR_JEJU", new String[] {"제주도", "제주", "jeju", "チェジュ"});
+		REGION_WORDS.put("JP_HOKKAIDO", new String[] {"홋카이도", "hokkaido", "北海道"});
+		REGION_WORDS.put("JP_TOHOKU", new String[] {"도호쿠", "tohoku", "東北"});
+		REGION_WORDS.put("JP_KANTO", new String[] {"간토", "kanto", "関東"});
+		REGION_WORDS.put("JP_CHUBU", new String[] {"주부", "chubu", "中部"});
+		REGION_WORDS.put("JP_KANSAI", new String[] {"간사이", "긴키", "kansai", "kinki", "関西", "近畿"});
+		REGION_WORDS.put("JP_CHUGOKU", new String[] {"주고쿠", "chugoku", "中国"});
+		REGION_WORDS.put("JP_SHIKOKU", new String[] {"시코쿠", "shikoku", "四国"});
+		REGION_WORDS.put("JP_KYUSHU_OKINAWA", new String[] {"규슈", "오키나와", "kyushu", "okinawa", "九州", "沖縄"});
 	}
 
 	private String findCode(Map<String, String[]> words, String keyword) {
 
-		String k = keyword.trim();
+		//영어 단어(예: "Korea")는 대소문자가 다를 수 있으니 소문자로 맞춰서 비교한다.
+		//한글/일본어는 대소문자 개념이 없어서 toLowerCase가 아무 영향도 안 준다.
+		String k = keyword.trim().toLowerCase();
 
 		for (Map.Entry<String, String[]> e : words.entrySet()) {
 			for (String w : e.getValue()) {
-				if (k.contains(w)) {
+				if (k.contains(w.toLowerCase())) {
 					return e.getKey();
 				}
 			}
@@ -84,7 +107,7 @@ public class PostDAO {
 			conditions.add("p.region = ?");
 		}
 		if (keyword != null && !keyword.trim().isEmpty()) {
-			conditions.add("(p.title like ? or p.country = ? or p.style = ?)"); //수정-경민
+			conditions.add("(p.title like ? or p.country = ? or p.style = ? or p.region = ?)"); //수정-경민, 지역 태그 추가
 		}
 
 		if (conditions.isEmpty()) {
@@ -109,6 +132,7 @@ public class PostDAO {
 			pstmt.setString(idx++, "%" + keyword.trim() + "%");
 			pstmt.setString(idx++, findCode(COUNTRY_WORDS, keyword)); //추가-경민
 			pstmt.setString(idx++, findCode(STYLE_WORDS, keyword)); //추가-경민
+			pstmt.setString(idx++, findCode(REGION_WORDS, keyword));
 		}
 
 		return idx;
@@ -154,7 +178,7 @@ public class PostDAO {
 		return getListOrderBy(country, style, region, keyword, "p.like_cnt desc, p.view_cnt desc, p.bno desc");
 	}
 
-	public static final int PAGE_SIZE = 20;
+	public static final int PAGE_SIZE = 16;
 
 	//페이지네이션 적용 버전 (커뮤니티 목록, /post/list). page는 1부터 시작.
 	public List<PostDTO> getList(String country, String style, String region, String keyword, int page) {

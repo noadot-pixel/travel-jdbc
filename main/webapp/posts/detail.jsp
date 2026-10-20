@@ -26,8 +26,10 @@
     MemberDTO loginMember = (MemberDTO) session.getAttribute("loginMember");
     String loginId = (loginMember == null) ? null : loginMember.getId();
 
-    boolean canManage = loginMember != null
-        && (loginMember.getId().equals(post.getWriter()) || loginMember.isModerator());
+    //남의 글 수정은 admin(레벨 2)만, 삭제는 moderator(레벨 1)부터 가능하다.
+    boolean isOwner = loginMember != null && loginMember.getId().equals(post.getWriter());
+    boolean canEdit = isOwner || (loginMember != null && loginMember.isAdmin());
+    boolean canDelete = isOwner || (loginMember != null && loginMember.isModerator());
 
     //PostModifyFormCommand/PostDeleteCommand가 "권한 없음" 등을 알리려고 세션에 남겨둔 1회성 메시지
     String flashMsg = (String) session.getAttribute("flashMsg");
@@ -117,15 +119,18 @@
 
         </div>
 
-        <% if (canManage) { %>
+        <% if (canEdit || canDelete) { %>
         <div class="detail-actions">
 
+            <% if (canEdit) { %>
             <a href="<%= contextPath %>/post/modify?bno=<%= post.getBno() %>"
                class="detail-edit-button"
                data-i18n="common.edit">
                 수정
             </a>
+            <% } %>
 
+            <% if (canDelete) { %>
             <form method="post"
                   action="<%= contextPath %>/post/delete"
                   onsubmit="return confirm(window.t('detail.confirmDeletePost', '이 게시글을 삭제하시겠습니까?'));">
@@ -137,6 +142,7 @@
                 </button>
 
             </form>
+            <% } %>
 
         </div>
         <% } %>

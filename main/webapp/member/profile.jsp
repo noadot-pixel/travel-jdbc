@@ -92,7 +92,7 @@
                     <span><span data-i18n="mypage.countryLabel">국가</span> <% if (countryI18nKey != null) { %><span data-i18n="<%= countryI18nKey %>"><%= EscapeUtil.html(countryLabel) %></span><% } else { %><%= EscapeUtil.html(countryLabel) %><% } %></span>
                 </div>
 
-                <%-- 실명/생일/성별은 그 회원이 공개로 설정했을 때만 보여준다 (비공개는 아예 표시하지 않음 -
+                <%-- 실명/성별은 그 회원이 공개로 설정했을 때만 보여준다 (비공개는 아예 표시하지 않음 -
                      본인 마이페이지와 달리 "(비공개)"라는 안내 자체가 다른 사람에겐 의미가 없다). --%>
                 <div class="profile-personal">
                     <%
@@ -102,10 +102,6 @@
                             String genderKey = "M".equals(profileMember.getGender()) ? "gender.male" : "gender.female";
                             personalParts.add("<span data-i18n=\"mypage.genderLabel\">성별</span> "
                                 + "<span data-i18n=\"" + genderKey + "\">" + profileMember.getGenderLabel() + "</span>");
-                        }
-
-                        if (profileMember.getBirthday() != null && !profileMember.getBirthday().isEmpty() && profileMember.isBirthdayPublic()) {
-                            personalParts.add("<span data-i18n=\"mypage.birthdayLabel\">생일</span> " + profileMember.getBirthday());
                         }
 
                         if (profileMember.getRealName() != null && !profileMember.getRealName().isEmpty() && profileMember.isNamePublic()) {

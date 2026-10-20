@@ -12,7 +12,8 @@ import util.ParamUtil;
 
 /**
  * 수정 화면 띄우기(GET /post/modify). 기존 글을 불러와 폼에 채운다.
- * 본인 글(또는 관리자)이 아니면 상세화면으로 돌려보낸다.
+ * 본인 글(또는 admin, 레벨 2)이 아니면 상세화면으로 돌려보낸다 - moderator(레벨 1)는
+ * 남의 글을 수정할 수 없다(삭제까지만 가능, PostDeleteCommand 참고).
  */
 public class PostModifyFormCommand implements Command {
 
@@ -31,7 +32,7 @@ public class PostModifyFormCommand implements Command {
 
 		MemberDTO loginMember = (MemberDTO) request.getSession().getAttribute("loginMember");
 
-		if (!loginMember.getId().equals(post.getWriter()) && !loginMember.isModerator()) {
+		if (!loginMember.getId().equals(post.getWriter()) && !loginMember.isAdmin()) {
 
 			request.getSession().setAttribute("flashMsg", "본인이 작성한 게시글만 수정할 수 있습니다.");
 			response.sendRedirect(request.getContextPath() + "/post/view?bno=" + bno);

@@ -175,7 +175,8 @@
         hiddenInputId: "writeBody",
         uploadUrl: "<%= contextPath %>/post/uploadImage",
         loginUrl: "<%= contextPath %>/member/login",
-        placeholder: window.t("write.editorPlaceholder", "여행 이야기를 자유롭게 남겨주세요")
+        placeholderKey: "write.editorPlaceholder",
+        placeholderFallback: "여행 이야기를 자유롭게 남겨주세요"
     });
 
     /*

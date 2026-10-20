@@ -25,15 +25,12 @@
     String countryValue = isResubmit ? request.getParameter("profileCountry") : loginMember.getCountry();
     String countryOtherValue = isResubmit ? request.getParameter("profileCountryOther") : loginMember.getCountryOther();
     String nameValue = isResubmit ? request.getParameter("profileName") : loginMember.getRealName();
-    String birthdayValue = isResubmit ? request.getParameter("profileBirthday") : loginMember.getBirthday();
     boolean namePublicValue = isResubmit ? !"private".equals(request.getParameter("nameVisibility")) : loginMember.isNamePublic();
-    boolean birthdayPublicValue = isResubmit ? !"private".equals(request.getParameter("birthdayVisibility")) : loginMember.isBirthdayPublic();
 
     if (countryValue == null || countryValue.isEmpty()) countryValue = "KR";
     if (bioValue == null) bioValue = "";
     if (countryOtherValue == null) countryOtherValue = "";
     if (nameValue == null) nameValue = "";
-    if (birthdayValue == null) birthdayValue = "";
 %>
 
 <!DOCTYPE html>
@@ -118,10 +115,24 @@
                     닉네임
                 </label>
 
-                <input type="text"
-                       id="profileNickname"
-                       name="profileNickname"
-                       value="<%= EscapeUtil.html(nicknameValue) %>">
+                <div class="auth-field-with-button">
+
+                    <input type="text"
+                           id="profileNickname"
+                           name="profileNickname"
+                           value="<%= EscapeUtil.html(nicknameValue) %>"
+                           maxlength="12">
+
+                    <button type="button" id="nicknameCheckButton" class="filter-button" data-i18n="auth.idCheckButton">
+                        중복확인
+                    </button>
+
+                </div>
+
+                <p class="write-field-note" data-i18n="auth.nicknameRule">
+                    특수문자·공백 없이 2~12자
+                </p>
+                <p class="write-field-note" id="nicknameCheckResult"></p>
 
             </div>
 
@@ -181,7 +192,6 @@
                 <p class="write-field-note" data-i18n="editProfile.genderNote">
                     성별은 성별/여행지별 인기 게시글 통계(랭킹)에 쓰이며, 한 번 저장하면
                     이 화면에서 다시 바꿀 수 없습니다. 공개 여부는 자유롭게 선택하세요.
-                    (나이는 따로 받지 않고 아래 생일로 계산해서 보여줘요)
                 </p>
 
                 <input type="hidden" id="genderInput" name="gender" value="">
@@ -221,33 +231,6 @@
                 </div>
 
                 <% } %>
-
-                <div class="write-field">
-
-                    <label for="profileBirthday" data-i18n="mypage.birthdayLabel">
-                        생일
-                    </label>
-
-                    <input type="date"
-                           id="profileBirthday"
-                           name="profileBirthday"
-                           value="<%= birthdayValue %>">
-
-                    <div class="radio-group">
-
-                        <label class="radio-option">
-                            <input type="radio" name="birthdayVisibility" value="public" <%= birthdayPublicValue ? "checked" : "" %>>
-                            <span data-i18n="mypage.public">공개</span>
-                        </label>
-
-                        <label class="radio-option">
-                            <input type="radio" name="birthdayVisibility" value="private" <%= birthdayPublicValue ? "" : "checked" %>>
-                            <span data-i18n="mypage.private">비공개</span>
-                        </label>
-
-                    </div>
-
-                </div>
 
                 <div class="write-field">
 
@@ -330,6 +313,87 @@
         reader.readAsDataURL(file);
 
     });
+
+
+    /*
+     * 닉네임 형식은 서버(ProfileEditCommand)에서도 똑같이 검사하지만, 제출 전에 미리 알려준다.
+     */
+
+    document.getElementById("profileForm").addEventListener("submit", function (event) {
+
+        const nickname = document.getElementById("profileNickname").value.trim();
+
+        if (!/^[\p{L}\p{N}]{2,12}$/u.test(nickname)) {
+            event.preventDefault();
+            alert(window.t("auth.nicknameInvalidAlert", "닉네임은 특수문자·공백 없이 2~12자로 입력해 주세요."));
+        }
+
+    });
+
+
+    /*
+     * 닉네임 중복확인 - 원래 닉네임 그대로면(안 바꿨으면) 굳이 또 확인하라고 막지 않는다.
+     * 바꿨을 때만 저장 전에 중복확인을 거치게 한다.
+     */
+
+    (function () {
+
+        const originalNickname = "<%= EscapeUtil.json(nicknameValue) %>";
+        const nicknameInput = document.getElementById("profileNickname");
+        const nicknameCheckButton = document.getElementById("nicknameCheckButton");
+        const nicknameCheckResult = document.getElementById("nicknameCheckResult");
+        let nicknameChecked = false;
+
+        nicknameCheckButton.addEventListener("click", function () {
+
+            const nickname = nicknameInput.value.trim();
+
+            if (!/^[\p{L}\p{N}]{2,12}$/u.test(nickname)) {
+                nicknameChecked = false;
+                nicknameCheckResult.textContent = window.t("auth.nicknameInvalidAlert", "닉네임은 특수문자·공백 없이 2~12자로 입력해 주세요.");
+                nicknameCheckResult.className = "write-field-note field-hint-error";
+                return;
+            }
+
+            fetch("<%= contextPath %>/member/nicknameCheck?nickname=" + encodeURIComponent(nickname))
+                .then(function (res) { return res.json(); })
+                .then(function (data) {
+
+                    if (data.result === "available") {
+                        nicknameChecked = true;
+                        nicknameCheckResult.textContent = window.t("auth.nicknameCheckAvailable", "사용 가능한 닉네임입니다.");
+                        nicknameCheckResult.className = "write-field-note field-hint-ok";
+                    } else if (data.result === "duplicate") {
+                        nicknameChecked = false;
+                        nicknameCheckResult.textContent = window.t("auth.nicknameCheckDuplicate", "이미 사용 중인 닉네임입니다.");
+                        nicknameCheckResult.className = "write-field-note field-hint-error";
+                    } else {
+                        nicknameChecked = false;
+                        nicknameCheckResult.textContent = window.t("auth.nicknameInvalidAlert", "닉네임은 특수문자·공백 없이 2~12자로 입력해 주세요.");
+                        nicknameCheckResult.className = "write-field-note field-hint-error";
+                    }
+
+                });
+
+        });
+
+        nicknameInput.addEventListener("input", function () {
+            nicknameChecked = false;
+            nicknameCheckResult.textContent = "";
+        });
+
+        document.getElementById("profileForm").addEventListener("submit", function (event) {
+
+            const nickname = nicknameInput.value.trim();
+
+            if (nickname !== originalNickname && !nicknameChecked) {
+                event.preventDefault();
+                alert(window.t("auth.nicknameCheckRequiredAlert", "닉네임 중복확인을 먼저 해 주세요."));
+            }
+
+        });
+
+    })();
 </script>
 
 <% if (loginMember.getGender() == null) { %>

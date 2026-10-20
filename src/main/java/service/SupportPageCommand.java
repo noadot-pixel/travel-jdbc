@@ -23,8 +23,11 @@ public class SupportPageCommand implements Command {
 		String viewerId = (loginMember == null) ? null : loginMember.getId();
 		boolean isModerator = loginMember != null && loginMember.isModerator();
 
+		String keyword = request.getParameter("keyword");
+
 		request.setAttribute("faqList", new FaqDAO().getList());
-		request.setAttribute("inquiryList", new InquiryDAO().getList(viewerId, isModerator));
+		request.setAttribute("inquiryList", new InquiryDAO().getList(viewerId, isModerator, keyword));
+		request.setAttribute("keyword", keyword == null ? "" : keyword);
 
 		return true;   // support.jsp로 forward
 	}

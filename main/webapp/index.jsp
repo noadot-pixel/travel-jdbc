@@ -37,7 +37,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>여행만들기</title>
+    <title data-i18n="home.footerVisual.webTitle">여행만들기</title>
 
     <%@ include file="/common/css-links.jspf" %>
 </head>
@@ -86,10 +86,6 @@
                     여행지 검색
                 </label>
 
-                <span class="search-icon">
-                    ⌕
-                </span>
-
                 <input type="text"
                        id="searchKeyword"
                        name="keyword"
@@ -102,17 +98,6 @@
                 </button>
 
             </form>
-
-            <div class="recommend-keywords">
-
-                <button type="button" data-i18n="home.keyword.seoul">#서울</button>
-                <button type="button" data-i18n="home.keyword.jeju">#제주도</button>
-                <button type="button" data-i18n="home.keyword.tokyo">#도쿄</button>
-                <button type="button" data-i18n="home.keyword.osaka">#오사카</button>
-                <button type="button" data-i18n="home.keyword.fukuoka">#후쿠오카</button>
-                <button type="button" data-i18n="home.keyword.barcelona">#바르셀로나</button>
-
-            </div>
 
         </div>
 
@@ -140,6 +125,8 @@
             <button type="button"
                     class="category-nav category-nav-prev"
                     id="categoryPrev"
+                    data-i18n="home.prevCategoryAriaLabel"
+                    data-i18n-attr="aria-label"
                     aria-label="이전 카테고리">
                 ‹
             </button>
@@ -288,6 +275,8 @@
             <button type="button"
                     class="category-nav category-nav-next"
                     id="categoryNext"
+                    data-i18n="home.nextCategoryAriaLabel"
+                    data-i18n-attr="aria-label"
                     aria-label="다음 카테고리">
                 ›
             </button>
@@ -464,27 +453,6 @@
 <%@ include file="/common/footer.jsp" %>
 
 <script>
-    /*
-     * 추천 검색어를 클릭하면 검색창에 입력
-     */
-
-    const searchInput =
-        document.getElementById("searchKeyword");
-
-    document.querySelectorAll(".recommend-keywords button").forEach(function (button) {
-
-        button.addEventListener("click", function () {
-
-            //버튼에 보이는 글자(언어 전환이 이미 반영된 상태)를 그대로 검색어로 쓴다.
-            //주의: 실제 게시글 제목은 한국어로만 쓰여 있어서, 영어/일본어 UI에서는
-            //이 검색어로 결과가 0건이 나올 수 있다(의도적으로 감수하기로 한 선택).
-            searchInput.value = button.textContent.replace(/^#/, "").trim();
-
-            searchInput.focus();
-        });
-
-    });
-
     /*
      * 여행 카테고리 캐러셀 - 기본 4개만 보이고, </>버튼으로 한 칸씩 이동한다.
      * 끝(쇼핑 여행)에서 다음을 누르면 처음(한국 여행지)으로, 처음에서 이전을 누르면

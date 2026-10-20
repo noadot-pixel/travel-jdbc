@@ -22,8 +22,6 @@ public class MemberDTO {
 	private String countryOther;   // country가 ETC일 때 직접 입력값
 	private String realName;
 	private boolean namePublic;
-	private String birthday;       // "YYYY-MM-DD"
-	private boolean birthdayPublic;
 	private String photoPath;      // 업로드 경로 ("upload/xxx.jpg"), 없으면 null
 	private String gender;         // M / F. 이 기능 이전 가입자는 null
 	private boolean genderPublic;
@@ -99,18 +97,6 @@ public class MemberDTO {
 	public void setNamePublic(boolean namePublic) {
 		this.namePublic = namePublic;
 	}
-	public String getBirthday() {
-		return birthday;
-	}
-	public void setBirthday(String birthday) {
-		this.birthday = birthday;
-	}
-	public boolean isBirthdayPublic() {
-		return birthdayPublic;
-	}
-	public void setBirthdayPublic(boolean birthdayPublic) {
-		this.birthdayPublic = birthdayPublic;
-	}
 	public String getPhotoPath() {
 		return photoPath;
 	}
@@ -147,21 +133,6 @@ public class MemberDTO {
 		if ("M".equals(gender)) return "남성";
 		if ("F".equals(gender)) return "여성";
 		return null;
-	}
-
-	//별도 컬럼을 두지 않고 생일에서 바로 계산한다 (나이는 시간이 지나면 틀려지는 값이라
-	//저장해두면 어차피 매번 갱신해줘야 하므로, 생일만 있으면 그때그때 계산하는 게 더 정확하다).
-	//생일이 없거나(이 기능 이전 가입자 포함) 형식이 이상하면 null.
-	public Integer getAge() {
-		if (birthday == null || birthday.isEmpty()) {
-			return null;
-		}
-		try {
-			java.time.LocalDate birth = java.time.LocalDate.parse(birthday);
-			return java.time.Period.between(birth, java.time.LocalDate.now()).getYears();
-		} catch (Exception e) {
-			return null;
-		}
 	}
 
 }

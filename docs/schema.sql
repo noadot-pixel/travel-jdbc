@@ -29,8 +29,6 @@ CREATE TABLE members (
     country_other    VARCHAR2(50),                -- free-text value when country = ETC
     real_name        VARCHAR2(50),
     name_public      CHAR(1)        DEFAULT 'Y' NOT NULL,
-    birthday         VARCHAR2(10),                -- "YYYY-MM-DD" stored as plain text, never parsed
-    birthday_public  CHAR(1)        DEFAULT 'Y' NOT NULL,
     photo_path       VARCHAR2(300),
     gender           VARCHAR2(1),                 -- M / F, asked at signup (ranking feature). NULL for members who joined before this.
     gender_public    CHAR(1)        DEFAULT 'Y' NOT NULL,
@@ -38,9 +36,9 @@ CREATE TABLE members (
     suspended        CHAR(1)        DEFAULT 'N' NOT NULL,  -- admin-set; blocks comment/like/post-write, not scraps
     dark_mode        CHAR(1)        DEFAULT 'N' NOT NULL   -- self-set in mypage; applied to every page via <html data-theme>
 
-    -- Age is NOT stored as a column: MemberDTO.getAge() computes it from birthday instead,
-    -- so there is nothing to keep in sync as time passes. (An age/age_public column pair
-    -- existed briefly for this project's ranking feature and was dropped in favor of this.)
+    -- birthday/birthday_public columns existed briefly (mypage personal-info section) and
+    -- were dropped - the feature was removed, not just hidden, so there is nothing left that
+    -- reads or writes them.
 );
 
 -- Make an account a moderator or admin (sign up through the normal form first, then run):
@@ -130,14 +128,17 @@ CREATE TABLE notices (
 );
 
 
--- 8. Notifications (personal alerts - someone commented/liked my post)
+-- 8. Notifications (personal alerts - someone commented/liked my post, or
+-- commented on an inquiry I'm involved in)
 CREATE SEQUENCE seq_notifications START WITH 1 INCREMENT BY 1;
 
 CREATE TABLE notifications (
     notif_id    NUMBER          PRIMARY KEY,
     member_id   VARCHAR2(100)   NOT NULL REFERENCES members(id),              -- who the alert is for
-    type        VARCHAR2(10)    NOT NULL,                                     -- COMMENT / LIKE
-    bno         NUMBER          NOT NULL REFERENCES posts(bno) ON DELETE CASCADE,
+    type        VARCHAR2(20)    NOT NULL,                                     -- COMMENT / LIKE / INQUIRY_COMMENT
+    target_type VARCHAR2(10)    DEFAULT 'POST' NOT NULL,                      -- POST / INQUIRY - which of bno/inquiry_id is set
+    bno         NUMBER          REFERENCES posts(bno) ON DELETE CASCADE,      -- set when target_type = POST
+    inquiry_id  NUMBER          REFERENCES inquiries(inquiry_id) ON DELETE CASCADE, -- set when target_type = INQUIRY
     actor_id    VARCHAR2(100)   NOT NULL REFERENCES members(id),              -- who commented/liked
     is_read     CHAR(1)         DEFAULT 'N' NOT NULL,
     reg_date    DATE            DEFAULT SYSDATE NOT NULL
@@ -161,10 +162,22 @@ CREATE TABLE faqs (
 CREATE SEQUENCE seq_inquiries START WITH 1 INCREMENT BY 1;
 
 CREATE TABLE inquiries (
-    inquiry_id  NUMBER          PRIMARY KEY,
-    title       VARCHAR2(200)   NOT NULL,
-    content     VARCHAR2(2000)  NOT NULL,
-    writer      VARCHAR2(100)   NOT NULL REFERENCES members(id),
-    reg_date    DATE            DEFAULT SYSDATE NOT NULL,
-    is_private  CHAR(1)         DEFAULT 'N' NOT NULL   -- 'Y'면 작성자 본인과 관리자만 볼 수 있음
+    inquiry_id        NUMBER          PRIMARY KEY,
+    title             VARCHAR2(200)   NOT NULL,
+    content           VARCHAR2(2000)  NOT NULL,
+    writer            VARCHAR2(100)   NOT NULL REFERENCES members(id),
+    reg_date          DATE            DEFAULT SYSDATE NOT NULL,
+    is_private        CHAR(1)         DEFAULT 'N' NOT NULL  -- 'Y'면 작성자 본인과 관리자만 볼 수 있음
+);
+
+-- 10-1. Inquiry comments (상세 페이지의 댓글 - 문의 당사자와 moderator 이상만 남길 수 있다,
+-- Command에서 검사함. 게시글 댓글(COMMENTS)과 달리 전체 공개 댓글이 아니라서 별도 테이블로 둔다)
+CREATE SEQUENCE seq_inquiry_comments START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE inquiry_comments (
+    inquiry_comment_id  NUMBER          PRIMARY KEY,
+    inquiry_id          NUMBER          NOT NULL REFERENCES inquiries(inquiry_id) ON DELETE CASCADE,
+    writer              VARCHAR2(100)   NOT NULL REFERENCES members(id),
+    content             VARCHAR2(1000)  NOT NULL,
+    reg_date            DATE            DEFAULT SYSDATE NOT NULL
 );

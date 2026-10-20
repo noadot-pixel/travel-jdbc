@@ -60,7 +60,9 @@ public class NotificationListCommand implements Command {
 		for (int i = 0; i < alerts.size(); i++) {
 			NotificationDTO a = alerts.get(i);
 			if (i > 0) json.append(",");
-			json.append("{\"bno\":").append(a.getBno()).append(",")
+			json.append("{\"targetType\":\"").append(EscapeUtil.json(a.getTargetType())).append("\",")
+				.append("\"bno\":").append(a.getBno()).append(",")
+				.append("\"inquiryId\":").append(a.getInquiryId()).append(",")
 				.append("\"message\":\"").append(EscapeUtil.json(a.getMessage())).append("\",")
 				.append("\"read\":").append(a.isRead()).append(",")
 				.append("\"regDate\":\"").append(EscapeUtil.json(a.getRegDate())).append("\"}");

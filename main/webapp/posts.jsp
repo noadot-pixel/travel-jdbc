@@ -116,10 +116,6 @@
                 게시글 검색
             </label>
 
-            <span class="search-icon">
-                ⌕
-            </span>
-
             <input type="text"
                    id="searchKeyword"
                    name="keyword"
@@ -248,17 +244,22 @@
         <% for (PostDTO post : list) {
 
             boolean isMine = loginMember != null && loginMember.getId().equals(post.getWriter());
-            boolean canManage = isMine || (loginMember != null && loginMember.isModerator());
+            //남의 글 수정은 admin(레벨 2)만, 삭제는 moderator(레벨 1)부터 가능하다.
+            boolean canEdit = isMine || (loginMember != null && loginMember.isAdmin());
+            boolean canDelete = isMine || (loginMember != null && loginMember.isModerator());
 
             showMyBadge = isMine;
 
-            if (canManage) {
+            if (canEdit || canDelete) {
                 actionsHtml = "<div class=\"detail-actions local-post-actions\">"
-                    + "<a href=\"" + contextPath + "/post/modify?bno=" + post.getBno() + "\" class=\"detail-edit-button\" data-i18n=\"common.edit\">수정</a>"
-                    + "<form method=\"post\" action=\"" + contextPath + "/post/delete\" onsubmit=\"return confirm(window.t('detail.confirmDeletePost', '이 게시글을 삭제하시겠습니까?'));\">"
-                    + "<input type=\"hidden\" name=\"bno\" value=\"" + post.getBno() + "\">"
-                    + "<button type=\"submit\" class=\"detail-delete-button\" data-i18n=\"common.delete\">삭제</button>"
-                    + "</form></div>";
+                    + (canEdit ? "<a href=\"" + contextPath + "/post/modify?bno=" + post.getBno() + "\" class=\"detail-edit-button\" data-i18n=\"common.edit\">수정</a>" : "")
+                    + (canDelete
+                        ? "<form method=\"post\" action=\"" + contextPath + "/post/delete\" onsubmit=\"return confirm(window.t('detail.confirmDeletePost', '이 게시글을 삭제하시겠습니까?'));\">"
+                          + "<input type=\"hidden\" name=\"bno\" value=\"" + post.getBno() + "\">"
+                          + "<button type=\"submit\" class=\"detail-delete-button\" data-i18n=\"common.delete\">삭제</button>"
+                          + "</form>"
+                        : "")
+                    + "</div>";
             } else {
                 actionsHtml = null;
             }

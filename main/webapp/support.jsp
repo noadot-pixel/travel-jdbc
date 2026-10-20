@@ -23,6 +23,9 @@
     }
 
     String msg = (String) request.getAttribute("msg");
+
+    String keyword = (String) request.getAttribute("keyword");
+    if (keyword == null) keyword = "";
 %>
 
 <!DOCTYPE html>
@@ -75,9 +78,7 @@
                     <span class="faq-toggle-icon">+</span>
                 </button>
 
-                <p class="faq-answer" hidden>
-                    <%= EscapeUtil.html(faq.getAnswer()) %>
-                </p>
+                <p class="faq-answer" hidden><%= EscapeUtil.html(faq.getAnswer()) %></p>
 
             </li>
             <% } %>
@@ -151,6 +152,22 @@
 
     <section class="inquiry-list-section">
 
+        <form class="search-form inquiry-search-form" action="<%= contextPath %>/support#contact" method="get">
+
+            <label for="inquirySearchKeyword" class="blind" data-i18n="support.searchLabel">문의 검색</label>
+
+            <input type="text"
+                   id="inquirySearchKeyword"
+                   name="keyword"
+                   value="<%= EscapeUtil.html(keyword) %>"
+                   data-i18n="support.searchPlaceholder"
+                   data-i18n-attr="placeholder"
+                   placeholder="문의 제목/내용으로 검색해 보세요">
+
+            <button type="submit" data-i18n="common.search">검색</button>
+
+        </form>
+
         <% if (inquiryList.isEmpty()) { %>
         <p class="ranking-empty" data-i18n="support.noInquiries">등록된 문의가 없습니다.</p>
         <% } else { %>
@@ -158,15 +175,17 @@
             <% for (InquiryDTO inquiry : inquiryList) { %>
             <li class="inquiry-item">
 
-                <div class="inquiry-item-head">
-                    <strong><%= EscapeUtil.html(inquiry.getTitle()) %></strong>
-                    <% if (inquiry.isPrivate()) { %>
-                    <span class="inquiry-private-badge" data-i18n="mypage.private">비공개</span>
-                    <% } %>
-                    <span><%= inquiry.getRegDate() %> · <%= EscapeUtil.html(inquiry.getWriterNick()) %></span>
-                </div>
+                <a class="inquiry-item-link" href="<%= contextPath %>/support/view?inquiryId=<%= inquiry.getInquiryId() %>">
 
-                <p><%= EscapeUtil.html(inquiry.getContent()) %></p>
+                    <div class="inquiry-item-head">
+                        <strong><%= EscapeUtil.html(inquiry.getTitle()) %></strong>
+                        <% if (inquiry.isPrivate()) { %>
+                        <span class="inquiry-private-badge" data-i18n="mypage.private">비공개</span>
+                        <% } %>
+                        <span><%= inquiry.getRegDate() %> · <%= EscapeUtil.html(inquiry.getWriterNick()) %></span>
+                    </div>
+
+                </a>
 
             </li>
             <% } %>

@@ -18,7 +18,8 @@
      *   initialHtml   - 기존 글 수정일 때 미리 채울 HTML (없으면 빈 에디터로 시작)
      *   uploadUrl     - 본문 이미지 업로드 API 주소
      *   loginUrl      - 업로드 도중 로그인이 풀려있으면 보낼 주소
-     *   placeholder   - 빈 에디터에 보여줄 안내 문구
+     *   placeholderKey      - 빈 에디터에 보여줄 안내 문구의 i18n 키 (window.t로 풀어 씀)
+     *   placeholderFallback - 그 키가 사전에 없을 때(또는 사전이 아직 안 로딩됐을 때) 쓸 한국어 원문
      *
      * 돌려주는 quill 인스턴스로 quill.getText()/quill.root 등을 직접 써서
      * 페이지마다 필요한 제출 전 검사(예: 본문이 비었는지)를 할 수 있다.
@@ -65,9 +66,19 @@
 
     function initQuillEditor(options) {
 
+        //placeholder는 Quill 생성 시점에 한 번 고정되는 옵션이 아니라, 에디터 root의
+        //data-placeholder 속성(CSS가 ::before로 보여줌)이라 언제든 다시 써넣을 수 있다.
+        //헤더의 i18n 사전이 비동기로 로딩되는 동안엔 한국어 fallback이 잠깐 보일 수 있지만,
+        //사전이 로딩되는 즉시(i18n:applied) 그리고 언어를 바꿀 때마다 아래서 다시 맞춰 넣는다.
+        function resolvePlaceholder() {
+            return options.placeholderKey
+                ? window.t(options.placeholderKey, options.placeholderFallback || "")
+                : (options.placeholderFallback || "");
+        }
+
         const quill = new Quill("#" + options.containerId, {
             theme: "snow",
-            placeholder: options.placeholder || "",
+            placeholder: resolvePlaceholder(),
             modules: {
                 toolbar: {
                     container: [
@@ -98,6 +109,10 @@
         if (options.initialHtml) {
             quill.root.innerHTML = options.initialHtml;
         }
+
+        $(document).on("i18n:applied", function () {
+            quill.root.setAttribute("data-placeholder", resolvePlaceholder());
+        });
 
         //붙여넣기(클립보드 이미지)도 업로드 경로로 보낸다. capture 단계에서 먼저 가로채고
         //stopImmediatePropagation으로 Quill 자체의 base64 붙여넣기 처리를 막는다.

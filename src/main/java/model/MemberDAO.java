@@ -14,12 +14,10 @@ import util.DBUtil;
  */
 public class MemberDAO {
 
-	//BIRTHDAY는 날짜 계산을 할 일이 없는 단순 표시용 값이라 DATE가 아니라 VARCHAR2(10)로 저장한다
-	//(그대로 "YYYY-MM-DD" 문자열로 넣고 꺼내면 돼서 TO_CHAR/TO_DATE 변환이 필요 없다)
 	private static final String COLUMNS =
 			"ID, PWD, NICKNAME, ADMIN_LEVEL, TO_CHAR(JOIN_DATE, 'YYYY-MM-DD') JOIN_DATE, "
 		  + "BIO, COUNTRY, COUNTRY_OTHER, REAL_NAME, NAME_PUBLIC, "
-		  + "BIRTHDAY, BIRTHDAY_PUBLIC, PHOTO_PATH, GENDER, GENDER_PUBLIC, SUSPENDED, DARK_MODE ";
+		  + "PHOTO_PATH, GENDER, GENDER_PUBLIC, SUSPENDED, DARK_MODE ";
 
 	private MemberDTO toDto(ResultSet rs) throws Exception {
 
@@ -33,8 +31,6 @@ public class MemberDAO {
 		dto.setCountryOther(rs.getString("COUNTRY_OTHER"));
 		dto.setRealName(rs.getString("REAL_NAME"));
 		dto.setNamePublic(!"N".equals(rs.getString("NAME_PUBLIC")));
-		dto.setBirthday(rs.getString("BIRTHDAY"));
-		dto.setBirthdayPublic(!"N".equals(rs.getString("BIRTHDAY_PUBLIC")));
 		dto.setPhotoPath(rs.getString("PHOTO_PATH"));
 		dto.setGender(rs.getString("GENDER"));
 		dto.setGenderPublic(!"N".equals(rs.getString("GENDER_PUBLIC")));
@@ -55,6 +51,31 @@ public class MemberDAO {
 			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
 			pstmt.setString(1, id);
+			try (ResultSet rs = pstmt.executeQuery()) {
+				isDuplicate = rs.next();
+			}
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
+		return isDuplicate;
+	}
+
+	//닉네임 중복 확인 - 이미 있으면 true. excludeId가 있으면(프로필 수정) 그 계정 본인은 제외하고
+	//검사한다(안 바꾸고 그대로 "저장"만 눌러도 자기 자신과 중복이라고 막히면 안 되므로).
+	public boolean nicknameCheck(String nickname, String excludeId) {
+
+		String sql = "select id from members where nickname = ? and (? is null or id != ?)";
+
+		boolean isDuplicate = false;
+
+		try (Connection conn = DBUtil.getInstance();
+			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			pstmt.setString(1, nickname);
+			pstmt.setString(2, excludeId);
+			pstmt.setString(3, excludeId);
 			try (ResultSet rs = pstmt.executeQuery()) {
 				isDuplicate = rs.next();
 			}
@@ -144,7 +165,7 @@ public class MemberDAO {
 
 		String sql = "update members set "
 				   + "nickname = ?, bio = ?, country = ?, country_other = ?, "
-				   + "real_name = ?, name_public = ?, birthday = ?, birthday_public = ?, photo_path = ?, "
+				   + "real_name = ?, name_public = ?, photo_path = ?, "
 				   + "gender = ?, gender_public = ? "
 				   + "where id = ?";
 
@@ -159,14 +180,10 @@ public class MemberDAO {
 			pstmt.setString(4, dto.getCountryOther());
 			pstmt.setString(5, dto.getRealName());
 			pstmt.setString(6, dto.isNamePublic() ? "Y" : "N");
-			//생일을 비워서 저장하면 null로 들어가도록 빈 문자열은 null로 바꾼다.
-			String birthday = (dto.getBirthday() == null || dto.getBirthday().isEmpty()) ? null : dto.getBirthday();
-			pstmt.setString(7, birthday);
-			pstmt.setString(8, dto.isBirthdayPublic() ? "Y" : "N");
-			pstmt.setString(9, dto.getPhotoPath());
-			pstmt.setString(10, dto.getGender());
-			pstmt.setString(11, dto.isGenderPublic() ? "Y" : "N");
-			pstmt.setString(12, dto.getId());
+			pstmt.setString(7, dto.getPhotoPath());
+			pstmt.setString(8, dto.getGender());
+			pstmt.setString(9, dto.isGenderPublic() ? "Y" : "N");
+			pstmt.setString(10, dto.getId());
 			result = pstmt.executeUpdate();
 
 		} catch (Exception e) {

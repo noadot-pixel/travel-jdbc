@@ -14,16 +14,28 @@ import util.DBUtil;
 public class NotificationDAO {
 
 	private static final String COLUMNS =
-			"nf.notif_id, nf.type, nf.bno, p.title post_title, nf.actor_id, m.nickname actor_nick, "
+			"nf.notif_id, nf.type, nf.target_type, nf.bno, p.title post_title, "
+		  + "nf.inquiry_id, i.title inquiry_title, nf.actor_id, m.nickname actor_nick, "
 		  + "nf.is_read, to_char(nf.reg_date, 'YYYY-MM-DD HH24:MI') reg_date ";
+
+	//target_type에 따라 bno/inquiry_id 중 하나만 채워져 있어서(둘 다 LEFT JOIN) - POST
+	//알림은 posts만, INQUIRY 알림은 inquiries만 매칭되고 나머지는 자연히 null로 남는다.
+	private static final String FROM =
+			"from notifications nf "
+		  + "left join posts p on nf.bno = p.bno "
+		  + "left join inquiries i on nf.inquiry_id = i.inquiry_id "
+		  + "join members m on nf.actor_id = m.id ";
 
 	private NotificationDTO toDto(ResultSet rs) throws Exception {
 
 		NotificationDTO dto = new NotificationDTO();
 		dto.setNotifId(rs.getInt("notif_id"));
 		dto.setType(rs.getString("type"));
+		dto.setTargetType(rs.getString("target_type"));
 		dto.setBno(rs.getInt("bno"));
 		dto.setPostTitle(rs.getString("post_title"));
+		dto.setInquiryId(rs.getInt("inquiry_id"));
+		dto.setInquiryTitle(rs.getString("inquiry_title"));
 		dto.setActorId(rs.getString("actor_id"));
 		dto.setActorNick(rs.getString("actor_nick"));
 		dto.setRead("Y".equals(rs.getString("is_read")));
@@ -31,7 +43,7 @@ public class NotificationDAO {
 		return dto;
 	}
 
-	//댓글/좋아요 알림 적재 - 자기 글에 자기가 댓글을 달거나 좋아요를 누른 경우는 알릴 필요가 없어서 뺀다.
+	//게시글 댓글/좋아요 알림 적재 - 자기 글에 자기가 댓글을 달거나 좋아요를 누른 경우는 알릴 필요가 없어서 뺀다.
 	public void insert(String targetMemberId, String type, int bno, String actorId) {
 
 		if (targetMemberId.equals(actorId)) {
@@ -39,7 +51,8 @@ public class NotificationDAO {
 		}
 
 		String seqSql = "select seq_notifications.nextval from dual";
-		String sql = "insert into notifications(notif_id, member_id, type, bno, actor_id) values(?, ?, ?, ?, ?)";
+		String sql = "insert into notifications(notif_id, member_id, type, target_type, bno, actor_id) "
+				   + "values(?, ?, ?, 'POST', ?, ?)";
 
 		try (Connection conn = DBUtil.getInstance();
 			 PreparedStatement seqPstmt = conn.prepareStatement(seqSql);
@@ -64,14 +77,44 @@ public class NotificationDAO {
 		}
 	}
 
+	//문의 댓글 알림 적재 - 자기 문의에 자기가 댓글을 단 경우(본인 글에 본인이 쓴 첫 댓글 등)는 뺀다.
+	public void insertForInquiry(String targetMemberId, int inquiryId, String actorId) {
+
+		if (targetMemberId.equals(actorId)) {
+			return;
+		}
+
+		String seqSql = "select seq_notifications.nextval from dual";
+		String sql = "insert into notifications(notif_id, member_id, type, target_type, inquiry_id, actor_id) "
+				   + "values(?, ?, 'INQUIRY_COMMENT', 'INQUIRY', ?, ?)";
+
+		try (Connection conn = DBUtil.getInstance();
+			 PreparedStatement seqPstmt = conn.prepareStatement(seqSql);
+			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			int notifId = 0;
+			try (ResultSet rs = seqPstmt.executeQuery()) {
+				if (rs.next()) {
+					notifId = rs.getInt(1);
+				}
+			}
+
+			pstmt.setInt(1, notifId);
+			pstmt.setString(2, targetMemberId);
+			pstmt.setInt(3, inquiryId);
+			pstmt.setString(4, actorId);
+			pstmt.executeUpdate();
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+	}
+
 	//알림 벨 드롭다운에 보여줄 이 회원의 최신 n개(읽음 여부 상관없이)
 	public List<NotificationDTO> getRecent(String memberId, int n) {
 
 		String sql = "select * from ( "
-				   + "  select " + COLUMNS
-				   + "  from notifications nf "
-				   + "  join posts p on nf.bno = p.bno "
-				   + "  join members m on nf.actor_id = m.id "
+				   + "  select " + COLUMNS + FROM
 				   + "  where nf.member_id = ? "
 				   + "  order by nf.notif_id desc "
 				   + ") where rownum <= ?";

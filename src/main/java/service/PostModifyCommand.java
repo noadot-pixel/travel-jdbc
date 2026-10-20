@@ -15,6 +15,7 @@ import util.ParamUtil;
 /**
  * 게시글 수정 저장(POST /post/modify). 본문은 에디터(Quill)가 만든 HTML이라
  * 저장 전에 HtmlSanitizer로 한 번 거르고, 목록 카드 썸네일도 수정된 본문 기준으로 다시 계산한다.
+ * 남의 글 수정은 admin(레벨 2)만 가능하다 - moderator(레벨 1)는 삭제까지만(PostDeleteCommand).
  */
 public class PostModifyCommand implements Command {
 
@@ -34,9 +35,9 @@ public class PostModifyCommand implements Command {
 			return false;
 		}
 
-		boolean isModerator = loginMember.isModerator();
+		boolean isAdmin = loginMember.isAdmin();
 
-		if (!loginMember.getId().equals(original.getWriter()) && !isModerator) {
+		if (!loginMember.getId().equals(original.getWriter()) && !isAdmin) {
 			request.getSession().setAttribute("flashMsg", "본인이 작성한 게시글만 수정할 수 있습니다.");
 			response.sendRedirect(request.getContextPath() + "/post/view?bno=" + bno);
 			return false;
@@ -71,8 +72,8 @@ public class PostModifyCommand implements Command {
 		dto.setStyle(style);
 		dto.setImgPath(imgPath);
 
-		//일반 회원은 본인 글만(where writer=?), 관리자는 전부 수정 가능
-		int updatedRows = isModerator ? postDAO.updateByAdmin(dto) : postDAO.update(dto);
+		//일반 회원은 본인 글만(where writer=?), admin은 전부 수정 가능
+		int updatedRows = isAdmin ? postDAO.updateByAdmin(dto) : postDAO.update(dto);
 
 		if (updatedRows == 0) {
 			request.setAttribute("post", original);

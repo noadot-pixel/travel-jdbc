@@ -40,7 +40,7 @@
     if ("KR".equals(loginMember.getCountry())) { countryLabel = "한국"; countryI18nKey = "filter.korea"; }
     else if ("JP".equals(loginMember.getCountry())) { countryLabel = "일본"; countryI18nKey = "filter.japan"; }
     else if ("ETC".equals(loginMember.getCountry())) countryLabel = (loginMember.getCountryOther() != null ? loginMember.getCountryOther() : "기타");
-    else countryLabel = "-";
+    else { countryLabel = "설정하지 않음"; countryI18nKey = "mypage.countryNotSet"; }
 %>
 
 <!DOCTYPE html>
@@ -123,12 +123,6 @@
                                 + (loginMember.isGenderPublic() ? "공개" : "비공개") + "</span>)");
                         }
 
-                        if (loginMember.getBirthday() != null && !loginMember.getBirthday().isEmpty()) {
-                            personalParts.add("<span data-i18n=\"mypage.birthdayLabel\">생일</span> " + loginMember.getBirthday()
-                                + " (<span data-i18n=\"" + (loginMember.isBirthdayPublic() ? "mypage.public" : "mypage.private") + "\">"
-                                + (loginMember.isBirthdayPublic() ? "공개" : "비공개") + "</span>)");
-                        }
-
                         if (loginMember.getRealName() != null && !loginMember.getRealName().isEmpty()) {
                             personalParts.add("<span data-i18n=\"mypage.nameLabel\">이름</span> " + EscapeUtil.html(loginMember.getRealName())
                                 + " (<span data-i18n=\"" + (loginMember.isNamePublic() ? "mypage.public" : "mypage.private") + "\">"
@@ -181,8 +175,6 @@
 
             <label for="activitySearchKeyword" class="blind" data-i18n="mypage.searchLabel">내 활동 검색</label>
 
-            <span class="search-icon">⌕</span>
-
             <input type="text"
                    id="activitySearchKeyword"
                    name="keyword"
@@ -213,6 +205,13 @@
                 <p class="activity-item-desc"><%= EscapeUtil.html(comment.getContent()) %></p>
                 <span class="activity-item-date"><%= comment.getRegDate() %></span>
             </a>
+            <div class="detail-actions local-post-actions">
+                <form method="post" action="<%= contextPath %>/comment/delete" class="comment-remove-form"
+                      onsubmit="return confirm(window.t('detail.confirmDeleteComment', '이 댓글을 삭제하시겠습니까?'));">
+                    <input type="hidden" name="cno" value="<%= comment.getCno() %>">
+                    <button type="submit" class="detail-delete-button" data-i18n="common.delete">삭제</button>
+                </form>
+            </div>
         </li>
         <% }
         } else {
@@ -312,6 +311,45 @@
             })
             .then(function () {
                 location.reload();
+            });
+
+        });
+
+    });
+
+    /*
+     * 댓글 삭제도 scrap-remove-form과 같은 이유로 fetch로 보낸다 - CommentDeleteCommand는
+     * Ajax 전용 JSON 엔드포인트라 폼을 그대로 제출하면 화면에 JSON이 떠버린다.
+     */
+
+    document.querySelectorAll(".comment-remove-form").forEach(function (form) {
+
+        form.addEventListener("submit", function (event) {
+
+            event.preventDefault();
+
+            const cno = form.querySelector('input[name="cno"]').value;
+
+            fetch(form.action, {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: "cno=" + encodeURIComponent(cno)
+            })
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+
+                if (data.result === "login") {
+                    location.href = "<%= contextPath %>/member/login";
+                    return;
+                }
+
+                if (data.result !== "ok") {
+                    alert(window.t("detail.commentDeleteFailed", "댓글 삭제에 실패했습니다."));
+                    return;
+                }
+
+                location.reload();
+
             });
 
         });

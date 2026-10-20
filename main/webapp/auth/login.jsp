@@ -118,13 +118,26 @@
                                 비밀번호
                             </label>
 
-                            <input type="password"
-                                   id="loginPassword"
-                                   name="loginPassword"
-                                   data-i18n="auth.passwordPlaceholder"
-                                   data-i18n-attr="placeholder"
-                                   placeholder="비밀번호를 입력해 주세요"
-                                   autocomplete="current-password">
+                            <div class="password-field-wrap">
+
+                                <input type="password"
+                                       id="loginPassword"
+                                       name="loginPassword"
+                                       data-i18n="auth.passwordPlaceholder"
+                                       data-i18n-attr="placeholder"
+                                       placeholder="비밀번호를 입력해 주세요"
+                                       autocomplete="current-password">
+
+                                <button type="button"
+                                        class="password-toggle-button"
+                                        id="loginPasswordToggle"
+                                        data-i18n="auth.passwordToggleAriaLabel"
+                                        data-i18n-attr="aria-label"
+                                        aria-label="눌러서 비밀번호 보기">
+                                    👁
+                                </button>
+
+                            </div>
                         </div>
 
                         <button type="submit"
@@ -156,6 +169,36 @@
 </main>
 
 <%@ include file="/common/footer.jsp" %>
+
+<script>
+    /*
+     * 비밀번호 보기 - 아이콘에 마우스를 올리고 있거나(hover) 누르고 있는 동안만
+     * 평문으로 보여주고, 떼면(또는 마우스가 벗어나면) 다시 가린다. 포인터 이벤트라
+     * 마우스/터치 둘 다 같은 핸들러로 처리된다.
+     */
+
+    function bindPasswordReveal(buttonId, inputId) {
+
+        const button = document.getElementById(buttonId);
+        const input = document.getElementById(inputId);
+
+        function reveal() { input.type = "text"; }
+        function hide() { input.type = "password"; }
+
+        //mousedown 시점에 버튼이 포커스를 가져가 input의 커서 위치가 흐트러지는 걸 막는다.
+        button.addEventListener("pointerdown", function (event) {
+            event.preventDefault();
+            reveal();
+        });
+
+        button.addEventListener("pointerenter", reveal);
+        button.addEventListener("pointerup", hide);
+        button.addEventListener("pointerleave", hide);
+        button.addEventListener("pointercancel", hide);
+    }
+
+    bindPasswordReveal("loginPasswordToggle", "loginPassword");
+</script>
 
 </body>
 </html>

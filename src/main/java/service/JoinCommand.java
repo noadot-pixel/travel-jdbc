@@ -32,6 +32,11 @@ public class JoinCommand implements Command {
 			return true;   // signup.jsp로 다시 forward
 		}
 
+		if (!nickname.trim().matches("^[\\p{L}\\p{N}]{2,12}$")) {
+			request.setAttribute("msg", "닉네임은 특수문자·공백 없이 2~12자로 입력해 주세요.");
+			return true;
+		}
+
 		if (!pwd.equals(pwdConfirm)) {
 			request.setAttribute("msg", "비밀번호가 서로 일치하지 않습니다.");
 			return true;
@@ -65,6 +70,11 @@ public class JoinCommand implements Command {
 
 		if (dao.idCheck(email)) {
 			request.setAttribute("msg", "이미 가입된 이메일입니다.");
+			return true;
+		}
+
+		if (dao.nicknameCheck(nickname.trim(), null)) {
+			request.setAttribute("msg", "이미 사용 중인 닉네임입니다.");
 			return true;
 		}
 

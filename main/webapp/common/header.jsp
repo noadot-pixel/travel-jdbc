@@ -55,7 +55,7 @@
                 id="mobileMenuToggle"
                 aria-controls="mobileMenuPanel"
                 aria-expanded="false">
-            <span class="blind">메뉴 열기</span>
+            <span class="blind" data-i18n="nav.menuOpen">메뉴 열기</span>
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
@@ -63,7 +63,7 @@
 
         <div class="header-menu-panel" id="mobileMenuPanel">
 
-        <nav class="navigation" aria-label="주요 메뉴">
+        <nav class="navigation" data-i18n="nav.mainMenuAriaLabel" data-i18n-attr="aria-label" aria-label="주요 메뉴">
 
             <a href="<%= contextPath %>/main"
                class="<%= "home".equals(activeNav) ? "active" : "" %>"
@@ -96,26 +96,28 @@
             </select>
         </div>
 
-        <%-- 로그인 여부와 상관없이 누구나 쓸 수 있다. 로그인했으면 서버가 계정의 다크모드
-             값을 그대로 내려주고(아래 체크 상태), 로그인 안 했으면 일단 "화이트"로 내려준 뒤
-             아래 스크립트가 로컬스토리지 값을 보고 그 자리에서 바로 고쳐 적용한다. --%>
-        <div class="theme-select-wrap" id="themeSelectWrap">
-
-            <label class="theme-option <%= (headerMember == null || !headerMember.isDarkMode()) ? "active" : "" %>">
-                <input type="radio" name="themeMode" value="light" <%= (headerMember == null || !headerMember.isDarkMode()) ? "checked" : "" %>>
-                <span data-i18n="theme.light">화이트</span>
-            </label>
-
-            <label class="theme-option <%= (headerMember != null && headerMember.isDarkMode()) ? "active" : "" %>">
-                <input type="radio" name="themeMode" value="dark" <%= (headerMember != null && headerMember.isDarkMode()) ? "checked" : "" %>>
-                <span data-i18n="theme.dark">다크</span>
-            </label>
-
-        </div>
-
         </div>
 
         <div class="member-menu">
+
+            <%-- 로그인 여부와 상관없이 누구나 쓸 수 있다. 로그인했으면 서버가 계정의 다크모드
+                 값을 그대로 내려주고(아래 체크 상태), 로그인 안 했으면 일단 "화이트"로 내려준 뒤
+                 아래 스크립트가 로컬스토리지 값을 보고 그 자리에서 바로 고쳐 적용한다.
+                 오른쪽(글쓰기 바로 앞) 기준으로 붙여둔다 - member-menu가 margin-left:auto라
+                 여기 들어간 요소는 전부 오른쪽 끝에서부터 자리를 잡는다. --%>
+            <div class="theme-select-wrap" id="themeSelectWrap">
+
+                <label class="theme-option <%= (headerMember == null || !headerMember.isDarkMode()) ? "active" : "" %>">
+                    <input type="radio" name="themeMode" value="light" <%= (headerMember == null || !headerMember.isDarkMode()) ? "checked" : "" %>>
+                    <span data-i18n="theme.light">화이트</span>
+                </label>
+
+                <label class="theme-option <%= (headerMember != null && headerMember.isDarkMode()) ? "active" : "" %>">
+                    <input type="radio" name="themeMode" value="dark" <%= (headerMember != null && headerMember.isDarkMode()) ? "checked" : "" %>>
+                    <span data-i18n="theme.dark">다크</span>
+                </label>
+
+            </div>
 
             <a href="<%= contextPath %>/post/write"
                class="write-link"
@@ -129,6 +131,8 @@
                 <button type="button"
                         id="notifBellButton"
                         class="notif-bell-button"
+                        data-i18n="notif.bellAriaLabel"
+                        data-i18n-attr="aria-label"
                         aria-label="알림">
 
                     🔔
@@ -172,7 +176,7 @@
                     마이페이지
                 </a>
 
-                <span class="member-nickname"><%= EscapeUtil.html(headerMember.getNickname()) %>님</span>
+                <span class="member-nickname"><%= EscapeUtil.html(headerMember.getNickname()) %><span data-i18n="common.honorific">님</span></span>
 
                 <a href="<%= contextPath %>/member/logout" data-i18n="nav.logout">
                     로그아웃
@@ -193,10 +197,12 @@
 <button type="button"
         class="mobile-menu-backdrop"
         id="mobileMenuBackdrop"
+        data-i18n="nav.menuClose"
+        data-i18n-attr="aria-label"
         aria-label="메뉴 닫기"
         hidden></button>
 
-<nav class="mobile-bottom-nav" aria-label="모바일 빠른 메뉴">
+<nav class="mobile-bottom-nav" data-i18n="nav.mobileBottomNavAriaLabel" data-i18n-attr="aria-label" aria-label="모바일 빠른 메뉴">
     <a href="<%= contextPath %>/main"
        class="mobile-bottom-nav-item <%= "home".equals(activeNav) ? "active" : "" %>"
        <%= "home".equals(activeNav) ? "aria-current=\"page\"" : "" %>>
@@ -264,7 +270,9 @@
             panel.inert = mobileViewport && !shouldOpen;
 
             if (toggleLabel) {
-                toggleLabel.textContent = shouldOpen ? "메뉴 닫기" : "메뉴 열기";
+                toggleLabel.textContent = shouldOpen
+                    ? window.t("nav.menuClose", "메뉴 닫기")
+                    : window.t("nav.menuOpen", "메뉴 열기");
             }
 
             if (mobileViewport) {
@@ -370,34 +378,68 @@
 
         const select = $("#languageSelect");
 
+        //새로고침/재방문마다 네트워크로 사전을 다시 받아올 때까지 한국어 원문이 잠깐 보였다가
+        //번역으로 바뀌는 "깜빡임"이 있었다. localStorage에 사전을 캐시해두고, 있으면 네트워크
+        //응답을 기다리지 않고 즉시(동기적으로) 먼저 칠한 뒤, 최신 사전을 받아와 다시 한 번
+        //칠한다(파일이 바뀐 경우 대비 - 캐시가 최신이면 결과는 똑같아서 티도 안 난다).
+        function readCachedDict(lang) {
+            try {
+                const cached = localStorage.getItem("i18nDict_" + lang);
+                return cached ? JSON.parse(cached) : null;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function writeCachedDict(lang, dict) {
+            try {
+                localStorage.setItem("i18nDict_" + lang, JSON.stringify(dict));
+            } catch (e) {
+                // 저장이 안 되면 이번 방문은 매번 네트워크로만 받아온다.
+            }
+        }
+
+        function applyDict(lang, dict) {
+
+            window.i18nDict = dict;
+
+            $("[data-i18n]").each(function () {
+
+                const key = $(this).data("i18n");
+                const attr = $(this).data("i18n-attr");   // 있으면 text 대신 이 속성(예: placeholder)을 바꾼다
+
+                //dict[key]가 falsy인 경우(== "")까지 "번역이 없다"로 취급해버리면, 언어별로
+                //일부러 빈 문자열을 쓰는 번역(예: 영어는 호칭 접미사가 없음)이 적용되지 않고
+                //한국어 원문이 그대로 남는다. 그래서 "키가 사전에 존재하는가"로 판단한다.
+                if (key in dict) {
+                    if (attr) {
+                        $(this).attr(attr, dict[key]);
+                    } else {
+                        $(this).text(dict[key]);
+                    }
+                }
+
+            });
+
+            //SVG 지도처럼 data-i18n 스캔이 못 미치는 동적 콘텐츠용 - 사전이 바뀔 때마다 알려준다.
+            $(document).trigger("i18n:applied", [lang, dict]);
+        }
+
         function applyTranslations(lang) {
+
+            const cached = readCachedDict(lang);
+
+            if (cached) {
+                applyDict(lang, cached);
+            }
 
             $.getJSON("<%= contextPath %>/i18n/" + lang + ".json")
                 .done(function (dict) {
-
-                    window.i18nDict = dict;
-
-                    $("[data-i18n]").each(function () {
-
-                        const key = $(this).data("i18n");
-                        const attr = $(this).data("i18n-attr");   // 있으면 text 대신 이 속성(예: placeholder)을 바꾼다
-
-                        if (dict[key]) {
-                            if (attr) {
-                                $(this).attr(attr, dict[key]);
-                            } else {
-                                $(this).text(dict[key]);
-                            }
-                        }
-
-                    });
-
-                    //SVG 지도처럼 data-i18n 스캔이 못 미치는 동적 콘텐츠용 - 사전이 바뀔 때마다 알려준다.
-                    $(document).trigger("i18n:applied", [lang, dict]);
-
+                    writeCachedDict(lang, dict);
+                    applyDict(lang, dict);
                 })
                 .fail(function () {
-                    // 파일이 없거나 네트워크 문제면 지금 보이는 글자(한국어 원문)를 그대로 둔다.
+                    // 캐시도 없고 네트워크도 실패하면 한국어 원문이 그대로 남는다.
                 });
 
         }
@@ -541,7 +583,7 @@
                     .then(function (data) {
 
                         if (data.result !== "ok") {
-                            alert("다크모드 설정에 실패했습니다.");
+                            alert(window.t("theme.toggleFailedAlert", "다크모드 설정에 실패했습니다."));
                         }
 
                     });
@@ -594,8 +636,11 @@
             if (data.alerts.length > 0) {
                 parts.push('<p class="notif-section-title">내 알림</p>');
                 data.alerts.forEach(function (a) {
+                    const href = a.targetType === "INQUIRY"
+                        ? "<%= contextPath %>/support/view?inquiryId=" + a.inquiryId
+                        : "<%= contextPath %>/post/view?bno=" + a.bno;
                     parts.push(
-                        '<a href="<%= contextPath %>/post/view?bno=' + a.bno + '" class="notif-item notif-alert-item' +
+                        '<a href="' + href + '" class="notif-item notif-alert-item' +
                             (a.read ? '' : ' notif-unread') + '">' +
                             '<span>' + escapeHtml(a.message) + '</span>' +
                             '<span>' + escapeHtml(a.regDate) + '</span>' +

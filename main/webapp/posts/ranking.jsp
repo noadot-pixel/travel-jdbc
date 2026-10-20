@@ -17,6 +17,9 @@
     List<RegionRankDTO> femaleRanking = (List<RegionRankDTO>) request.getAttribute("femaleRanking");
     List<RegionRankDTO> totalRanking = (List<RegionRankDTO>) request.getAttribute("totalRanking");
 
+    //상위 3위는 숫자(#1) 대신 메달 이모지로 표시한다 (번역이 필요 없어서 i18n 사전과 무관하게 항상 보임).
+    String[] rankMedals = { "🥇", "🥈", "🥉" };
+
     String countryLabel = "JP".equals(country) ? "일본 여행지" : "한국 여행지";
     String countryI18nKey = "JP".equals(country) ? "country.JP" : "country.KR";
 
@@ -29,7 +32,8 @@
     //로딩 중에 레이아웃이 출렁이지 않게 한다.
     String mapAspectRatio = "JP".equals(country) ? "745 / 815" : "550 / 745";
 
-    //지도 색칠용 JSON - {"KR_CAPITAL":12,"KR_GANGWON":3,...} 형태로 JS에 넘긴다
+    //지도 색칠용 JSON - {"KR_CAPITAL":12,"KR_GANGWON":3,...} 형태로 JS에 넘긴다.
+    //전체/남성/여성 세 버전을 따로 만들어서, 지도 우측 상단 라디오로 바로 전환할 수 있게 한다.
     StringBuilder regionCountsJson = new StringBuilder("{");
     for (int i = 0; i < totalRanking.size(); i++) {
         if (i > 0) regionCountsJson.append(",");
@@ -37,6 +41,22 @@
         regionCountsJson.append("\"").append(row.getRegion()).append("\":").append(row.getPostCount());
     }
     regionCountsJson.append("}");
+
+    StringBuilder maleRegionCountsJson = new StringBuilder("{");
+    for (int i = 0; i < maleRanking.size(); i++) {
+        if (i > 0) maleRegionCountsJson.append(",");
+        RegionRankDTO row = maleRanking.get(i);
+        maleRegionCountsJson.append("\"").append(row.getRegion()).append("\":").append(row.getPostCount());
+    }
+    maleRegionCountsJson.append("}");
+
+    StringBuilder femaleRegionCountsJson = new StringBuilder("{");
+    for (int i = 0; i < femaleRanking.size(); i++) {
+        if (i > 0) femaleRegionCountsJson.append(",");
+        RegionRankDTO row = femaleRanking.get(i);
+        femaleRegionCountsJson.append("\"").append(row.getRegion()).append("\":").append(row.getPostCount());
+    }
+    femaleRegionCountsJson.append("}");
 
     String topPostsByRegionJson = (String) request.getAttribute("topPostsByRegionJson");
     if (topPostsByRegionJson == null) topPostsByRegionJson = "{}";
@@ -103,6 +123,24 @@
                          id="regionMapContainer"
                          style="aspect-ratio: <%= mapAspectRatio %>;"
                          data-map-src="<%= contextPath %>/images/maps/<%= mapSvgFile %>?v=<%= mapSvgVer %>"></div>
+                    <div class="region-map-gender-filter" id="regionMapGenderFilter">
+
+                        <label class="theme-option active">
+                            <input type="radio" name="regionMapGender" value="all" checked>
+                            <span data-i18n="ranking.mapFilterAll">전체</span>
+                        </label>
+
+                        <label class="theme-option">
+                            <input type="radio" name="regionMapGender" value="M">
+                            <span data-i18n="gender.male">남성</span>
+                        </label>
+
+                        <label class="theme-option">
+                            <input type="radio" name="regionMapGender" value="F">
+                            <span data-i18n="gender.female">여성</span>
+                        </label>
+
+                    </div>
                     <div class="region-map-tooltip" id="regionMapTooltip" hidden></div>
                     <div class="region-map-legend" aria-hidden="true">
                         <span class="ranking-map-legend-label" data-i18n="ranking.mapLegendLow">적음</span>
@@ -110,9 +148,9 @@
                         <span class="ranking-map-legend-label" data-i18n="ranking.mapLegendHigh">많음</span>
                     </div>
                     <div class="region-map-zoom-controls">
-                        <button type="button" class="region-map-zoom-button" id="regionMapZoomIn" aria-label="확대">+</button>
-                        <button type="button" class="region-map-zoom-button" id="regionMapZoomOut" aria-label="축소">−</button>
-                        <button type="button" class="region-map-zoom-button region-map-zoom-reset" id="regionMapZoomReset" aria-label="보기 초기화">⟲</button>
+                        <button type="button" class="region-map-zoom-button" id="regionMapZoomIn" data-i18n="ranking.zoomInAriaLabel" data-i18n-attr="aria-label" aria-label="확대">+</button>
+                        <button type="button" class="region-map-zoom-button" id="regionMapZoomOut" data-i18n="ranking.zoomOutAriaLabel" data-i18n-attr="aria-label" aria-label="축소">−</button>
+                        <button type="button" class="region-map-zoom-button region-map-zoom-reset" id="regionMapZoomReset" data-i18n="ranking.zoomResetAriaLabel" data-i18n-attr="aria-label" aria-label="보기 초기화">⟲</button>
                     </div>
                 </div>
 
@@ -120,7 +158,7 @@
 
             <div class="ranking-lists-col">
 
-                <div class="ranking-column">
+                <div class="ranking-column ranking-column-male">
 
                     <h2 class="ranking-column-title"><span data-i18n="ranking.male">남성 인기 지역</span> - <span data-i18n="<%= countryI18nKey %>"><%= countryLabel %></span></h2>
 
@@ -130,10 +168,11 @@
                     <ol class="ranking-list">
                         <% for (int i = 0; i < maleRanking.size(); i++) {
                             RegionRankDTO row = maleRanking.get(i);
+                            String rankClass = i < 3 ? " rank-" + (i + 1) : "";
                         %>
-                        <li class="ranking-item">
+                        <li class="ranking-item<%= rankClass %>">
                             <a href="<%= contextPath %>/post/list?country=<%= country %>&region=<%= row.getRegion() %>">
-                                <span class="ranking-rank">#<%= i + 1 %></span>
+                                <span class="ranking-rank"><%= i < 3 ? rankMedals[i] : ("#" + (i + 1)) %></span>
                                 <span class="ranking-region" data-i18n="region.<%= row.getRegion() %>"><%= EscapeUtil.html(row.getRegionLabel()) %></span>
                                 <span class="ranking-count"><%= row.getPostCount() %><span data-i18n="common.countSuffix">개</span></span>
                             </a>
@@ -144,7 +183,7 @@
 
                 </div>
 
-                <div class="ranking-column">
+                <div class="ranking-column ranking-column-female">
 
                     <h2 class="ranking-column-title"><span data-i18n="ranking.female">여성 인기 지역</span> - <span data-i18n="<%= countryI18nKey %>"><%= countryLabel %></span></h2>
 
@@ -154,10 +193,11 @@
                     <ol class="ranking-list">
                         <% for (int i = 0; i < femaleRanking.size(); i++) {
                             RegionRankDTO row = femaleRanking.get(i);
+                            String rankClass = i < 3 ? " rank-" + (i + 1) : "";
                         %>
-                        <li class="ranking-item">
+                        <li class="ranking-item<%= rankClass %>">
                             <a href="<%= contextPath %>/post/list?country=<%= country %>&region=<%= row.getRegion() %>">
-                                <span class="ranking-rank">#<%= i + 1 %></span>
+                                <span class="ranking-rank"><%= i < 3 ? rankMedals[i] : ("#" + (i + 1)) %></span>
                                 <span class="ranking-region" data-i18n="region.<%= row.getRegion() %>"><%= EscapeUtil.html(row.getRegionLabel()) %></span>
                                 <span class="ranking-count"><%= row.getPostCount() %><span data-i18n="common.countSuffix">개</span></span>
                             </a>
@@ -210,7 +250,13 @@
 
         const contextPath = "<%= contextPath %>";
         const country = "<%= country %>";
-        const regionCounts = <%= regionCountsJson.toString() %>;
+        //전체/남성/여성 세 버전을 다 들고 있다가, 라디오를 바꾸면 그 자리에서 다시 칠한다.
+        const regionCountsByGender = {
+            all: <%= regionCountsJson.toString() %>,
+            M: <%= maleRegionCountsJson.toString() %>,
+            F: <%= femaleRegionCountsJson.toString() %>
+        };
+        let activeGender = "all";
         const topPostsByRegion = <%= topPostsByRegionJson %>;
 
         const koreaRegionCodeMap = {
@@ -235,12 +281,23 @@
 
         const regionCodeMap = country === "JP" ? japanRegionCodeMap : koreaRegionCodeMap;
 
-        const counts = Object.values(regionCodeMap).map(function (code) {
-            return regionCounts[code] || 0;
-        });
+        let min = 0, max = 0;
 
-        const min = Math.min.apply(null, counts);
-        const max = Math.max.apply(null, counts);
+        //라디오(전체/남성/여성)를 바꿀 때마다, 그 데이터셋 기준으로 min/max를 다시 잡는다
+        //(예: 남성 데이터는 지역별 수치 범위가 전체 데이터와 다르므로 색 대비도 다시 계산해야 한다).
+        function recomputeMinMax() {
+
+            const activeCounts = regionCountsByGender[activeGender] || {};
+
+            const values = Object.values(regionCodeMap).map(function (code) {
+                return activeCounts[code] || 0;
+            });
+
+            min = Math.min.apply(null, values);
+            max = Math.max.apply(null, values);
+        }
+
+        recomputeMinMax();
 
         function colorFor(count) {
 
@@ -540,10 +597,15 @@
 
                 const groupMetas = [];
 
+                function countFor(regionCode) {
+                    const activeCounts = regionCountsByGender[activeGender] || {};
+                    return regionCode ? (activeCounts[regionCode] || 0) : 0;
+                }
+
                 svg.querySelectorAll("[data-region]").forEach(function (group) {
 
                     const regionCode = regionCodeMap[group.dataset.region];
-                    const count = regionCode ? (regionCounts[regionCode] || 0) : 0;
+                    const count = countFor(regionCode);
                     const targetUrl = contextPath + "/post/list?country=" + country + "&region=" + regionCode;
 
                     group.style.setProperty("--region-fill", colorFor(count));
@@ -603,6 +665,37 @@
                 translateMapTexts();
 
                 $(document).on("i18n:applied", translateMapTexts);
+
+                //지도 우측 상단 전체/남성/여성 라디오 - 바꾸면 그 데이터셋 기준으로 min/max부터
+                //다시 잡고(recomputeMinMax), 모든 지역의 색과 aria-label을 새로 칠한다.
+                function repaintMap() {
+
+                    recomputeMinMax();
+
+                    groupMetas.forEach(function (meta) {
+                        meta.count = countFor(meta.regionCode);
+                        meta.el.style.setProperty("--region-fill", colorFor(meta.count));
+                    });
+
+                    translateMapTexts();
+                }
+
+                document.querySelectorAll('#regionMapGenderFilter input[name="regionMapGender"]').forEach(function (radio) {
+
+                    radio.addEventListener("change", function () {
+
+                        activeGender = radio.value;
+
+                        document.querySelectorAll("#regionMapGenderFilter .theme-option").forEach(function (label) {
+                            label.classList.toggle("active", label.querySelector("input").checked);
+                        });
+
+                        hideTooltip();
+                        repaintMap();
+
+                    });
+
+                });
 
             })
             .catch(function () {

@@ -216,6 +216,21 @@ textarea:focus-visible {
         font-size: 14px;
         line-height: 44px;
         text-align: center;
+        white-space: nowrap;
+    }
+
+    /* 지도 위에 뜨는 작은 필터는 헤더 드로어의 44px 터치 사이즈를 따르지 않고 원래 크기 그대로 둔다 */
+    .region-map-gender-filter {
+        top: 8px;
+        right: 8px;
+    }
+
+    .region-map-gender-filter .theme-option {
+        min-height: 0;
+        flex: 0 0 auto;
+        padding: 5px 9px;
+        font-size: 11px;
+        line-height: normal;
     }
 
     .member-menu,
@@ -461,12 +476,9 @@ textarea:focus-visible {
         border-radius: 13px;
     }
 
-    .search-icon {
-        font-size: 22px;
-    }
-
     .search-form input {
         min-width: 0;
+        margin-right: 8px;
         padding: 0 8px;
         font-size: 16px;
     }
@@ -478,26 +490,11 @@ textarea:focus-visible {
         font-size: 13px;
     }
 
-    .recommend-keywords {
-        flex-wrap: nowrap;
-        margin-right: -16px;
-        overflow-x: auto;
-        padding-right: 16px;
-        scrollbar-width: none;
-    }
-
-    .recommend-keywords::-webkit-scrollbar,
     .category-list::-webkit-scrollbar,
     .country-card-list::-webkit-scrollbar,
     .filter-group::-webkit-scrollbar,
     .ql-toolbar::-webkit-scrollbar {
         display: none;
-    }
-
-    .recommend-keywords button {
-        flex: 0 0 auto;
-        min-height: 31px;
-        font-size: 12px;
     }
 
     .category-section {

@@ -108,7 +108,6 @@ Oracle로 옮기면 파일은 서버 폴더(예: `webapp/uploads/`)에 저장하
 
 - 처음 설계(이 섹션의 이전 버전)는 숫자 대리 키(`MEMBER_ID`, `WRITER_ID`)를 썼지만, **실제 구현은 수업 예제(BlogProject)와 같은 방식으로 로그인 아이디(이메일)를 기본키로 그대로 쓴다.** (`members.id`)
 - 화면(`auth/signup.jsp`, `auth/login.jsp`)이 "이메일" 입력 하나만 받으므로, 별도의 "아이디" 입력칸을 추가하지 않고 그 이메일 값을 그대로 로그인 아이디로 쓴다. 그래서 `EMAIL` 컬럼을 따로 두지 않는다 — `id` 자체가 이메일이다.
-- `BIRTHDAY`는 날짜 계산을 할 일이 없는 단순 표시값이라 `DATE`가 아니라 `VARCHAR2(10)`로 저장한다(“YYYY-MM-DD” 문자열 그대로).
 - `comments`(댓글 수)는 컬럼으로 저장하지 않고 `COUNT(*)`로 센다. `likes`(좋아요 수)는 `posts.like_cnt` 컬럼으로 저장하되, 토글할 때마다 `+1/-1` 하지 않고 **실제 좋아요 개수를 다시 세서** 넣는다(`CommentDAO`/`PostDAO`의 `toggleLike` 참고) — 값이 어긋나 있어도 자동으로 맞춰지도록.
 - 자료형은 `NUMBER`, `VARCHAR2`, `DATE`, `CHAR(1)`('Y'/'N' 플래그)만 쓴다.
 
@@ -119,23 +118,25 @@ MEMBERS 1 ──< POSTS 1 ──< COMMENTS
    │             │
    │             ├──< POST_LIKES >── MEMBERS
    ├──< SCRAPS >── POSTS
-   └──< POST_LOGS
+   ├──< POST_LOGS
+   └──< INQUIRIES 1 ──< INQUIRY_COMMENTS
 ```
 
 ### 테이블 요약
 
 | 테이블 | 기본키 | 설명 |
 |---|---|---|
-| `members` | `id` (VARCHAR2, = 이메일) | 회원. `admin_level`: 0=일반회원, 1=moderator, 2=admin (권한 레벨 변경 자체는 admin만 가능). `gender`는 랭킹 화면용(이 기능 이전 가입자는 NULL). 나이는 컬럼 없이 `birthday`에서 계산(`MemberDTO.getAge()`). `suspended`='Y'면 댓글/좋아요/글쓰기 금지(스크랩은 허용; moderator/admin 계정은 정지 대상에서 제외). `dark_mode`='Y'면 모든 페이지가 다크 테마로 렌더링됨. `MemberDAO` |
+| `members` | `id` (VARCHAR2, = 이메일) | 회원. `admin_level`: 0=일반회원, 1=moderator, 2=admin (권한 레벨 변경 자체는 admin만 가능). `gender`는 랭킹 화면용(이 기능 이전 가입자는 NULL). `suspended`='Y'면 댓글/좋아요/글쓰기 금지(스크랩은 허용; moderator/admin 계정은 정지 대상에서 제외). `dark_mode`='Y'면 모든 페이지가 다크 테마로 렌더링됨. `MemberDAO` |
 | `posts` | `bno` (시퀀스 `seq_posts`) | 게시글. `writer`는 `members.id` 참조. `PostDAO` |
 | `comments` | `cno` (시퀀스 `seq_comments`) | 댓글. `bno`는 `posts.bno` 참조(`ON DELETE CASCADE`). `CommentDAO` |
 | `post_likes` | `(bno, member_id)` | 좋아요. 문서가 아니라 행 존재 여부로 판단. `PostDAO`에 같이 있음 |
 | `scraps` | `(member_id, bno)` | 스크랩. `PostDAO`에 같이 있음 |
 | `post_logs` | `log_id` (시퀀스 `seq_post_logs`) | 작업 이력. `bno`는 FK 없음(글이 지워져도 이력은 남아야 함). `PostLogDAO` |
 | `notices` | `notice_id` (시퀀스 `seq_notices`) | 관리자 공지. 모든 회원의 알림 벨에 표시됨. `NoticeDAO` |
-| `notifications` | `notif_id` (시퀀스 `seq_notifications`) | 개인 알림(내 글에 댓글/좋아요). 자기 글에 자기 행동은 안 쌓음. `NotificationDAO` |
+| `notifications` | `notif_id` (시퀀스 `seq_notifications`) | 개인 알림(내 글에 댓글/좋아요, 내가 관련된 문의에 댓글). `target_type`('POST'/'INQUIRY')에 따라 `bno`/`inquiry_id` 중 하나만 채워짐. 자기 글/문의에 자기 행동은 안 쌓음. `NotificationDAO` |
 | `faqs` | `faq_id` (시퀀스 `seq_faqs`) | 자주 묻는 질문. 관리자가 `/admin/faqs`에서 등록/수정/삭제. `FaqDAO` |
-| `inquiries` | `inquiry_id` (시퀀스 `seq_inquiries`) | 문의하기 게시판. 로그인한 회원이면 남길 수 있음(답변 기능 없음). `is_private`='Y'면 작성자 본인과 관리자만 볼 수 있음. `InquiryDAO` |
+| `inquiries` | `inquiry_id` (시퀀스 `seq_inquiries`) | 문의하기 게시판(게시글 방식 - 목록은 제목만, 상세에서 내용/댓글 확인). 로그인한 회원이면 남길 수 있음. `is_private`='Y'면 작성자 본인과 관리자만 볼 수 있음. `InquiryDAO` |
+| `inquiry_comments` | `inquiry_comment_id` (시퀀스 `seq_inquiry_comments`) | 문의 상세 페이지의 댓글. `inquiry_id`는 `inquiries.inquiry_id` 참조(`ON DELETE CASCADE`). 일반 게시글 댓글과 달리 누구나 달 수 있는 게 아니라, 그 문의의 작성자 본인과 moderator 이상만 남길 수 있다(권한 검사는 `InquiryCommentWriteCommand`에서). `InquiryCommentDAO` |
 
 ### Firestore 필드 → 컬럼 대응 (1번과 비교용)
 
@@ -145,7 +146,7 @@ MEMBERS 1 ──< POSTS 1 ──< COMMENTS
 | `email` | `members.id` | 컬럼을 따로 안 둠(위 설명) |
 | `nickname`, `bio`, `country`, `countryOther` | 같은 이름의 컬럼 | |
 | `name`, `nameVisibility` | `real_name`, `name_public`('Y'/'N') | |
-| `birthday`, `birthdayVisibility` | `birthday`, `birthday_public`('Y'/'N') | |
+| `birthday`, `birthdayVisibility` | (저장 안 함) | 이 저장소에서는 생일 입력 자체를 받지 않음 (`birthday`/`birthday_public` 컬럼 제거됨) |
 | `photoUrl` | `photo_path` | Storage URL 대신 서버 업로드 경로("upload/profile/xxx.jpg") |
 | (`admins` 컬렉션) | `members.admin_level` | 별도 테이블 대신 컬럼(0/1/2) |
 | `posts/{id}` 문서 id | `posts.bno` | |

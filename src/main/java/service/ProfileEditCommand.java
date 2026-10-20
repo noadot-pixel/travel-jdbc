@@ -26,9 +26,14 @@ public class ProfileEditCommand implements Command {
 
 		String nickname = request.getParameter("profileNickname");
 
-		if (nickname == null || nickname.trim().isEmpty()) {
-			request.setAttribute("msg", "닉네임을 입력해 주세요.");
+		if (nickname == null || !nickname.trim().matches("^[\\p{L}\\p{N}]{2,12}$")) {
+			request.setAttribute("msg", "닉네임은 특수문자·공백 없이 2~12자로 입력해 주세요.");
 			return true;   // mypage/edit.jsp로 다시 forward
+		}
+
+		if (new MemberDAO().nicknameCheck(nickname.trim(), loginMember.getId())) {
+			request.setAttribute("msg", "이미 사용 중인 닉네임입니다.");
+			return true;
 		}
 
 		String country = request.getParameter("profileCountry");
@@ -48,12 +53,9 @@ public class ProfileEditCommand implements Command {
 		dto.setCountryOther(request.getParameter("profileCountryOther"));
 		dto.setRealName(request.getParameter("profileName"));
 		dto.setNamePublic(!"private".equals(request.getParameter("nameVisibility")));
-		dto.setBirthday(request.getParameter("profileBirthday"));
-		dto.setBirthdayPublic(!"private".equals(request.getParameter("birthdayVisibility")));
 
 		//성별은 이 기능 이전 가입자(gender가 아직 null)에게만 이 화면에서 한 번 필수로 입력받는다.
 		//한 번 입력하면 edit.jsp가 그 필드를 다시는 보여주지 않으므로, 그 다음부터는 기존 값을 그대로 유지한다.
-		//나이는 별도로 안 받고 생일에서 계산하므로(MemberDTO.getAge() 참고) 여기서 다룰 값이 없다.
 		if (loginMember.getGender() == null) {
 
 			String genderParam = request.getParameter("gender");

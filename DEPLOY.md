@@ -169,5 +169,5 @@ DNS가 전파되는 데 몇 분~몇 시간 걸릴 수 있다.
 - [ ] Oracle DB 접속 계정(`travel`)의 비밀번호가 충분히 복잡함
 - [ ] Windows가 최신 업데이트 상태
 - [ ] Tomcat, Caddy 둘 다 Windows 서비스로 등록되어 재부팅해도 자동 시작
-- [ ] Oracle `members.pwd`가 평문 저장이라는 점 인지(PROGRESS.md 참고) — 실사용자 비밀번호가 쌓이기 전에 해시 적용을 권장
+- [x] Oracle `members.pwd` 해시 적용 완료(PBKDF2WithHmacSHA256, `util/PasswordUtil`) — 기존 평문 비밀번호도 전부 마이그레이션함
 - [ ] DB 백업 계획(최소한 가끔 수동으로라도 `EXPDP`/데이터 내보내기)

@@ -1,7 +1,7 @@
 -- ============================================================
 -- trable-jdbc Oracle schema
 -- Matches the SQL that the DAO classes in the model package run, 1:1.
--- Run this file top to bottom, as-is, logged in as the app's DB user (e.g. "trable").
+-- Run this file top to bottom, as-is, logged in as the app's DB user (e.g. "travel").
 --
 -- NOTE ON ENCODING: comments in this file are kept in plain ASCII on purpose.
 -- Korean comments here previously caused SQL*Plus (on a Windows client whose
@@ -35,11 +35,15 @@ CREATE TABLE members (
     last_notice_seen DATE,                        -- last time this member opened the notification bell. NULL = never.
     suspended        CHAR(1)        DEFAULT 'N' NOT NULL,  -- admin-set; blocks comment/like/post-write, not scraps
     dark_mode        CHAR(1)        DEFAULT 'N' NOT NULL   -- self-set in mypage; applied to every page via <html data-theme>
-
-    -- birthday/birthday_public columns existed briefly (mypage personal-info section) and
-    -- were dropped - the feature was removed, not just hidden, so there is nothing left that
-    -- reads or writes them.
 );
+
+-- birthday/birthday_public columns existed briefly (mypage personal-info section) and
+-- were dropped - the feature was removed, not just hidden, so there is nothing left that
+-- reads or writes them.
+-- (NOTE: this comment must stay OUTSIDE the CREATE TABLE parens above - a trailing
+-- comment-only block right before a closing ")" makes SQL*Plus misparse the next
+-- line as a stray command, "SP2-0042: unknown command ")" ". Verified by reproducing
+-- it in isolation while debugging this exact file.)
 
 -- Make an account a moderator or admin (sign up through the normal form first, then run):
 -- UPDATE members SET admin_level = 1 WHERE id = 'the email you signed up with';  -- moderator
@@ -128,24 +132,7 @@ CREATE TABLE notices (
 );
 
 
--- 8. Notifications (personal alerts - someone commented/liked my post, or
--- commented on an inquiry I'm involved in)
-CREATE SEQUENCE seq_notifications START WITH 1 INCREMENT BY 1;
-
-CREATE TABLE notifications (
-    notif_id    NUMBER          PRIMARY KEY,
-    member_id   VARCHAR2(100)   NOT NULL REFERENCES members(id),              -- who the alert is for
-    type        VARCHAR2(20)    NOT NULL,                                     -- COMMENT / LIKE / INQUIRY_COMMENT
-    target_type VARCHAR2(10)    DEFAULT 'POST' NOT NULL,                      -- POST / INQUIRY - which of bno/inquiry_id is set
-    bno         NUMBER          REFERENCES posts(bno) ON DELETE CASCADE,      -- set when target_type = POST
-    inquiry_id  NUMBER          REFERENCES inquiries(inquiry_id) ON DELETE CASCADE, -- set when target_type = INQUIRY
-    actor_id    VARCHAR2(100)   NOT NULL REFERENCES members(id),              -- who commented/liked
-    is_read     CHAR(1)         DEFAULT 'N' NOT NULL,
-    reg_date    DATE            DEFAULT SYSDATE NOT NULL
-);
-
-
--- 9. FAQs (footer "자주 묻는 질문", editable by admins on /admin/faqs)
+-- 8. FAQs (footer "자주 묻는 질문", editable by admins on /admin/faqs)
 CREATE SEQUENCE seq_faqs START WITH 1 INCREMENT BY 1;
 
 CREATE TABLE faqs (
@@ -158,7 +145,7 @@ CREATE TABLE faqs (
 );
 
 
--- 10. Inquiries (footer "문의하기" board - anyone can read, members can post)
+-- 9. Inquiries (footer "문의하기" board - anyone can read, members can post)
 CREATE SEQUENCE seq_inquiries START WITH 1 INCREMENT BY 1;
 
 CREATE TABLE inquiries (
@@ -170,7 +157,7 @@ CREATE TABLE inquiries (
     is_private        CHAR(1)         DEFAULT 'N' NOT NULL  -- 'Y'면 작성자 본인과 관리자만 볼 수 있음
 );
 
--- 10-1. Inquiry comments (상세 페이지의 댓글 - 문의 당사자와 moderator 이상만 남길 수 있다,
+-- 9-1. Inquiry comments (상세 페이지의 댓글 - 문의 당사자와 moderator 이상만 남길 수 있다,
 -- Command에서 검사함. 게시글 댓글(COMMENTS)과 달리 전체 공개 댓글이 아니라서 별도 테이블로 둔다)
 CREATE SEQUENCE seq_inquiry_comments START WITH 1 INCREMENT BY 1;
 
@@ -180,4 +167,22 @@ CREATE TABLE inquiry_comments (
     writer              VARCHAR2(100)   NOT NULL REFERENCES members(id),
     content             VARCHAR2(1000)  NOT NULL,
     reg_date            DATE            DEFAULT SYSDATE NOT NULL
+);
+
+
+-- 10. Notifications (personal alerts - someone commented/liked my post, or
+-- commented on an inquiry I'm involved in). Must come after inquiries (table 9)
+-- since it has a foreign key to it.
+CREATE SEQUENCE seq_notifications START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE notifications (
+    notif_id    NUMBER          PRIMARY KEY,
+    member_id   VARCHAR2(100)   NOT NULL REFERENCES members(id),              -- who the alert is for
+    type        VARCHAR2(20)    NOT NULL,                                     -- COMMENT / LIKE / INQUIRY_COMMENT
+    target_type VARCHAR2(10)    DEFAULT 'POST' NOT NULL,                      -- POST / INQUIRY - which of bno/inquiry_id is set
+    bno         NUMBER          REFERENCES posts(bno) ON DELETE CASCADE,      -- set when target_type = POST
+    inquiry_id  NUMBER          REFERENCES inquiries(inquiry_id) ON DELETE CASCADE, -- set when target_type = INQUIRY
+    actor_id    VARCHAR2(100)   NOT NULL REFERENCES members(id),              -- who commented/liked
+    is_read     CHAR(1)         DEFAULT 'N' NOT NULL,
+    reg_date    DATE            DEFAULT SYSDATE NOT NULL
 );

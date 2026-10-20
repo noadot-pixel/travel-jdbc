@@ -31,16 +31,16 @@ NCS 시험용 "여행 커뮤니티" 웹사이트의 **실제 제출용 구현**.
    - `jsoup-1.18.1.jar` ([jsoup.org](https://jsoup.org/download) 또는 Maven Central에서 받기) — **없으면 글쓰기/알림 관련 클래스가 `ClassNotFoundException`으로 전부 깨진다.**
 3. Oracle에 애플리케이션 계정을 만든다 (SYS로 접속해서):
    ```sql
-   CREATE USER trable IDENTIFIED BY "원하는_비밀번호" DEFAULT TABLESPACE USERS TEMPORARY TABLESPACE TEMP;
-   GRANT CONNECT, RESOURCE TO trable;
-   GRANT UNLIMITED TABLESPACE TO trable;
+   CREATE USER travel IDENTIFIED BY "원하는_비밀번호" DEFAULT TABLESPACE USERS TEMPORARY TABLESPACE TEMP;
+   GRANT CONNECT, RESOURCE TO travel;
+   GRANT UNLIMITED TABLESPACE TO travel;
    ```
-4. `docs/schema.sql`을 그 `trable` 계정으로 그대로 실행해 테이블/시퀀스를 만든다 (SQL*Plus라면 `sqlplus trable/비밀번호@XE @docs/schema.sql` — `@호스트:포트:SID` 콜론 문법은 SQL*Plus에서 안 먹는다, TNS 별칭이나 `@host:port/service` 슬래시 문법을 쓸 것. 자세한 이유는 schema.sql 맨 위 주석 참고).
+4. `docs/schema.sql`을 그 `travel` 계정으로 그대로 실행해 테이블/시퀀스를 만든다 (SQL*Plus라면 `sqlplus travel/비밀번호@XE @docs/schema.sql` — `@호스트:포트:SID` 콜론 문법은 SQL*Plus에서 안 먹는다, TNS 별칭이나 `@host:port/service` 슬래시 문법을 쓸 것. 자세한 이유는 schema.sql 맨 위 주석 참고).
 5. **비밀번호는 소스에 적지 않고 환경변수로 넘긴다.** Tomcat을 띄우기 전에:
    ```powershell
-   $env:TRABLE_DB_PASSWORD = "3단계에서 만든 비밀번호"
+   $env:TRAVEL_DB_PASSWORD = "3단계에서 만든 비밀번호"
    ```
-   (`src/main/java/util/DBUtil.java`가 `System.getenv("TRABLE_DB_PASSWORD")`로 읽는다. URL/계정명이 다르면 `DBUtil.java`의 `url`/`id`도 같이 고칠 것.)
+   (`src/main/java/util/DBUtil.java`가 `System.getenv("TRAVEL_DB_PASSWORD")`로 읽는다. URL/계정명이 다르면 `DBUtil.java`의 `url`/`id`도 같이 고칠 것.)
 6. 소스를 컴파일해 `WEB-INF/classes`에 올리고(Eclipse라면 자동), Tomcat을 띄운다. `/main`으로 접속하면 메인 화면이 뜬다.
 7. 가입 화면에서 계정을 하나 만든 뒤, `UPDATE members SET is_admin='Y' WHERE id='가입한 이메일'; COMMIT;`로 관리자 계정을 만들어두면 관리자 메뉴(게시글 로그, 예시 게시글 9개 시드 추가)를 쓸 수 있다. **세션에 로그인 정보가 캐시되므로, 관리자로 바꾼 뒤에는 한 번 다시 로그인해야 반영된다.**
 

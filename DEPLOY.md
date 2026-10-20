@@ -42,14 +42,14 @@ sqlplus "/ as sysdba"
 ```
 
 ```sql
-CREATE USER trable IDENTIFIED BY "새_비밀번호_직접_정하기" DEFAULT TABLESPACE USERS TEMPORARY TABLESPACE TEMP;
-GRANT CONNECT, RESOURCE TO trable;
-GRANT UNLIMITED TABLESPACE TO trable;
+CREATE USER travel IDENTIFIED BY "새_비밀번호_직접_정하기" DEFAULT TABLESPACE USERS TEMPORARY TABLESPACE TEMP;
+GRANT CONNECT, RESOURCE TO travel;
+GRANT UNLIMITED TABLESPACE TO travel;
 exit
 ```
 
 ```powershell
-sqlplus "trable/새_비밀번호@XE"
+sqlplus "travel/새_비밀번호@XE"
 ```
 ```sql
 @C:\경로\trable-jdbc\docs\schema.sql
@@ -61,7 +61,7 @@ exit
 비밀번호는 **Windows 사용자 환경변수**로 영구 저장한다(소스에 절대 적지 않음):
 
 ```powershell
-[Environment]::SetEnvironmentVariable("TRABLE_DB_PASSWORD", "새_비밀번호", "User")
+[Environment]::SetEnvironmentVariable("TRAVEL_DB_PASSWORD", "새_비밀번호", "User")
 ```
 
 ---
@@ -102,7 +102,7 @@ cd C:\apache-tomcat-10.1.59\bin
 
 - 간단한 방법: `"Machine"`(시스템 전체) 범위로 환경변수를 다시 설정
   ```powershell
-  [Environment]::SetEnvironmentVariable("TRABLE_DB_PASSWORD", "새_비밀번호", "Machine")
+  [Environment]::SetEnvironmentVariable("TRAVEL_DB_PASSWORD", "새_비밀번호", "Machine")
   ```
 - 서비스 설치 후에는 `services.msc`에서 Tomcat10 서비스를 재시작해야 새 환경변수가 반영된다.
 
@@ -165,8 +165,8 @@ DNS가 전파되는 데 몇 분~몇 시간 걸릴 수 있다.
 ## 10. 보안 체크리스트 (운영 시작 전 마지막으로)
 
 - [ ] 1521, 8006, 8081 포트는 공유기에서 포워딩 안 됨 (80/443만 열림)
-- [ ] `TRABLE_DB_PASSWORD`는 소스/저장소 어디에도 없고 환경변수로만 존재
-- [ ] Oracle DB 접속 계정(`trable`)의 비밀번호가 충분히 복잡함
+- [ ] `TRAVEL_DB_PASSWORD`는 소스/저장소 어디에도 없고 환경변수로만 존재
+- [ ] Oracle DB 접속 계정(`travel`)의 비밀번호가 충분히 복잡함
 - [ ] Windows가 최신 업데이트 상태
 - [ ] Tomcat, Caddy 둘 다 Windows 서비스로 등록되어 재부팅해도 자동 시작
 - [ ] Oracle `members.pwd`가 평문 저장이라는 점 인지(PROGRESS.md 참고) — 실사용자 비밀번호가 쌓이기 전에 해시 적용을 권장

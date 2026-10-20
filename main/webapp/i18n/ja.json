@@ -66,7 +66,7 @@
     "home.emptyStory.japan": "新しい日本旅行記がここに登録されます。",
     "home.emptyStory.world": "新しい世界旅行記がここに登録されます。",
     "home.footerVisual.title": "素敵な人たちと一緒につくる旅",
-    "home.footerVisual.desc": "新しい旅行記をTrableで一緒にシェアしましょう。",
+    "home.footerVisual.desc": "新しい旅行記をTravelで一緒にシェアしましょう。",
     "home.footerVisual.cta": "旅行記を書く",
     "home.footerVisual.webTitle": "旅行作り",
 
@@ -102,7 +102,7 @@
     "footer.notices": "お知らせ",
     "footer.faq": "よくある質問",
     "footer.contact": "お問い合わせ",
-    "footer.copyright": "© 2026 Trable. All rights reserved.",
+    "footer.copyright": "© 2026 Travel. All rights reserved.",
 
     "common.countSuffix": "件",
     "common.popularSort": "人気順",
@@ -225,7 +225,7 @@
     "auth.loginHeroTitle": "また旅を続けてみませんか?",
     "auth.loginHeroDesc": "旅の記録を残して、新しい旅行記に出会いましょう。",
     "auth.tagJeju": "#済州",
-    "auth.loginDesc": "Trableアカウントでログインしてください。",
+    "auth.loginDesc": "Travelアカウントでログインしてください。",
     "auth.joinedMsg": "会員登録が完了しました。ログインしてください。",
     "auth.emailLabel": "メールアドレス",
     "auth.emailPlaceholder": "メールアドレスを入力してください",
@@ -233,9 +233,9 @@
     "auth.passwordPlaceholder": "パスワードを入力してください",
     "auth.backToMain": "メインに戻る",
 
-    "auth.signupHeroTitle": "Trableと一緒に最初の物語を始めましょう",
+    "auth.signupHeroTitle": "Travelと一緒に最初の物語を始めましょう",
     "auth.signupHeroDesc": "登録すると旅行記を書いて、自分だけの記録を残せます。",
-    "auth.signupDesc": "基本情報を入力してTrableを始めましょう。",
+    "auth.signupDesc": "基本情報を入力してTravelを始めましょう。",
     "auth.nicknameLabel": "ニックネーム",
     "auth.nicknamePlaceholder": "使用するニックネームを入力してください",
     "auth.nicknameRule": "特殊文字・空白を除いた2〜12文字",
@@ -260,8 +260,8 @@
     "auth.passwordTooShortAlert": "パスワードは6文字以上である必要があります。",
     "auth.privacyRequiredJoinAlert": "個人情報の収集・利用に同意しないと登録できません。",
 
-    "privacy.pageDesc": "Trableがどのような個人情報を、なぜ収集するのかご案内します。",
-    "privacy.intro": "「Trable(旅つくり)」は学習目的で作られた個人/チームプロジェクトであり、収集した個人情報を営利目的で販売したり外部業者に提供したりしません。",
+    "privacy.pageDesc": "Travelがどのような個人情報を、なぜ収集するのかご案内します。",
+    "privacy.intro": "「Travel(旅つくり)」は学習目的で作られた個人/チームプロジェクトであり、収集した個人情報を営利目的で販売したり外部業者に提供したりしません。",
     "privacy.section1Title": "1. 収集する個人情報の項目",
     "privacy.section1Item1": "必須(会員登録時): メールアドレス(ログインID)、パスワード、ニックネーム、性別、年齢",
     "privacy.section1Item2": "任意(マイページで直接入力した場合のみ): 自己紹介、実名、誕生日、プロフィール画像",
@@ -276,9 +276,9 @@
     "privacy.section5Title": "5. お問い合わせ",
     "privacy.section5Body": "個人情報に関するご質問や削除のご要請は、運営者に直接ご連絡ください。",
 
-    "about.heading": "Trable紹介",
+    "about.heading": "Travel紹介",
     "about.pageDesc": "旅行記を自由に記録し、共有するコミュニティです。",
-    "about.intro": "「Trable(旅つくり)」は、韓国国内・日本・海外の旅行経験をスタイル別(癒し/グルメ/アクティビティ/ショッピング)に記録して共有できるコミュニティです。",
+    "about.intro": "「Travel(旅つくり)」は、韓国国内・日本・海外の旅行経験をスタイル別(癒し/グルメ/アクティビティ/ショッピング)に記録して共有できるコミュニティです。",
     "about.featuresTitle": "できること",
     "about.feature1": "旅行先(国内/日本/海外)と詳細地域、旅行スタイルをタグで残す投稿",
     "about.feature2": "コメント・いいね・スクラップで他の人の旅行記にリアクションする",
@@ -310,7 +310,7 @@
     "support.commentForbidden": "お問い合わせの作成者と運営者のみコメントできます。",
     "support.loginToCommentSuffix": "後、お問い合わせの作成者または運営者であればコメントできます。",
 
-    "notice.pageDesc": "Trableの新着情報を確認しましょう。",
+    "notice.pageDesc": "Travelの新着情報を確認しましょう。",
     "notice.empty": "登録されたお知らせがありません。",
 
     "write.imageTooLargeAlert": "10MB未満の画像のみアップロードできます。",

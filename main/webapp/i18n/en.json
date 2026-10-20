@@ -1,6 +1,6 @@
 {
     "brand.logoFile": "logo_en.png",
-    "brand.logoAlt": "Trable logo",
+    "brand.logoAlt": "Travel logo",
     "nav.home": "Home",
     "nav.community": "Community",
     "nav.ranking": "Ranking",
@@ -66,9 +66,9 @@
     "home.emptyStory.japan": "New Japan travel stories will appear here.",
     "home.emptyStory.world": "New world travel stories will appear here.",
     "home.footerVisual.title": "Travel made together with great people",
-    "home.footerVisual.desc": "Share your new travel story with the Trable community.",
+    "home.footerVisual.desc": "Share your new travel story with the Travel community.",
     "home.footerVisual.cta": "Write a Travel Story",
-    "home.footerVisual.webTitle": "Trable Maker",
+    "home.footerVisual.webTitle": "Travel Maker",
 
     "country.KR": "Korea",
     "country.JP": "Japan",
@@ -102,7 +102,7 @@
     "footer.notices": "Notices",
     "footer.faq": "FAQ",
     "footer.contact": "Contact Us",
-    "footer.copyright": "© 2026 Trable. All rights reserved.",
+    "footer.copyright": "© 2026 Travel. All rights reserved.",
 
     "common.countSuffix": "",
     "common.popularSort": "Popular",
@@ -225,7 +225,7 @@
     "auth.loginHeroTitle": "Ready to continue your journey?",
     "auth.loginHeroDesc": "Keep a record of your trips, and discover new travel stories.",
     "auth.tagJeju": "#Jeju",
-    "auth.loginDesc": "Log in to your Trable account.",
+    "auth.loginDesc": "Log in to your Travel account.",
     "auth.joinedMsg": "Sign-up complete. Please log in.",
     "auth.emailLabel": "Email",
     "auth.emailPlaceholder": "Enter your email",
@@ -233,9 +233,9 @@
     "auth.passwordPlaceholder": "Enter your password",
     "auth.backToMain": "Back to Home",
 
-    "auth.signupHeroTitle": "Start your first story with Trable",
+    "auth.signupHeroTitle": "Start your first story with Travel",
     "auth.signupHeroDesc": "Sign up to write travel stories and keep your own record.",
-    "auth.signupDesc": "Enter your basic information to get started with Trable.",
+    "auth.signupDesc": "Enter your basic information to get started with Travel.",
     "auth.nicknameLabel": "Nickname",
     "auth.nicknamePlaceholder": "Enter the nickname you'll use",
     "auth.nicknameRule": "2-12 characters, no spaces or special characters",
@@ -260,8 +260,8 @@
     "auth.passwordTooShortAlert": "Password must be at least 6 characters.",
     "auth.privacyRequiredJoinAlert": "You must agree to the collection and use of personal information to sign up.",
 
-    "privacy.pageDesc": "An explanation of what personal information Trable collects and why.",
-    "privacy.intro": "Trable is a personal/team project built for learning purposes. We don't sell the personal information we collect for profit or share it with outside companies.",
+    "privacy.pageDesc": "An explanation of what personal information Travel collects and why.",
+    "privacy.intro": "Travel is a personal/team project built for learning purposes. We don't sell the personal information we collect for profit or share it with outside companies.",
     "privacy.section1Title": "1. Personal Information Collected",
     "privacy.section1Item1": "Required (at sign-up): email (login ID), password, nickname, gender, age",
     "privacy.section1Item2": "Optional (only if entered on My Page): bio, real name, birthday, profile photo",
@@ -276,9 +276,9 @@
     "privacy.section5Title": "5. Contact",
     "privacy.section5Body": "For questions about personal information or deletion requests, please contact the site operator directly.",
 
-    "about.heading": "About Trable",
+    "about.heading": "About Travel",
     "about.pageDesc": "A community for freely recording and sharing travel stories.",
-    "about.intro": "Trable is a community for recording and sharing travel experiences across Korea, Japan, and abroad, organized by style (healing/food/activity/shopping).",
+    "about.intro": "Travel is a community for recording and sharing travel experiences across Korea, Japan, and abroad, organized by style (healing/food/activity/shopping).",
     "about.featuresTitle": "What You Can Do",
     "about.feature1": "Write posts tagged with destination (Korea/Japan/overseas), region, and travel style",
     "about.feature2": "React to other people's travel stories with comments, likes, and saves",
@@ -310,7 +310,7 @@
     "support.commentForbidden": "Only the inquiry's author and staff can comment.",
     "support.loginToCommentSuffix": "to comment, if you're the inquiry's author or staff.",
 
-    "notice.pageDesc": "Check the latest news from Trable.",
+    "notice.pageDesc": "Check the latest news from Travel.",
     "notice.empty": "No notices have been posted yet.",
 
     "write.imageTooLargeAlert": "Only images under 10MB can be uploaded.",

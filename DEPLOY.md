@@ -28,7 +28,7 @@
 3. **Tomcat 10.1.59**
    - https://archive.apache.org/dist/tomcat/tomcat-10/v10.1.59/bin/apache-tomcat-10.1.59-windows-x64.zip
    - 압축을 `C:\apache-tomcat-10.1.59` 같은 곳에 푼다
-4. **Git**으로 이 저장소를 받는다: `git clone https://github.com/noadot-pixel/trable-jdbc.git`
+4. **Git**으로 이 저장소를 받는다: `git clone https://github.com/noadot-pixel/travel-jdbc.git`
 
 ---
 

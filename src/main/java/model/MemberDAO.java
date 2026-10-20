@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import util.DBUtil;
+import util.PasswordUtil;
 
 /**
  * MEMBERS 테이블을 다루는 DAO. SQL을 실행하는 코드는 전부 여기에 모은다.
@@ -87,7 +88,8 @@ public class MemberDAO {
 		return isDuplicate;
 	}
 
-	//회원가입 - 성공하면 1, 실패하면 0
+	//회원가입 - 성공하면 1, 실패하면 0. 비밀번호는 평문으로 받아서 여기서 해싱해 저장한다
+	//(호출하는 쪽에서 실수로 평문을 그대로 넣어버릴 걱정이 없도록, 해싱을 DAO 안에 고정해둔다).
 	public int join(MemberDTO dto) {
 
 		String sql = "insert into members(id, pwd, nickname, gender) values(?, ?, ?, ?)";
@@ -99,7 +101,7 @@ public class MemberDAO {
 			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
 			pstmt.setString(1, dto.getId());
-			pstmt.setString(2, dto.getPwd());
+			pstmt.setString(2, PasswordUtil.hash(dto.getPwd()));
 			pstmt.setString(3, dto.getNickname());
 			pstmt.setString(4, dto.getGender());
 			result = pstmt.executeUpdate();
@@ -112,9 +114,11 @@ public class MemberDAO {
 	}
 
 	//로그인 - 아이디/비밀번호가 맞으면 전체 프로필을, 틀리면 null을 돌려준다.
+	//비밀번호는 해시로 저장돼 있어서 SQL의 WHERE 조건으로 직접 비교할 수 없다 - 아이디로만
+	//조회한 뒤, 저장된 해시와 입력값을 Java 쪽에서 PasswordUtil로 비교한다.
 	public MemberDTO login(String id, String pwd) {
 
-		String sql = "select " + COLUMNS + "from members where id = ? and pwd = ?";
+		String sql = "select " + COLUMNS + "from members where id = ?";
 
 		MemberDTO dto = null;
 
@@ -122,9 +126,8 @@ public class MemberDAO {
 			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
 			pstmt.setString(1, id);
-			pstmt.setString(2, pwd);
 			try (ResultSet rs = pstmt.executeQuery()) {
-				if (rs.next()) {
+				if (rs.next() && PasswordUtil.verify(pwd, rs.getString("PWD"))) {
 					dto = toDto(rs);
 				}
 			}

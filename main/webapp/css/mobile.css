@@ -267,7 +267,8 @@ textarea:focus-visible {
     }
 
     .write-link,
-    .join-button {
+    .join-button,
+    .login-button {
         display: flex;
         width: 100%;
         min-height: 46px;
@@ -280,6 +281,15 @@ textarea:focus-visible {
     .write-link {
         color: var(--blue);
         background: var(--light-blue);
+    }
+
+    /* 바로 아래 있는 .join-button(채워진 버튼)과 짝을 이루는 보조 버튼이라
+       테두리만 그려서 구분한다 - 색이 같으면 두 버튼이 뭉쳐 보인다. */
+    .login-button {
+        color: var(--blue);
+        background: var(--white);
+        border: 1px solid var(--blue);
+        font-weight: 600;
     }
 
     .notif-bell-wrap {

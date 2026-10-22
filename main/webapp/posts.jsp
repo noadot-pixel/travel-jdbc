@@ -141,7 +141,7 @@
             <a class="filter-button <%= "JP".equals(country) ? "active" : "" %>" data-i18n="filter.japan"
                href="<%= contextPath %>/post/list?country=JP&style=<%= style %>&sort=<%= sort %>&<%= baseQuery %>">일본</a>
             <a class="filter-button <%= "ETC".equals(country) ? "active" : "" %>" data-i18n="filter.worldShort"
-               href="<%= contextPath %>/post/list?country=ETC&style=<%= style %>&sort=<%= sort %>&<%= baseQuery %>">세계</a>
+               href="<%= contextPath %>/post/list?country=ETC&style=<%= style %>&sort=<%= sort %>&<%= baseQuery %>">글로벌</a>
 
         </div>
 

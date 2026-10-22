@@ -111,7 +111,7 @@ public class PostDTO {
 	public String getCountryLabel() {
 		if ("KR".equals(country)) return "한국";
 		if ("JP".equals(country)) return "일본";
-		if ("ETC".equals(country)) return "세계";
+		if ("ETC".equals(country)) return "글로벌";
 		return country;
 	}
 

@@ -39,7 +39,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>자주 묻는 질문 · 문의하기 - 여행만들기</title>
+    <title data-i18n="title.support">자주 묻는 질문 · 문의하기 - 여행만들기</title>
 
     <%@ include file="/common/css-links.jspf" %>
 </head>

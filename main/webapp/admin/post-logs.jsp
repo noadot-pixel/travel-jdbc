@@ -40,7 +40,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>게시글 로그 - 여행만들기</title>
+    <title data-i18n="title.adminPostLogs">게시글 로그 - 여행만들기</title>
 
     <%@ include file="/common/css-links.jspf" %>
 </head>

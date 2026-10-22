@@ -36,6 +36,7 @@
     session.removeAttribute("flashMsg");
 
     long detailJsVer = new java.io.File(application.getRealPath("/js/posts/detail.js")).lastModified();
+    long documentTitleJsVer = new java.io.File(application.getRealPath("/js/common/document-title.js")).lastModified();
 %>
 
 <!DOCTYPE html>
@@ -48,6 +49,10 @@
           content="width=device-width, initial-scale=1.0">
 
     <title><%= EscapeUtil.html(post.getTitle()) %> - 여행만들기</title>
+
+    <script>
+        window.pageTitleData = { content: "<%= EscapeUtil.json(post.getTitle()) %>" };
+    </script>
 
     <%@ include file="/common/css-links.jspf" %>
 </head>
@@ -229,6 +234,7 @@
     };
 </script>
 <script src="<%= contextPath %>/js/posts/detail.js?v=<%= detailJsVer %>"></script>
+<script src="<%= contextPath %>/js/common/document-title.js?v=<%= documentTitleJsVer %>"></script>
 
 </body>
 </html>

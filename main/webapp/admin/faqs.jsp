@@ -42,7 +42,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>FAQ 관리 - 여행만들기</title>
+    <title data-i18n="title.adminFaqs">FAQ 관리 - 여행만들기</title>
 
     <%@ include file="/common/css-links.jspf" %>
 </head>

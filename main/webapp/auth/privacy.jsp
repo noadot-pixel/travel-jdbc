@@ -19,7 +19,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>개인정보처리방침 - 여행만들기</title>
+    <title data-i18n="title.privacy">개인정보처리방침 - 여행만들기</title>
 
     <%@ include file="/common/css-links.jspf" %>
 </head>

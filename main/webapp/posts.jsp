@@ -56,7 +56,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>게시글 목록 - 여행만들기</title>
+    <title data-i18n="title.postsList">게시글 목록 - 여행만들기</title>
 
     <%@ include file="/common/css-links.jspf" %>
 </head>

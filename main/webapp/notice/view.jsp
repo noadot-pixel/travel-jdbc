@@ -18,6 +18,8 @@
         response.sendRedirect(contextPath + "/notice/list");
         return;
     }
+
+    long documentTitleJsVer = new java.io.File(application.getRealPath("/js/common/document-title.js")).lastModified();
 %>
 
 <!DOCTYPE html>
@@ -30,6 +32,10 @@
           content="width=device-width, initial-scale=1.0">
 
     <title><%= EscapeUtil.html(notice.getTitle()) %> - 여행만들기</title>
+
+    <script>
+        window.pageTitleData = { content: "<%= EscapeUtil.json(notice.getTitle()) %>" };
+    </script>
 
     <%@ include file="/common/css-links.jspf" %>
 </head>
@@ -78,6 +84,7 @@
 </main>
 
 <%@ include file="/common/footer.jsp" %>
+<script src="<%= contextPath %>/js/common/document-title.js?v=<%= documentTitleJsVer %>"></script>
 
 </body>
 </html>

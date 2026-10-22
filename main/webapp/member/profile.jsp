@@ -32,6 +32,8 @@
     //common/post-card.jspf가 쓰는 변수들 (다른 사람 글이니 수정/삭제 버튼은 안 보여준다)
     boolean showMyBadge = false;
     String actionsHtml = null;
+
+    long documentTitleJsVer = new java.io.File(application.getRealPath("/js/common/document-title.js")).lastModified();
 %>
 
 <!DOCTYPE html>
@@ -44,6 +46,14 @@
           content="width=device-width, initial-scale=1.0">
 
     <title><%= EscapeUtil.html(profileMember.getNickname()) %>님의 프로필 - 여행만들기</title>
+
+    <script>
+        window.pageTitleData = {
+            content: "<%= EscapeUtil.json(profileMember.getNickname()) %>",
+            suffixKey: "profile.nicknameSuffix",
+            suffixFallback: "님의 프로필"
+        };
+    </script>
 
     <%@ include file="/common/css-links.jspf" %>
 </head>
@@ -138,6 +148,7 @@
 </main>
 
 <%@ include file="/common/footer.jsp" %>
+<script src="<%= contextPath %>/js/common/document-title.js?v=<%= documentTitleJsVer %>"></script>
 
 </body>
 </html>

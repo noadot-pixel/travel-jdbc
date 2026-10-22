@@ -20,7 +20,7 @@
     //상위 3위는 숫자(#1) 대신 메달 이모지로 표시한다 (번역이 필요 없어서 i18n 사전과 무관하게 항상 보임).
     String[] rankMedals = { "🥇", "🥈", "🥉" };
 
-    String countryLabel = "JP".equals(country) ? "일본 여행지" : "한국 여행지";
+    String countryLabel = "JP".equals(country) ? "일본" : "한국";
     String countryI18nKey = "JP".equals(country) ? "country.JP" : "country.KR";
 
     //Cloudflare가 정적 파일(svg)을 기본 4시간 엣지 캐시로 들고 있어서, css-links.jspf와

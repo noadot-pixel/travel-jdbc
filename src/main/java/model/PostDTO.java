@@ -105,11 +105,13 @@ public class PostDTO {
 		this.modDate = modDate;
 	}
 
-	//국가 코드를 화면에 보여줄 이름으로 바꿔준다 (Firebase 버전의 countryLabel과 같은 값)
+	//국가 코드를 화면에 보여줄 이름으로 바꿔준다. "여행지"/"旅行" 같은 접미사를 붙이면
+	//다른 태그(지역/성향)와 나란히 놓였을 때 카드 폭을 넘겨 줄바꿈이 강제로 생겨서,
+	//국가 이름만 짧게 보여준다 (i18n 키 country.KR/JP/ETC도 같은 길이로 맞춰져 있음).
 	public String getCountryLabel() {
-		if ("KR".equals(country)) return "한국 여행지";
-		if ("JP".equals(country)) return "일본 여행지";
-		if ("ETC".equals(country)) return "세계 여행지";
+		if ("KR".equals(country)) return "한국";
+		if ("JP".equals(country)) return "일본";
+		if ("ETC".equals(country)) return "세계";
 		return country;
 	}
 

@@ -1,0 +1,1 @@
+bindPasswordReveal("loginPasswordToggle", "loginPassword");

@@ -18,6 +18,8 @@
         response.sendRedirect(contextPath + "/main");
         return;
     }
+
+    long adminIndexJsVer = new java.io.File(application.getRealPath("/js/admin/index.js")).lastModified();
 %>
 
 <!DOCTYPE html>
@@ -129,24 +131,7 @@
 
 <%@ include file="/common/footer.jsp" %>
 
-<script>
-    document.getElementById("seedButton")
-        .addEventListener("click", function () {
-
-            fetch("<%= contextPath %>/admin/seed", { method: "POST" })
-                .then(function (res) { return res.json(); })
-                .then(function (data) {
-
-                    if (data.added === 0) {
-                        alert(window.t("admin.seedAlreadyExists", "이미 게시글이 있어서 시드를 추가하지 않았습니다."));
-                    } else {
-                        alert(data.added + window.t("admin.seedAddedSuffix", "개의 예시 게시글을 추가했습니다."));
-                    }
-
-                });
-
-        });
-</script>
+<script src="<%= contextPath %>/js/admin/index.js?v=<%= adminIndexJsVer %>"></script>
 
 </body>
 </html>

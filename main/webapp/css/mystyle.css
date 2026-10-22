@@ -3308,3 +3308,550 @@ a.notif-item:hover {
     font-weight: 700;
     text-align: center;
 }
+
+/* =========================
+   글쓰기/수정 에디터 - 2단 구성 (write.jsp, posts/edit.jsp)
+   공지사항(admin/notices.jsp)은 사이드바 없이 .composer-notices만 적용.
+   전부 기존 --navy/--blue 등 변수를 그대로 쓰므로 다크모드가 별도 작업 없이 적용된다.
+========================= */
+
+.composer-page {
+    background: var(--input-bg);
+    color: var(--text-color);
+}
+
+.composer-page-main {
+    max-width: 1220px;
+    margin: 0 auto;
+    padding: 34px 28px 64px;
+    box-sizing: border-box;
+}
+
+.composer-page .page-heading {
+    max-width: none;
+    padding: 0;
+    margin: 0 0 28px;
+    text-align: left;
+}
+
+.composer-page .breadcrumb {
+    font-size: 12px;
+    margin: 0 0 18px;
+    color: var(--gray-color);
+}
+
+.composer-page .page-heading h1 {
+    font-size: 30px;
+    line-height: 1.4;
+    letter-spacing: -1px;
+    margin: 0 0 8px;
+    color: var(--navy);
+}
+
+.composer-page .page-description {
+    font-size: 14px;
+    line-height: 1.7;
+    margin: 0;
+    color: var(--gray-color);
+}
+
+.composer-page .write-section {
+    max-width: none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+}
+
+.composer-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 24px;
+    align-items: start;
+}
+
+.composer-paper,
+.composer-settings {
+    min-width: 0;
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 18px;
+    box-shadow: 0 5px 20px rgba(16, 40, 68, 0.02);
+    box-sizing: border-box;
+}
+
+.composer-paper {
+    padding: 28px;
+}
+
+.composer-settings {
+    padding: 24px;
+}
+
+.composer-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.composer-section-heading h2 {
+    font-size: 15px;
+    margin: 0;
+    color: var(--navy);
+    font-weight: 700;
+}
+
+.composer-step {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 9px;
+    font: 700 11px system-ui;
+    background: var(--light-blue);
+    color: var(--blue);
+}
+
+.composer-page .write-field {
+    margin: 0 0 24px;
+    gap: 10px;
+}
+
+.composer-page .write-field:last-child {
+    margin-bottom: 0;
+}
+
+.composer-page .write-field > label {
+    font-size: 13px;
+    color: var(--gray-color);
+}
+
+.composer-page #writeTitle {
+    font-size: 22px;
+    line-height: 1.5;
+    font-weight: 650;
+    padding: 14px 0 18px;
+    border: 0;
+    border-bottom: 1px solid var(--border-color);
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.composer-page #writeTitle::placeholder {
+    color: var(--gray-color);
+    font-weight: 400;
+    font-size: 19px;
+}
+
+.composer-page #writeTitle:focus {
+    border-color: var(--blue);
+    outline: 0;
+}
+
+.composer-page .write-section .filter-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 23px;
+    padding: 0;
+    overflow: visible;
+    white-space: normal;
+}
+
+.composer-page .write-section .filter-group[hidden] {
+    display: none !important;
+}
+
+.composer-page .write-section .filter-label {
+    flex: 0 0 100%;
+    width: 100%;
+    font-size: 12px;
+    margin: 0 0 3px;
+    color: var(--gray-color);
+    font-weight: 700;
+}
+
+.composer-page .write-section .filter-button {
+    flex: 0 1 auto;
+    min-height: 38px;
+    width: auto;
+    max-width: 100%;
+    padding: 9px 12px;
+    font-size: 12px;
+    line-height: 1.3;
+    white-space: normal;
+    border: 1px solid var(--border-color);
+    border-radius: 9px;
+    background: var(--white);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.composer-page .write-section .filter-button:hover {
+    border-color: var(--blue);
+    background: var(--light-blue);
+}
+
+.composer-page .write-section .filter-button.active {
+    background: var(--light-blue);
+    border-color: var(--blue);
+    color: var(--navy);
+    box-shadow: inset 0 0 0 1px var(--blue);
+    font-weight: 700;
+}
+
+.composer-help {
+    font-size: 12px;
+    color: var(--gray-color);
+    line-height: 1.8;
+    margin: -12px 0 25px;
+}
+
+.composer-tip {
+    border-top: 1px solid var(--border-color);
+    padding-top: 20px;
+    color: var(--gray-color);
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+.composer-tip strong {
+    color: var(--navy);
+    font-weight: 600;
+}
+
+.composer-tip p {
+    margin: 6px 0 0;
+}
+
+.composer-page .write-field-note {
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--gray-color);
+    margin: 2px 0 0;
+}
+
+.composer-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    padding: 24px 0;
+}
+
+.composer-actions > span {
+    font-size: 12px;
+    color: var(--gray-color);
+}
+
+.composer-page .composer-actions .auth-submit {
+    width: auto;
+    min-width: 148px;
+    margin: 0;
+    padding: 14px 25px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--blue);
+    color: #fff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(50, 114, 220, 0.13);
+}
+
+.composer-page button:focus-visible,
+.editor-shell button:focus-visible,
+.editor-shell .ql-picker-label:focus-visible {
+    outline: 3px solid var(--blue);
+    outline-offset: 3px;
+}
+
+/* Quill 툴바(.ql-toolbar)는 에디터(.ql-container)의 자식이 아니라 형제로 생성되므로,
+   둘을 감싸는 래퍼(.editor-shell)에 테두리/그림자를 입힌다 (quill-assets.jspf가 JS로 생성). */
+.editor-shell {
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--white);
+    min-width: 0;
+    position: relative;
+}
+
+.editor-shell:focus-within {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px var(--light-blue);
+}
+
+.editor-shell .ql-toolbar.ql-snow {
+    border: 0;
+    border-bottom: 1px solid var(--border-color);
+    border-radius: 12px 12px 0 0;
+    background: var(--input-bg);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 9px 10px;
+    font-family: inherit;
+}
+
+.editor-shell .ql-toolbar.ql-snow .ql-formats {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    margin: 0;
+    padding-right: 8px;
+    border-right: 1px solid var(--border-color);
+}
+
+.editor-shell .ql-toolbar.ql-snow .ql-formats:last-child {
+    border: 0;
+    padding-right: 0;
+}
+
+.editor-shell .ql-toolbar.ql-snow button {
+    width: 34px;
+    height: 34px;
+    padding: 7px;
+    border-radius: 6px;
+    float: none;
+    color: var(--text-color);
+    font-size: 18px;
+}
+
+.editor-shell .ql-toolbar.ql-snow button:hover,
+.editor-shell .ql-toolbar.ql-snow button.ql-active {
+    background: var(--light-blue);
+}
+
+.editor-shell .ql-container.ql-snow {
+    border: 0;
+    font-family: inherit;
+    font-size: 16px;
+    background: var(--white);
+    height: auto;
+    min-width: 0;
+}
+
+.editor-shell .ql-editor {
+    min-height: 390px;
+    max-height: 680px;
+    line-height: 1.9;
+    padding: 25px 26px;
+    font-size: 16px;
+    color: var(--text-color);
+    overflow-wrap: anywhere;
+    overflow-y: auto;
+}
+
+.editor-shell .ql-editor p {
+    margin: 0 0 10px;
+}
+
+.editor-shell .ql-editor img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.editor-shell .ql-editor.ql-blank::before {
+    left: 26px;
+    right: 26px;
+    font-size: 15px;
+    font-style: normal;
+    color: var(--gray-color);
+}
+
+.editor-shell .ql-editor h1 {
+    font-size: 1.8em;
+    line-height: 1.45;
+}
+
+.editor-shell .ql-editor h2 {
+    font-size: 1.5em;
+    line-height: 1.5;
+}
+
+.editor-shell .ql-editor h3 {
+    font-size: 1.2em;
+}
+
+.editor-shell .ql-snow .ql-stroke {
+    stroke: var(--text-color);
+}
+
+.editor-shell .ql-snow .ql-fill {
+    fill: var(--text-color);
+}
+
+.editor-shell .ql-snow .ql-picker {
+    color: var(--text-color);
+    height: 34px;
+}
+
+.editor-shell .ql-snow .ql-picker-label {
+    display: flex;
+    align-items: center;
+    border-radius: 6px;
+}
+
+.editor-shell .ql-snow .ql-picker-options {
+    background: var(--white);
+    border-color: var(--border-color);
+    border-radius: 8px;
+    padding: 8px;
+    z-index: 5;
+}
+
+.editor-shell .ql-snow .ql-picker.ql-header {
+    width: 110px;
+}
+
+.editor-shell .ql-snow .ql-picker.ql-header .ql-picker-label::before,
+.editor-shell .ql-snow .ql-picker.ql-header .ql-picker-item::before {
+    content: attr(data-label);
+}
+
+.editor-shell .ql-snow .ql-tooltip {
+    background: var(--white);
+    color: var(--text-color);
+    border-color: var(--border-color);
+    box-shadow: 0 5px 20px rgba(16, 40, 68, 0.13);
+    z-index: 8;
+    white-space: normal;
+    max-width: calc(100% - 12px);
+    box-sizing: border-box;
+}
+
+.editor-shell .ql-snow .ql-tooltip input {
+    max-width: 100%;
+    background: var(--input-bg);
+    color: var(--text-color);
+}
+
+.editor-statusbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 16px;
+    border-top: 1px solid var(--border-color);
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--gray-color);
+    border-radius: 0 0 12px 12px;
+    background: var(--input-bg);
+}
+
+.editor-upload-status[data-state="error"] {
+    color: var(--error);
+}
+
+.editor-count {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+/* 공지사항(admin/notices.jsp) 전용 - 사이드바 없이 폼 폭만 좁게 */
+.composer-notices .write-section {
+    max-width: 940px;
+}
+
+.composer-notices .editor-shell .ql-editor {
+    min-height: 280px;
+}
+
+@media (max-width: 960px) {
+    .composer-layout {
+        grid-template-columns: minmax(0, 1fr) 260px;
+        gap: 16px;
+    }
+
+    .composer-paper {
+        padding: 22px;
+    }
+
+    .composer-settings {
+        padding: 19px;
+    }
+}
+
+@media (max-width: 760px) {
+    .composer-page-main {
+        padding: 24px 16px 32px;
+    }
+
+    .composer-page .page-heading h1 {
+        font-size: 25px;
+    }
+
+    .composer-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .composer-paper {
+        padding: 20px 16px;
+    }
+
+    .composer-settings {
+        padding: 20px;
+    }
+
+    .composer-page #writeTitle {
+        font-size: 20px;
+    }
+
+    .composer-page .write-section .filter-button {
+        min-height: 44px;
+        font-size: 13px;
+    }
+
+    .editor-shell .ql-toolbar.ql-snow {
+        gap: 7px;
+        padding: 8px;
+    }
+
+    .editor-shell .ql-toolbar.ql-snow button {
+        width: 36px;
+        height: 36px;
+    }
+
+    .editor-shell .ql-editor {
+        min-height: 320px;
+        padding: 20px 16px;
+    }
+
+    .editor-shell .ql-editor.ql-blank::before {
+        left: 16px;
+        right: 16px;
+    }
+
+    .composer-actions {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .composer-actions .auth-submit {
+        width: 100% !important;
+    }
+
+    .editor-statusbar {
+        flex-wrap: wrap;
+        padding: 10px 12px;
+    }
+
+    .composer-help {
+        margin-bottom: 20px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .composer-page * {
+        transition: none !important;
+    }
+}

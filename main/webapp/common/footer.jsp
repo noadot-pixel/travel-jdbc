@@ -8,6 +8,7 @@
     //헤더와 같은 이유(Cloudflare 캐시 우회)로 로고 버전을 따로 계산한다 - header.jsp와는
     //별개 include라서 거기서 만든 headerLogoJaVer를 그대로 쓸 수 없다.
     long footerLogoJaVer = new java.io.File(application.getRealPath("/images/logo_ja.png")).lastModified();
+    long footerJsVer = new java.io.File(application.getRealPath("/js/common/footer.js")).lastModified();
 %>
 
 <footer class="footer">
@@ -60,16 +61,4 @@
 
 </footer>
 
-<script>
-    document.querySelectorAll(".footer-placeholder-link").forEach(function (link) {
-
-        link.addEventListener("click", function (event) {
-
-            event.preventDefault();
-
-            alert(link.dataset.message);
-
-        });
-
-    });
-</script>
+<script src="<%= contextPath %>/js/common/footer.js?v=<%= footerJsVer %>"></script>

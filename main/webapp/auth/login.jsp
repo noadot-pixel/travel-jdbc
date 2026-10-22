@@ -16,6 +16,9 @@
     String msg = (String) request.getAttribute("msg");           // 로그인 실패 메시지 (LoginCommand)
     String inputId = (String) request.getAttribute("inputId");   // 실패 시 입력했던 이메일
     boolean joined = "1".equals(request.getParameter("joined"));  // 회원가입 직후 이동해 온 경우 (JoinCommand)
+
+    long passwordRevealJsVer = new java.io.File(application.getRealPath("/js/common/password-reveal.js")).lastModified();
+    long loginJsVer = new java.io.File(application.getRealPath("/js/auth/login.js")).lastModified();
 %>
 
 <!DOCTYPE html>
@@ -170,35 +173,8 @@
 
 <%@ include file="/common/footer.jsp" %>
 
-<script>
-    /*
-     * 비밀번호 보기 - 아이콘에 마우스를 올리고 있거나(hover) 누르고 있는 동안만
-     * 평문으로 보여주고, 떼면(또는 마우스가 벗어나면) 다시 가린다. 포인터 이벤트라
-     * 마우스/터치 둘 다 같은 핸들러로 처리된다.
-     */
-
-    function bindPasswordReveal(buttonId, inputId) {
-
-        const button = document.getElementById(buttonId);
-        const input = document.getElementById(inputId);
-
-        function reveal() { input.type = "text"; }
-        function hide() { input.type = "password"; }
-
-        //mousedown 시점에 버튼이 포커스를 가져가 input의 커서 위치가 흐트러지는 걸 막는다.
-        button.addEventListener("pointerdown", function (event) {
-            event.preventDefault();
-            reveal();
-        });
-
-        button.addEventListener("pointerenter", reveal);
-        button.addEventListener("pointerup", hide);
-        button.addEventListener("pointerleave", hide);
-        button.addEventListener("pointercancel", hide);
-    }
-
-    bindPasswordReveal("loginPasswordToggle", "loginPassword");
-</script>
+<script src="<%= contextPath %>/js/common/password-reveal.js?v=<%= passwordRevealJsVer %>"></script>
+<script src="<%= contextPath %>/js/auth/login.js?v=<%= loginJsVer %>"></script>
 
 </body>
 </html>

@@ -31,6 +31,9 @@
     if (bioValue == null) bioValue = "";
     if (countryOtherValue == null) countryOtherValue = "";
     if (nameValue == null) nameValue = "";
+
+    long editJsVer = new java.io.File(application.getRealPath("/js/mypage/edit.js")).lastModified();
+    long editGenderJsVer = new java.io.File(application.getRealPath("/js/mypage/edit-gender.js")).lastModified();
 %>
 
 <!DOCTYPE html>
@@ -276,169 +279,11 @@
 
 <%@ include file="/common/footer.jsp" %>
 
-<script>
-    /*
-     * 국가를 "기타"로 선택했을 때만 자유 입력란을 보여준다.
-     */
-
-    const countrySelect = document.getElementById("profileCountry");
-    const countryOtherField = document.getElementById("profileCountryOtherField");
-
-    countrySelect.addEventListener("change", function () {
-        countryOtherField.hidden = countrySelect.value !== "ETC";
-    });
-
-
-    /*
-     * 프로필 이미지를 고르면 바로 미리보기로 보여준다. 실제 업로드는 저장할 때 한 번만 일어난다.
-     */
-
-    const profilePhotoInput = document.getElementById("profilePhoto");
-    const profilePhotoPreview = document.getElementById("profilePhotoPreview");
-
-    profilePhotoInput.addEventListener("change", function () {
-
-        const file = profilePhotoInput.files[0];
-
-        if (!file) {
-            return;
-        }
-
-        const reader = new FileReader();
-
-        reader.onload = function (event) {
-            profilePhotoPreview.src = event.target.result;
-        };
-
-        reader.readAsDataURL(file);
-
-    });
-
-
-    /*
-     * 닉네임 형식은 서버(ProfileEditCommand)에서도 똑같이 검사하지만, 제출 전에 미리 알려준다.
-     */
-
-    document.getElementById("profileForm").addEventListener("submit", function (event) {
-
-        const nickname = document.getElementById("profileNickname").value.trim();
-
-        if (!/^[\p{L}\p{N}]{2,12}$/u.test(nickname)) {
-            event.preventDefault();
-            alert(window.t("auth.nicknameInvalidAlert", "닉네임은 특수문자·공백 없이 2~12자로 입력해 주세요."));
-        }
-
-    });
-
-
-    /*
-     * 닉네임 중복확인 - 원래 닉네임 그대로면(안 바꿨으면) 굳이 또 확인하라고 막지 않는다.
-     * 바꿨을 때만 저장 전에 중복확인을 거치게 한다.
-     */
-
-    (function () {
-
-        const originalNickname = "<%= EscapeUtil.json(nicknameValue) %>";
-        const nicknameInput = document.getElementById("profileNickname");
-        const nicknameCheckButton = document.getElementById("nicknameCheckButton");
-        const nicknameCheckResult = document.getElementById("nicknameCheckResult");
-        let nicknameChecked = false;
-
-        nicknameCheckButton.addEventListener("click", function () {
-
-            const nickname = nicknameInput.value.trim();
-
-            if (!/^[\p{L}\p{N}]{2,12}$/u.test(nickname)) {
-                nicknameChecked = false;
-                nicknameCheckResult.textContent = window.t("auth.nicknameInvalidAlert", "닉네임은 특수문자·공백 없이 2~12자로 입력해 주세요.");
-                nicknameCheckResult.className = "write-field-note field-hint-error";
-                return;
-            }
-
-            fetch("<%= contextPath %>/member/nicknameCheck?nickname=" + encodeURIComponent(nickname))
-                .then(function (res) { return res.json(); })
-                .then(function (data) {
-
-                    if (data.result === "available") {
-                        nicknameChecked = true;
-                        nicknameCheckResult.textContent = window.t("auth.nicknameCheckAvailable", "사용 가능한 닉네임입니다.");
-                        nicknameCheckResult.className = "write-field-note field-hint-ok";
-                    } else if (data.result === "duplicate") {
-                        nicknameChecked = false;
-                        nicknameCheckResult.textContent = window.t("auth.nicknameCheckDuplicate", "이미 사용 중인 닉네임입니다.");
-                        nicknameCheckResult.className = "write-field-note field-hint-error";
-                    } else {
-                        nicknameChecked = false;
-                        nicknameCheckResult.textContent = window.t("auth.nicknameInvalidAlert", "닉네임은 특수문자·공백 없이 2~12자로 입력해 주세요.");
-                        nicknameCheckResult.className = "write-field-note field-hint-error";
-                    }
-
-                });
-
-        });
-
-        nicknameInput.addEventListener("input", function () {
-            nicknameChecked = false;
-            nicknameCheckResult.textContent = "";
-        });
-
-        document.getElementById("profileForm").addEventListener("submit", function (event) {
-
-            const nickname = nicknameInput.value.trim();
-
-            if (nickname !== originalNickname && !nicknameChecked) {
-                event.preventDefault();
-                alert(window.t("auth.nicknameCheckRequiredAlert", "닉네임 중복확인을 먼저 해 주세요."));
-            }
-
-        });
-
-    })();
-</script>
+<script>window.originalNickname = "<%= EscapeUtil.json(nicknameValue) %>";</script>
+<script src="<%= contextPath %>/js/mypage/edit.js?v=<%= editJsVer %>"></script>
 
 <% if (loginMember.getGender() == null) { %>
-<script>
-    /*
-     * 성별 버튼 선택과, 제출 전 필수 입력 검사(서버에서도 똑같이 검사함).
-     * 이 블록은 gender가 아직 null인 회원에게만 보이므로, 이 화면을 저장하려면
-     * 성별/동의를 전부 채워야 한다.
-     */
-
-    const genderGroup = document.getElementById("profileGenderGroup");
-    const genderInput = document.getElementById("genderInput");
-
-    genderGroup.querySelectorAll(".filter-button").forEach(function (button) {
-
-        button.addEventListener("click", function () {
-
-            genderGroup.querySelectorAll(".filter-button").forEach(function (other) {
-                other.classList.remove("active");
-            });
-
-            button.classList.add("active");
-            genderInput.value = button.dataset.gender;
-
-        });
-
-    });
-
-    document.getElementById("profileForm").addEventListener("submit", function (event) {
-
-        const privacyAgree = document.getElementById("privacyAgree").checked;
-
-        if (genderInput.value === "") {
-            event.preventDefault();
-            alert(window.t("editProfile.genderRequiredAlert", "성별을 선택해 주세요."));
-            return;
-        }
-
-        if (!privacyAgree) {
-            event.preventDefault();
-            alert(window.t("editProfile.privacyRequiredAlert", "개인정보 수집·이용에 동의해야 저장할 수 있습니다."));
-        }
-
-    });
-</script>
+<script src="<%= contextPath %>/js/mypage/edit-gender.js?v=<%= editGenderJsVer %>"></script>
 <% } %>
 
 </body>

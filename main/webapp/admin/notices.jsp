@@ -29,6 +29,8 @@
         response.sendRedirect(contextPath + "/admin/notices");
         return;
     }
+
+    long adminNoticesJsVer = new java.io.File(application.getRealPath("/js/admin/notices.js")).lastModified();
 %>
 
 <!DOCTYPE html>
@@ -45,12 +47,12 @@
     <%@ include file="/common/css-links.jspf" %>
 </head>
 
-<body>
+<body class="composer-page composer-notices">
 
 <% String activeNav = ""; %>
 <%@ include file="/common/header.jsp" %>
 
-<main>
+<main class="composer-page-main">
 
     <section class="page-heading">
 
@@ -72,18 +74,30 @@
 
         <form id="noticeForm">
 
-            <div class="write-field">
-                <label for="noticeTitle" data-i18n="write.titleLabel">제목</label>
-                <input type="text" id="noticeTitle" data-i18n="adminNotices.titlePlaceholder" data-i18n-attr="placeholder" placeholder="공지 제목을 입력해 주세요">
+            <div class="composer-paper">
+
+                <div class="composer-section-heading">
+                    <span class="composer-step">01</span>
+                    <h2 data-i18n="admin.menuNoticesTitle">공지사항 관리</h2>
+                </div>
+
+                <div class="write-field">
+                    <label for="noticeTitle" data-i18n="write.titleLabel">제목</label>
+                    <input type="text" id="noticeTitle" data-i18n="adminNotices.titlePlaceholder" data-i18n-attr="placeholder" placeholder="공지 제목을 입력해 주세요">
+                </div>
+
+                <div class="write-field">
+                    <label for="noticeContentEditor" data-i18n="support.contentLabel">내용</label>
+                    <div id="noticeContentEditor" class="quill-editor-container"></div>
+                    <input type="hidden" id="noticeContent" name="content">
+                </div>
+
             </div>
 
-            <div class="write-field">
-                <label for="noticeContentEditor" data-i18n="support.contentLabel">내용</label>
-                <div id="noticeContentEditor" class="quill-editor-container"></div>
-                <input type="hidden" id="noticeContent" name="content">
+            <div class="composer-actions">
+                <span data-i18n="editor.publishHint">작성한 내용을 확인한 뒤 등록해 주세요.</span>
+                <button type="submit" class="auth-submit" data-i18n="write.submit">등록하기</button>
             </div>
-
-            <button type="submit" class="auth-submit" data-i18n="write.submit">등록하기</button>
 
         </form>
 
@@ -119,75 +133,7 @@
 <%@ include file="/common/footer.jsp" %>
 <%@ include file="/common/quill-assets.jspf" %>
 
-<script>
-    const noticeQuill = initQuillEditor({
-        containerId: "noticeContentEditor",
-        hiddenInputId: "noticeContent",
-        uploadUrl: "<%= contextPath %>/post/uploadImage",
-        loginUrl: "<%= contextPath %>/member/login",
-        placeholderKey: "adminNotices.contentPlaceholder",
-        placeholderFallback: "공지 내용을 입력해 주세요"
-    });
-
-    document.getElementById("noticeForm").addEventListener("submit", function (event) {
-
-        event.preventDefault();
-
-        const title = document.getElementById("noticeTitle").value.trim();
-        const bodyIsEmpty = noticeQuill.getText().trim() === "" && noticeQuill.root.querySelectorAll("img").length === 0;
-
-        if (title === "" || bodyIsEmpty) {
-            alert(window.t("adminNotices.fillAllAlert", "제목과 내용을 모두 입력해 주세요."));
-            return;
-        }
-
-        const content = document.getElementById("noticeContent").value;
-
-        const body = new URLSearchParams();
-        body.set("title", title);
-        body.set("content", content);
-
-        fetch("<%= contextPath %>/admin/notices/create", { method: "POST", body: body })
-            .then(function (res) { return res.json(); })
-            .then(function (data) {
-
-                if (data.result !== "ok") {
-                    alert(window.t("adminNotices.createFailedAlert", "공지 등록에 실패했습니다."));
-                    return;
-                }
-
-                location.reload();
-            });
-
-    });
-
-    document.querySelectorAll(".admin-notice-delete-button").forEach(function (button) {
-
-        button.addEventListener("click", function () {
-
-            if (!confirm(window.t("adminNotices.confirmDelete", "이 공지를 삭제할까요?"))) {
-                return;
-            }
-
-            const body = new URLSearchParams();
-            body.set("noticeId", button.dataset.noticeId);
-
-            fetch("<%= contextPath %>/admin/notices/delete", { method: "POST", body: body })
-                .then(function (res) { return res.json(); })
-                .then(function (data) {
-
-                    if (data.result !== "ok") {
-                        alert(window.t("adminNotices.deleteFailedAlert", "삭제에 실패했습니다."));
-                        return;
-                    }
-
-                    button.closest(".admin-notice-item").remove();
-                });
-
-        });
-
-    });
-</script>
+<script src="<%= contextPath %>/js/admin/notices.js?v=<%= adminNoticesJsVer %>"></script>
 
 </body>
 </html>

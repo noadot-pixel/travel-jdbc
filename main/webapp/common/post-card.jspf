@@ -29,7 +29,10 @@
             <span class="story-style-tag" data-i18n="style.<%= post.getStyle() %>"><%= EscapeUtil.html(post.getStyleLabel()) %></span>
         </div>
 
-        <h3><a href="<%= contextPath %>/post/view?bno=<%= post.getBno() %>"><%= EscapeUtil.html(post.getTitle()) %></a></h3>
+        <h3>
+            <a href="<%= contextPath %>/post/view?bno=<%= post.getBno() %>"><%= EscapeUtil.html(post.getTitle()) %></a>
+            <span class="story-comment-count">[<%= post.getCommentCnt() %>]</span>
+        </h3>
 
         <div class="story-information">
             <span><a href="<%= contextPath %>/member/profile?id=<%= post.getWriter() %>" class="story-writer-link"><%= EscapeUtil.html(post.getWriterNick()) %></a></span>

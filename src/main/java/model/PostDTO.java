@@ -16,6 +16,7 @@ public class PostDTO {
 	private String imgPath;      // "images/korea.jpg"(기본) 또는 "upload/xxx.jpg"(업로드)
 	private int viewCnt;
 	private int likeCnt;
+	private int commentCnt;      // COMMENTS 테이블에서 subquery로 세어옴 (POSTS에는 없는 컬럼)
 	private String regDate;      // "YYYY-MM-DD"
 	private String modDate;      // "YYYY-MM-DD" 또는 null(수정 전)
 
@@ -84,6 +85,12 @@ public class PostDTO {
 	}
 	public void setLikeCnt(int likeCnt) {
 		this.likeCnt = likeCnt;
+	}
+	public int getCommentCnt() {
+		return commentCnt;
+	}
+	public void setCommentCnt(int commentCnt) {
+		this.commentCnt = commentCnt;
 	}
 	public String getRegDate() {
 		return regDate;

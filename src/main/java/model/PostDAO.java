@@ -17,9 +17,13 @@ import util.DBUtil;
 public class PostDAO {
 
 	//목록/상세에서 공통으로 쓰는 컬럼. writer_nick은 members와 join해서 가져온다.
+	//comment_cnt는 like_cnt와 달리 posts에 카운터 컬럼이 없어서, comments를 직접 세는
+	//상관 서브쿼리로 매번 구한다 - 댓글 작성/삭제 때마다 카운터를 동기화할 필요가 없어서 더 안전하다.
 	private static final String COLUMNS =
 			"p.bno, p.writer, m.nickname writer_nick, p.title, p.country, p.region, p.style, p.img_path, "
-		  + "p.view_cnt, p.like_cnt, to_char(p.reg_date, 'YYYY-MM-DD') reg_date, "
+		  + "p.view_cnt, p.like_cnt, "
+		  + "(select count(*) from comments c where c.bno = p.bno) comment_cnt, "
+		  + "to_char(p.reg_date, 'YYYY-MM-DD') reg_date, "
 		  + "to_char(p.mod_date, 'YYYY-MM-DD') mod_date ";
 	//추가시작-경민
 	private static final Map<String, String[]> COUNTRY_WORDS = new LinkedHashMap<String, String[]>();
@@ -87,6 +91,7 @@ public class PostDAO {
 		dto.setImgPath(rs.getString("img_path"));
 		dto.setViewCnt(rs.getInt("view_cnt"));
 		dto.setLikeCnt(rs.getInt("like_cnt"));
+		dto.setCommentCnt(rs.getInt("comment_cnt"));
 		dto.setRegDate(rs.getString("reg_date"));
 		dto.setModDate(rs.getString("mod_date"));
 		return dto;

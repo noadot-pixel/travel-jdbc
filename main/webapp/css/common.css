@@ -15,9 +15,23 @@ body {
     background-color: var(--body-bg, #ffffff);
     transition: background-color 0.2s, color 0.2s;
 
+    /*
+     * 한국어/일본어/영어 다국어 사이트인데 기존 스택엔 일본어(히라가나/가타카나)를
+     * 지원하는 폰트가 하나도 없었다 - Malgun Gothic(한국어 전용)·Arial(라틴 전용) 둘 다
+     * 그 글자들을 못 그려서, 브라우저가 매 글자마다 이 폰트들을 전부 "지원 안 함"으로
+     * 판정하고 넘어간 뒤에야 OS 기본 CJK 폰트로 떨어졌다. 이 글자당 폴백 비용이 특히
+     * 에디터처럼 긴 글을 계속 입력하는 곳에서 체감 가능한 입력 지연으로 나타난다.
+     * OS별 일본어 폰트를 Arial보다 앞에 둬서 실패하는 폴백 단계를 줄인다.
+     */
     font-family:
         "Malgun Gothic",
         "맑은 고딕",
+        "Apple SD Gothic Neo",
+        "Yu Gothic",
+        "Meiryo",
+        "Hiragino Kaku Gothic ProN",
+        "Noto Sans CJK KR",
+        "Noto Sans CJK JP",
         Arial,
         sans-serif;
 }

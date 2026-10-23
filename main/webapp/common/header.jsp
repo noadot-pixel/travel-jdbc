@@ -15,7 +15,18 @@
 --%>
 <%
     MemberDTO headerMember = (MemberDTO) session.getAttribute("loginMember");
-    String headerCurrentUri = request.getRequestURI();
+
+    //주의: request.getRequestURI()는 "브라우저가 요청한 URL"이 아니라 forward() 시점 기준
+    //"지금 포워드된 대상"을 돌려준다(서블릿 스펙 동작) - 모든 페이지가 Controller에서
+    //RequestDispatcher.forward()로 이 JSP까지 왔으므로, 여기서 바로 부르면 "/post/write"가
+    //아니라 "/posts/write.jsp" 같은 JSP 파일 경로가 나와서 아래 .contains() 비교가 전부
+    //실패한다. forward 전 "원래 요청 URL"은 컨테이너가 넣어주는 이 request attribute에
+    //들어있다 - 없으면(=forward를 안 거친 경우) getRequestURI()로 대체한다.
+    String headerCurrentUri = (String) request.getAttribute("jakarta.servlet.forward.request_uri");
+    if (headerCurrentUri == null) {
+        headerCurrentUri = request.getRequestURI();
+    }
+
     boolean headerOnMyPage = headerCurrentUri != null
         && headerCurrentUri.contains("/member/mypage");
     boolean headerOnWritePage = headerCurrentUri != null

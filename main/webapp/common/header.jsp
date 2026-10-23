@@ -280,9 +280,9 @@
 </div>
 <% } %>
 
-<script src="<%= contextPath %>/js/common/mobile-menu.js?v=<%= mobileMenuJsVer %>"></script>
-
 <script src="<%= contextPath %>/js/common/header-prefs.js?v=<%= headerPrefsJsVer %>"></script>
+
+<script src="<%= contextPath %>/js/common/mobile-menu.js?v=<%= mobileMenuJsVer %>"></script>
 
 <% if (headerMember != null) { %>
 <script src="<%= contextPath %>/js/common/notification-bell.js?v=<%= notificationBellJsVer %>"></script>

@@ -10,6 +10,7 @@
     const badge = button.querySelector(".notif-badge");
 
     let loaded = false;
+    let lastData = null;   // 마지막으로 받아온 데이터 - 언어를 바꾸면 다시 그릴 때 쓴다(재요청 안 함)
 
     function escapeHtml(str) {
         const div = document.createElement("div");
@@ -17,12 +18,35 @@
         return div.innerHTML;
     }
 
+    //서버는 "누가/뭘 했는지/어느 글인지"만 보내고, 실제 문장은 여기서 언어에 맞게 조립한다
+    //(서버에서 한국어로 완성된 문장을 보내버리면 언어를 바꿔도 그대로 남기 때문).
+    function buildAlertMessage(a) {
+
+        const title = a.type === "INQUIRY_COMMENT" ? a.inquiryTitle : a.postTitle;
+
+        let suffixKey, suffixFallback;
+        if (a.type === "LIKE") {
+            suffixKey = "notif.likeSuffix";
+            suffixFallback = "님이 내 글을 좋아합니다";
+        } else if (a.type === "INQUIRY_COMMENT") {
+            suffixKey = "notif.inquiryCommentSuffix";
+            suffixFallback = "님이 문의에 댓글을 남겼습니다";
+        } else {
+            suffixKey = "notif.commentSuffix";
+            suffixFallback = "님이 내 글에 댓글을 남겼습니다";
+        }
+
+        return a.actorNick + window.t(suffixKey, suffixFallback) + " - " + title;
+    }
+
     function render(data) {
+
+        lastData = data;
 
         const parts = [];
 
         if (data.notices.length > 0) {
-            parts.push('<p class="notif-section-title">공지</p>');
+            parts.push('<p class="notif-section-title">' + escapeHtml(window.t("notif.noticesSectionTitle", "공지")) + '</p>');
             data.notices.forEach(function (n) {
                 parts.push(
                     '<a href="' + window.contextPath + '/notice/view?noticeId=' + n.noticeId + '" ' +
@@ -35,7 +59,7 @@
         }
 
         if (data.alerts.length > 0) {
-            parts.push('<p class="notif-section-title">내 알림</p>');
+            parts.push('<p class="notif-section-title">' + escapeHtml(window.t("notif.myAlertsSectionTitle", "내 알림")) + '</p>');
             data.alerts.forEach(function (a) {
                 const href = a.targetType === "INQUIRY"
                     ? window.contextPath + "/support/view?inquiryId=" + a.inquiryId
@@ -43,7 +67,7 @@
                 parts.push(
                     '<a href="' + href + '" class="notif-item notif-alert-item' +
                         (a.read ? '' : ' notif-unread') + '">' +
-                        '<span>' + escapeHtml(a.message) + '</span>' +
+                        '<span>' + escapeHtml(buildAlertMessage(a)) + '</span>' +
                         '<span>' + escapeHtml(a.regDate) + '</span>' +
                     '</a>'
                 );
@@ -51,7 +75,7 @@
         }
 
         if (parts.length === 0) {
-            parts.push('<p class="notif-empty">새 소식이 없습니다.</p>');
+            parts.push('<p class="notif-empty">' + escapeHtml(window.t("notif.empty", "새 소식이 없습니다.")) + '</p>');
         }
 
         dropdown.innerHTML = parts.join("");
@@ -89,6 +113,14 @@
     document.addEventListener("click", function (event) {
         if (!dropdown.hidden && !dropdown.contains(event.target) && event.target !== button) {
             dropdown.hidden = true;
+        }
+    });
+
+    //드롭다운을 열어둔 채로 언어를 바꾸면, 이미 받아온 데이터로 문장만 다시 조립해서 보여준다
+    //(서버에 다시 요청하지 않음 - 어차피 한 번 열면 서버가 전부 읽음 처리해버려서 다시 불러도 같은 데이터).
+    $(document).on("i18n:applied", function () {
+        if (lastData) {
+            render(lastData);
         }
     });
 

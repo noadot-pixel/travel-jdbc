@@ -86,15 +86,4 @@ public class NotificationDTO {
 		this.regDate = regDate;
 	}
 
-	//화면에 보여줄 한 줄 메시지
-	public String getMessage() {
-		if ("LIKE".equals(type)) {
-			return actorNick + "님이 내 글을 좋아합니다 - " + postTitle;
-		}
-		if ("INQUIRY_COMMENT".equals(type)) {
-			return actorNick + "님이 문의에 댓글을 남겼습니다 - " + inquiryTitle;
-		}
-		return actorNick + "님이 내 글에 댓글을 남겼습니다 - " + postTitle;   // COMMENT (기본값)
-	}
-
 }

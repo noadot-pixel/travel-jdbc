@@ -60,10 +60,16 @@ public class NotificationListCommand implements Command {
 		for (int i = 0; i < alerts.size(); i++) {
 			NotificationDTO a = alerts.get(i);
 			if (i > 0) json.append(",");
-			json.append("{\"targetType\":\"").append(EscapeUtil.json(a.getTargetType())).append("\",")
+			//메시지 문장을 여기서 한국어로 완성해서 보내면 클라이언트가 언어를 바꿔도 그대로
+			//남으므로, "누가/뭘 했는지/어디에"에 해당하는 조각만 보내고 실제 문장 조립은
+			//notification-bell.js가 window.t()로 한다(type별 어미를 언어마다 다르게 번역).
+			json.append("{\"type\":\"").append(EscapeUtil.json(a.getType())).append("\",")
+				.append("\"targetType\":\"").append(EscapeUtil.json(a.getTargetType())).append("\",")
 				.append("\"bno\":").append(a.getBno()).append(",")
 				.append("\"inquiryId\":").append(a.getInquiryId()).append(",")
-				.append("\"message\":\"").append(EscapeUtil.json(a.getMessage())).append("\",")
+				.append("\"actorNick\":\"").append(EscapeUtil.json(a.getActorNick())).append("\",")
+				.append("\"postTitle\":\"").append(EscapeUtil.json(a.getPostTitle())).append("\",")
+				.append("\"inquiryTitle\":\"").append(EscapeUtil.json(a.getInquiryTitle())).append("\",")
 				.append("\"read\":").append(a.isRead()).append(",")
 				.append("\"regDate\":\"").append(EscapeUtil.json(a.getRegDate())).append("\"}");
 		}
